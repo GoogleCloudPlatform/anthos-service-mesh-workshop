@@ -1,0 +1,142 @@
+---
+timeout: 3600s
+logsBucket: "gs://${PROJECT_ID}/logs/cloudbuild"
+steps:
+  - name: "gcr.io/kaniko-project/executor:latest"
+    id: "build-installer-image"
+    args:
+      - --destination=gcr.io/${PROJECT_ID}/asm-installer
+      - --cache=true
+      - --cache-ttl=12h
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-host-project"
+    dir: network/prod/host_project
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-shared-vpc"
+    dir: network/prod/shared_vpc
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-ops-project"
+    dir: ops/prod/ops_project
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-ops-project-gke-clusters"
+    dir: ops/prod/ops_gke
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app1-project"
+    dir: apps/prod/app1/app1_project
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app1-gce"
+    dir: apps/prod/app1/app1_gce
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app1-project-gke-clusters"
+    dir: apps/prod/app1/app1_gke
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app2-project"
+    dir: apps/prod/app2/app2_project
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app2-project-gke-clusters"
+    dir: apps/prod/app2/app2_gke
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-istio-prep"
+    dir: ops/prod/istio_prep
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-cloudbuild-ops"
+    dir: ops/prod/cloudbuild
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-k8s-repo"
+    dir: ops/prod/k8s_repo
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan

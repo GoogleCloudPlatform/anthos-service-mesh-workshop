@@ -1,0 +1,8 @@
+data "terraform_remote_state" "RESOURCE" {
+  backend = "gcs"
+
+  config = {
+    bucket  = "PROJECT_ID"
+    prefix  = "tfstate/prod/RESOURCE"
+  }
+}

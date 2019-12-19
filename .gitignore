@@ -1,0 +1,28 @@
+vars/*
+logs/*
+tmp/*
+gke/*
+certs/*
+k8s-repo/*
+scripts/test.sh
+
+infrastructure/*/*/*/backend.tf
+infrastructure/*/*/*/tfplan
+infrastructure/*/*/*/terraform.tfvars
+infrastructure/*/*/*/.terraform
+
+infrastructure/*/*/*/*/backend.tf
+infrastructure/*/*/*/*/tfplan
+infrastructure/*/*/*/*/terraform.tfvars
+infrastructure/*/*/*/*/.terraform
+
+infrastructure/*/*/backend.tf
+infrastructure/*/*/tfplan
+# infrastructure/*/*/*.tfvars
+infrastructure/*/*/.terraform
+
+# infrastructure/*/*/*/shared_state*
+# infrastructure/*/*/*/*/shared_state*
+
+infrastructure/gcp/*/*/*.tfvars
+infrastructure/gcp/*/*/shared_state*

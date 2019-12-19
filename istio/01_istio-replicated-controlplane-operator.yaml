@@ -1,0 +1,87 @@
+apiVersion: install.istio.io/v1alpha2
+kind: IstioControlPlane
+spec:
+  autoInjection:
+    components:
+      injector:
+        enabled: true
+    enabled: true
+  cni:
+    components:
+      cni:
+        enabled: false
+    enabled: false
+  configManagement:
+    components:
+      galley:
+        enabled: true
+    enabled: true
+  coreDNS:
+    components:
+      coreDNS:
+        enabled: true
+    enabled: true
+  gateways:
+    components:
+      egressGateway:
+        enabled: true
+        k8s:
+          env:
+          - name: ISTIO_META_REQUESTED_NETWORK_VIEW
+            value: external
+      ingressGateway:
+        enabled: true
+    enabled: true
+  policy:
+    components:
+      policy:
+        enabled: true
+    enabled: true
+  security:
+    components:
+      certManager:
+        enabled: false
+      citadel:
+        enabled: true
+      nodeAgent:
+        enabled: false
+    enabled: true
+  telemetry:
+    components:
+      telemetry:
+        enabled: true
+    enabled: true
+  trafficManagement:
+    components:
+      pilot:
+        enabled: true
+        k8s:
+          env:
+          - name: PILOT_ENABLE_FALLTHROUGH_ROUTE
+            value: "1"
+    enabled: true
+  values:
+    global:
+      controlPlaneSecurityEnabled: true
+      meshExpansion:
+        enabled: true
+      multiCluster:
+        enabled: true
+      podDNSSearchNamespaces:
+      - global
+      - '{{ valueOrDefault .DeploymentMeta.Namespace "default" }}.global'
+    grafana:
+      enabled: true
+    kiali:
+      createDemoSecret: true
+      dashboard:
+        grafanaURL: http://grafana:3000
+      enabled: true
+    prometheus:
+      enabled: true
+    security:
+      selfSigned: false
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true
+    tracing:
+      enabled: true

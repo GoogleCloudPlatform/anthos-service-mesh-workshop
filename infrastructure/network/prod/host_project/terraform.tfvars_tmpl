@@ -1,0 +1,2 @@
+host_project_name="${TF_VAR_host_project_name}"
+folder_display_name="${TF_VAR_folder_display_name}"
