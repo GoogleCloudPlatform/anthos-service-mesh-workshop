@@ -1,1 +1,1 @@
-output "k8s_repo_name" { value = "${google_sourcerepo_repository.k8s_repo.name}" }
+output "k8s_repo_name" { value = google_sourcerepo_repository.k8s_repo.name }

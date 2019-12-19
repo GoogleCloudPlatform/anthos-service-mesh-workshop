@@ -148,6 +148,7 @@ echo -e "export TF_VAR_org_id=${TF_VAR_org_id}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_billing_account=${TF_VAR_billing_account}" | tee -a ${VARS_FILE}
 echo -e "export TF_ADMIN=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_tfadmin=${TF_ADMIN}" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_project_editor=${MY_USER}" | tee -a ${VARS_FILE}
 echo -e "export GOOGLE_PROJECT=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_CLOUDBUILD_SA=$(gcloud projects describe ${TF_ADMIN} --format='value(projectNumber)')@cloudbuild.gserviceaccount.com" | tee -a ${VARS_FILE}
 

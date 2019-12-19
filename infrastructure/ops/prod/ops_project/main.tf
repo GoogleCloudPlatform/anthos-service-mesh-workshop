@@ -27,10 +27,32 @@ resource "google_project_iam_member" "ops_gke_sa_security_admin_in_host" {
   role    = "roles/compute.securityAdmin"
   member  = "serviceAccount:service-${module.create_ops_asm_project.project_number}@container-engine-robot.iam.gserviceaccount.com"
   
-    depends_on = [
+  depends_on = [
     null_resource.exec_check_for_ops_gke_service_accounts
   ]
 
+}
+
+# Grant project editor to the passed user
+resource "google_project_iam_member" "ops_project_editor" {
+  project = module.create_ops_asm_project.project_id
+  role    = "roles/editor"
+  member  = "user:${var.project_editor}"
+
+  depends_on = [
+    null_resource.exec_check_for_ops_gke_service_accounts
+  ]
+}
+
+# Grant source repo admin to the passed user
+resource "google_project_iam_member" "ops_project_source_admin" {
+  project = module.create_ops_asm_project.project_id
+  role    = "roles/source.admin"
+  member  = "user:${var.project_editor}"
+
+  depends_on = [
+    null_resource.exec_check_for_ops_gke_service_accounts
+  ]
 }
 
 resource "null_resource" "exec_check_for_ops_gke_service_accounts" {

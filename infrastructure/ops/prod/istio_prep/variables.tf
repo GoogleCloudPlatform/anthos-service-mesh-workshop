@@ -1,2 +1,2 @@
 # Istio
-variable "istio_version" { default = "1.4.0" }
+variable "istio_version" { default = "1.4.2" }
