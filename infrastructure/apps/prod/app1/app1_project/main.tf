@@ -6,7 +6,7 @@ module "create_dev1_project" {
   name                    = "${var.dev1_project_name}"
   default_service_account = "keep"
   org_id                  = "${var.org_id}"
-  folder_id               = data.terraform_remote_state.host_project.outputs.folder_name
+  folder_id               = var.folder_id
   shared_vpc              = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
   shared_vpc_subnets = [
     "projects/${data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id}/regions/${var.subnet_03_region}/subnetworks/${var.subnet_03_name}",
