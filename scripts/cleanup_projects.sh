@@ -38,14 +38,14 @@ gcloud alpha resource-manager liens delete ${LIEN_ID}
 echo -e "\n${CYAN}Deleting host project...${NC}" 
 gcloud projects delete ${TF_VAR_host_project_name} --quiet
 
+echo -e "\n${CYAN}Deleting terraform admin project...${NC}" 
+gcloud projects delete ${TF_ADMIN} --quiet
+
 echo -e "\n${CYAN}Getting folder ID...${NC}" 
 export FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
 
 echo -e "\n${CYAN}Deleting folder...${NC}" 
 gcloud resource-manager folders delete ${FOLDER_ID}
-
-echo -e "\n${CYAN}Deleting terraform admin project...${NC}" 
-gcloud projects delete ${TF_ADMIN} --quiet
 
 echo -e "\n${CYAN}Removing cloudbuild service account project creator IAM role at the Org level...${NC}" 
 gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
