@@ -1,5 +1,6 @@
 # Terraform admin project ID
     tfadmin_proj="${TF_ADMIN}"
     org_id="${TF_VAR_org_id}"
+    folder_id="${TF_VAR_folder_id}"
     billing_account="${TF_VAR_billing_account}"
     project_editor="${TF_VAR_project_editor}"
