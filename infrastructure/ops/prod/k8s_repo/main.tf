@@ -19,14 +19,14 @@ cp -r tmp/istio-operator-${var.istio_version}.yaml tmp/"${data.terraform_remote_
 cp -r tmp/istio-operator-${var.istio_version}.yaml tmp/"${data.terraform_remote_state.app2_gke.outputs.dev2_gke_3_name}"/
 cp -r tmp/istio-operator-${var.istio_version}.yaml tmp/"${data.terraform_remote_state.app2_gke.outputs.dev2_gke_4_name}"/
 
-gsutil cp -r gs://${var.tfadmin_proj}/ops/istiocerts .
-kubectl create secret generic -n istio-system \
---from-file=istiocerts/ca-cert.pem \
---from-file=istiocerts/ca-key.pem \
---from-file=istiocerts/root-cert.pem \
---from-file=istiocerts/cert-chain.pem \
---dry-run cacerts -oyaml > 02_istio-cacerts.yaml
-echo $(ls -d tmp/*/) | xargs -n 1 cp 02_istio-cacerts.yaml
+#gsutil cp -r gs://${var.tfadmin_proj}/ops/istiocerts .
+#kubectl create secret generic -n istio-system \
+#--from-file=istiocerts/ca-cert.pem \
+#--from-file=istiocerts/ca-key.pem \
+#--from-file=istiocerts/root-cert.pem \
+#--from-file=istiocerts/cert-chain.pem \
+#--dry-run cacerts -oyaml > 02_istio-cacerts.yaml
+#echo $(ls -d tmp/*/) | xargs -n 1 cp 02_istio-cacerts.yaml
 
 cat - | tee tmp/README.md << EOF
 This is where the k8s manifests live.
