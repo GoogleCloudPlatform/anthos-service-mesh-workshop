@@ -8,6 +8,7 @@ spec:
     enabled: true
   cni:
     components:
+      namespace: kube-system
       cni:
         enabled: true
     enabled: true
