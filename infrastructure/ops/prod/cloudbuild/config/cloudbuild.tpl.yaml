@@ -1,11 +1,24 @@
 steps:
+  # This step ensures the CRDs are installed before the manifests and CRs are created.
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    id: "Install-crds"
+    entrypoint: "bash"
+    args:
+      - "-exc"
+      - |
+        /gke-deploy apply --project=${ops_project_id} --cluster=${ops_gke_1_name} --location=${ops_gke_1_location} --filename=./gke-asm-1-r1-prod/${crd_path}
+        /gke-deploy apply --project=${ops_project_id} --cluster=${ops_gke_2_name} --location=${ops_gke_2_location} --filename=./gke-asm-2-r2-prod/${crd_path}
+        /gke-deploy apply --project=${dev1_project_id} --cluster=${dev1_gke_1_name} --location=${dev1_gke_1_location} --filename=./gke-1-apps-r1a-prod/${crd_path}
+        /gke-deploy apply --project=${dev1_project_id} --cluster=${dev1_gke_2_name} --location=${dev1_gke_2_location} --filename=./gke-2-apps-r1b-prod/${crd_path}
+        /gke-deploy apply --project=${dev2_project_id} --cluster=${dev2_gke_3_name} --location=${dev2_gke_3_location} --filename=./gke-3-apps-r2a-prod/${crd_path}
+        /gke-deploy apply --project=${dev2_project_id} --cluster=${dev2_gke_4_name} --location=${dev2_gke_4_location} --filename=./gke-4-apps-r2b-prod/${crd_path}
+
   # This step deploys the manifests to the gke-asm-1-r1-prod cluster
   - name: "gcr.io/cloud-builders/kubectl"
     id: Deploy-ops-asm-1
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-asm-1-r1-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${ops_project_id}"
@@ -17,8 +30,7 @@ steps:
     id: Deploy-ops-asm-2
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-asm-2-r2-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${ops_project_id}"
@@ -30,8 +42,7 @@ steps:
     id: Deploy-gke-1-apps-r1a-prod
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-1-apps-r1a-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${dev1_project_id}"
@@ -43,8 +54,7 @@ steps:
     id: Deploy-gke-2-apps-r1b-prod
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-2-apps-r1b-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${dev1_project_id}"
@@ -56,8 +66,7 @@ steps:
     id: Deploy-gke-3-apps-r2a-prod
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-3-apps-r2a-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${dev2_project_id}"
@@ -69,10 +78,31 @@ steps:
     id: Deploy-gke-4-apps-r2b-prod
     args:
       - "apply"
-      - "-R"
-      - "-f"
+      - "-k"
       - "./gke-4-apps-r2b-prod"
     env:
       - "CLOUDSDK_CORE_PROJECT=${dev2_project_id}"
       - "CLOUDSDK_COMPUTE_REGION=${dev2_gke_4_location}"
       - "CLOUDSDK_CONTAINER_CLUSTER=${dev2_gke_4_name}"
+
+  # This step builds the multi-cluster config secrets for the clusters
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+    id: build-multi-cluster-config-secrets
+    entrypoint: "/workspace/make_multi_cluster_config.sh"
+    env:
+      - "KUBECONFIG=/workspace/kubemesh"
+      - "OPS_PROJECT_ID=${ops_project_id}"
+      - "OPS_GKE_1_CLUSTER=${ops_gke_1_name}"
+      - "OPS_GKE_1_LOCATION=${ops_gke_1_location}"
+      - "OPS_GKE_2_CLUSTER=${ops_gke_2_name}"
+      - "OPS_GKE_2_LOCATION=${ops_gke_2_location}"
+      - "DEV1_PROJECT_ID=${dev1_project_id}"
+      - "DEV1_GKE_1_CLUSTER=${dev1_gke_1_name}"
+      - "DEV1_GKE_1_LOCATION=${dev1_gke_1_location}"
+      - "DEV1_GKE_2_CLUSTER=${dev1_gke_2_name}"
+      - "DEV1_GKE_2_LOCATION=${dev1_gke_2_location}"
+      - "DEV2_PROJECT_ID=${dev2_project_id}"
+      - "DEV2_GKE_1_CLUSTER=${dev2_gke_3_name}"
+      - "DEV2_GKE_1_LOCATION=${dev2_gke_3_location}"
+      - "DEV2_GKE_2_CLUSTER=${dev2_gke_4_name}"
+      - "DEV2_GKE_2_LOCATION=${dev2_gke_4_location}"

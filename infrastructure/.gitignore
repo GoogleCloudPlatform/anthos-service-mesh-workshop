@@ -1,6 +1,7 @@
 **/.terraform
 ops/prod/istio_prep/istio-operator-*.yaml
 ops/prod/istio_prep/operator-*/
+ops/prod/k8s_repo/data.zip
 ops/prod/k8s_repo/*istio-cacerts.yaml
 ops/prod/k8s_repo/istiocerts/
 ops/prod/k8s_repo/k8s-repo/

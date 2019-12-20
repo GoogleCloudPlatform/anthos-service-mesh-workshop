@@ -1,0 +1,135 @@
+apiVersion: install.istio.io/v1alpha2
+kind: IstioControlPlane
+metadata:
+  namespace: istio-operator
+  name: replicated-istiocontrolplane
+spec:
+  # Docs: https://istio.io/docs/reference/config/istio.operator.v1alpha12.pb/
+  autoInjection:
+    components:
+      injector:
+        enabled: true
+    enabled: true
+  cni:
+    components:
+      namespace: kube-system
+      cni:
+        enabled: true
+    enabled: true
+  configManagement:
+    components:
+      galley:
+        enabled: true
+    enabled: true
+  coreDNS:
+    components:
+      coreDNS:
+        enabled: true
+    enabled: true
+  gateways:
+    components:
+      egressGateway:
+        enabled: true
+        k8s:
+          env:
+            - name: ISTIO_META_REQUESTED_NETWORK_VIEW
+              value: external
+      ingressGateway:
+        enabled: true
+    enabled: true
+  policy:
+    components:
+      policy:
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-policy
+              patches:
+                - path: metadata.annotations
+                  value:
+                    cloud.google.com/load-balancer-type: "Internal"
+                - path: spec.type
+                  value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: POLICY_ILB_IP
+    enabled: true
+  security:
+    components:
+      certManager:
+        enabled: false
+      citadel:
+        enabled: true
+      nodeAgent:
+        enabled: false
+    enabled: true
+  telemetry:
+    components:
+      telemetry:
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-telemetry
+              patches:
+                - path: metadata.annotations
+                  value:
+                    cloud.google.com/load-balancer-type: "Internal"
+                - path: spec.type
+                  value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: TELEMETRY_ILB_IP
+    enabled: true
+  trafficManagement:
+    enabled: true
+    components:
+      pilot:
+        enabled: true
+        k8s:
+          env:
+            - name: PILOT_ENABLE_FALLTHROUGH_ROUTE
+              value: "1"
+          overlays:
+            - kind: Service
+              name: istio-pilot
+              patches:
+                - path: metadata.annotations
+                  value:
+                    cloud.google.com/load-balancer-type: "Internal"
+                - path: spec.type
+                  value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: PILOT_ILB_IP
+  values:
+    global:
+      controlPlaneSecurityEnabled: true
+      meshExpansion:
+        enabled: true
+      multiCluster:
+        enabled: true
+      podDNSSearchNamespaces:
+        - global
+        - '{{ valueOrDefault .DeploymentMeta.Namespace "default" }}.global'
+    grafana:
+      enabled: true
+    kiali:
+      createDemoSecret: true
+      dashboard:
+        grafanaURL: http://grafana:3000
+      enabled: true
+    prometheus:
+      enabled: true
+    security:
+      selfSigned: false
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true
+    tracing:
+      enabled: true
+    cni:
+      cniBinDir: /home/kubernetes/bin
+      excludeNamespaces:
+        - istio-system
+        - kube-system
+  unvalidatedValues:
+    cni:
+      logLevel: info

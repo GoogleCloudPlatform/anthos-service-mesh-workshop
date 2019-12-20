@@ -70,8 +70,8 @@ gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
 --role roles/resourcemanager.folderCreator
 
-echo -e "\n${CYAN}Remove infra git remote...${NC}" 
-(cd ${SCRIPT_DIR}/../infrastructure && git remote remove infra)
+echo -e "\n${CYAN}Remove infra git repo...${NC}" 
+(cd ${SCRIPT_DIR}/../infrastructure && rm -Rf .git)
 
 echo -e "\n${CYAN}Remove gke, istio-${ISTIO_VERSION}, vars and tmp folder...${NC}" 
 rm -rf ${SCRIPT_DIR}/../gke

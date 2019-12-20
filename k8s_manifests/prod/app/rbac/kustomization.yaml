@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ad-rbac.yaml
+  - cart-rbac.yaml
+  - checkout-rbac.yaml
+  - currency-rbac.yaml
+  - email-rbac.yaml
+  - frontend-rbac.yaml
+  - payment-rbac.yaml
+  - product-catalog-rbac.yaml
+  - recommendation-rbac.yaml
+  - shipping-rbac.yaml
