@@ -62,18 +62,18 @@ export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm-workshop
 export TF_ADMIN=${ORG_USER}-${RANDOM_PERSIST}-tf-admin 
 
 echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}" 
-export FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
-if [ "${FOLDER_ID}" ]; then
+export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
+if [ "${TF_VAR_folder_id}" ]; then
    echo -e "\n${CYAN}Folder ${TF_VAR_folder_display_name} already exists.${NC}"
    else
        echo -e "\n${CYAN}Creating asm workshop folder ${TF_VAR_folder_display_name}...${NC}"
        gcloud resource-manager folders create --display-name=${TF_VAR_folder_display_name} --organization=${TF_VAR_org_id}
-       export FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
+       export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
 fi
 
 echo -e "\n${CYAN}Creating terraform admin project...${NC}" 
 gcloud projects create ${TF_ADMIN} \
---folder ${FOLDER_ID} \
+--folder ${TF_VAR_folder_id} \
 --set-as-default 
 
 
