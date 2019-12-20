@@ -11,6 +11,9 @@ spec:
         enabled: true
     enabled: true
   cni:
+    components:
+      cni:
+        enabled: true
     enabled: true
   configManagement:
     components:
