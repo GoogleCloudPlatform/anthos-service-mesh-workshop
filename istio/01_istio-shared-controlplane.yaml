@@ -9,8 +9,8 @@ spec:
   cni:
     components:
       cni:
-        enabled: false
-    enabled: false
+        enabled: true
+    enabled: true
   configManagement:
     components:
       galley:
@@ -67,3 +67,11 @@ spec:
     security:
       createMeshPolicy: false
       selfSigned: false
+    cni:
+      cniBinDir: /home/kubernetes/bin
+      excludeNamespaces:
+        - istio-system
+        - kube-system
+  unvalidatedValues:
+    cni:
+      logLevel: info

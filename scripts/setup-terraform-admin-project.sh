@@ -58,12 +58,22 @@ echo -e "\n${CYAN}Defining terraform admin project ID, SA and SA credentials loc
 ORG_USER=${MY_USER?env not set}
 ORG_USER=${MY_USER%@*}
 ORG_USER=${ORG_USER:0:11}
+export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm-workshop
 export TF_ADMIN=${ORG_USER}-${RANDOM_PERSIST}-tf-admin 
 
+echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}" 
+export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
+if [ "${TF_VAR_folder_id}" ]; then
+   echo -e "\n${CYAN}Folder ${TF_VAR_folder_display_name} already exists.${NC}"
+   else
+       echo -e "\n${CYAN}Creating asm workshop folder ${TF_VAR_folder_display_name}...${NC}"
+       gcloud resource-manager folders create --display-name=${TF_VAR_folder_display_name} --organization=${TF_VAR_org_id}
+       export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
+fi
 
 echo -e "\n${CYAN}Creating terraform admin project...${NC}" 
 gcloud projects create ${TF_ADMIN} \
---organization ${TF_VAR_org_id} \
+--folder ${TF_VAR_folder_id} \
 --set-as-default 
 
 
@@ -148,6 +158,7 @@ echo -e "export TF_VAR_org_id=${TF_VAR_org_id}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_billing_account=${TF_VAR_billing_account}" | tee -a ${VARS_FILE}
 echo -e "export TF_ADMIN=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_tfadmin=${TF_ADMIN}" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_project_editor=${MY_USER}" | tee -a ${VARS_FILE}
 echo -e "export GOOGLE_PROJECT=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_CLOUDBUILD_SA=$(gcloud projects describe ${TF_ADMIN} --format='value(projectNumber)')@cloudbuild.gserviceaccount.com" | tee -a ${VARS_FILE}
 

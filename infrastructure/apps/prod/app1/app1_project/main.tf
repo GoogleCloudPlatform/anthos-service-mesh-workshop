@@ -6,7 +6,7 @@ module "create_dev1_project" {
   name                    = "${var.dev1_project_name}"
   default_service_account = "keep"
   org_id                  = "${var.org_id}"
-  folder_id               = data.terraform_remote_state.host_project.outputs.folder_name
+  folder_id               = var.folder_id
   shared_vpc              = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
   shared_vpc_subnets = [
     "projects/${data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id}/regions/${var.subnet_03_region}/subnetworks/${var.subnet_03_name}",
@@ -28,6 +28,28 @@ resource "google_project_iam_member" "dev1_gke_sa_security_admin_in_host" {
     null_resource.exec_check_for_dev1_gke_service_accounts
   ]
 
+}
+
+# Grant project editor to the passed user
+resource "google_project_iam_member" "dev1_project_editor" {
+  project = module.create_dev1_project.project_id
+  role    = "roles/editor"
+  member  = "user:${var.project_editor}"
+
+  depends_on = [
+    null_resource.exec_check_for_dev1_gke_service_accounts
+  ]
+}
+
+# Grant source repo admin to the passed user
+resource "google_project_iam_member" "dev1_project_source_admin" {
+  project = module.create_dev1_project.project_id
+  role    = "roles/source.admin"
+  member  = "user:${var.project_editor}"
+
+  depends_on = [
+    null_resource.exec_check_for_dev1_gke_service_accounts
+  ]
 }
 
 resource "null_resource" "exec_check_for_dev1_gke_service_accounts" {
