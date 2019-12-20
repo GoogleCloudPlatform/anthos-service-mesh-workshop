@@ -1,0 +1,78 @@
+steps:
+  # This step deploys the manifests to the gke-asm-1-r1-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-ops-asm-1
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-asm-1-r1-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${ops_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${ops_gke_1_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${ops_gke_1_name}"
+
+  # This step deploys the manifests to the gke-asm-2-r2-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-ops-asm-2
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-asm-2-r2-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${ops_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${ops_gke_2_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${ops_gke_2_name}"
+
+  # This step deploys the manifests to the gke-1-apps-r1a-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-gke-1-apps-r1a-prod
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-1-apps-r1a-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${dev1_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${dev1_gke_1_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${dev1_gke_1_name}"
+
+  # This step deploys the manifests to the gke-2-apps-r1b-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-gke-2-apps-r1b-prod
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-2-apps-r1b-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${dev1_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${dev1_gke_2_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${dev1_gke_2_name}"
+
+  # This step deploys the manifests to the gke-3-apps-r2a-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-gke-3-apps-r2a-prod
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-3-apps-r2a-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${dev2_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${dev2_gke_3_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${dev2_gke_3_name}"
+
+  # This step deploys the manifests to the gke-4-apps-r2b-prod cluster
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: Deploy-gke-4-apps-r2b-prod
+    args:
+      - "apply"
+      - "-R"
+      - "-f"
+      - "./gke-4-apps-r2b-prod"
+    env:
+      - "CLOUDSDK_CORE_PROJECT=${dev2_project_id}"
+      - "CLOUDSDK_COMPUTE_REGION=${dev2_gke_4_location}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${dev2_gke_4_name}"

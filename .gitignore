@@ -27,7 +27,6 @@ infrastructure/*/*/.terraform
 infrastructure/gcp/*/*/*.tfvars
 infrastructure/gcp/*/*/shared_state*
 
-infrastructure/ops/prod/cloudbuild/config/
 infrastructure/ops/prod/istio_prep/istio-operator-*.yaml
 infrastructure/ops/prod/istio_prep/operator-*/
 infrastructure/ops/prod/k8s_repo/*istio-cacerts.yaml
