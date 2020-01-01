@@ -5,6 +5,6 @@ metadata:
 spec:
   host: frontend
   subsets:
-  - name: v2
+  - name: NEW_VERSION
     labels:
-      version: v2
+      version: NEW_VERSION

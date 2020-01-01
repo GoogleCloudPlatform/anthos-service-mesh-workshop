@@ -1,0 +1,179 @@
+steps:
+################################################################################################
+# deploy new frontend / don't send traffic yet
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate deployment
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/deployment.yaml.tpl > devops/canary/deployment.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply deployment
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/deployment.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Sleep 20
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sleep 20
+################################################################################################
+# update DR
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Add Subset
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g" devops/canary/destinationrule-canary.yaml.tpl > devops/canary/destinationrule-canary.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply DestinationRule
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/destinationrule-canary.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+################################################################################################
+# 80/20
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate 80/20 VirtualService
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-20.yaml.tpl > devops/canary/vs-20.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply 80/20 VirtualService
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/vs-20.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: 80/20 - Sleep
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sleep 15
+################################################################################################
+# 50/50
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate 50/50 VirtualService
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-50.yaml.tpl > devops/canary/vs-50.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply 50/50 VirtualService
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/vs-50.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: 50/50 - Sleep
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sleep 15
+################################################################################################
+# 20/80
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate 20/80 VirtualService
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-80.yaml.tpl > devops/canary/vs-80.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply 20/80 VirtualService
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/vs-80.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: 20/80 - Sleep
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sleep 15
+################################################################################################
+# 0/100
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate 0/100 VirtualService
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/vs-100.yaml.tpl > devops/canary/vs-100.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply 0/100 VirtualService
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/vs-100.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+################################################################################################
+#  cleanup - removing old version from destinationrule
+################################################################################################
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate DestinationRule - Remove old version
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/destinationrule-cleanup.yaml.tpl > devops/canary/destinationrule-cleanup.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply DestinationRule - Remove old version
+  args:
+  - 'apply'
+  - '-f'
+  - 'devops/canary/destinationrule-cleanup.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+################################################################################################
+#  cleanup - delete old deployment
+################################################################################################
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Delete old Deployment
+  args:
+  - 'delete'
+  - 'deployment'
+  - 'frontend-${_OLD_VERSION}'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
+substitutions:
+    _OLD_VERSION: "v8"
+    _NEW_VERSION: "v9"
+    _CLUSTER: "mycluster"
+    _ZONE: "us-central1-b"

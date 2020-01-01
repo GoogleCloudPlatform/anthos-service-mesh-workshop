@@ -1,21 +1,7 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: frontend
-spec:
-  host: frontend
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-v2
+  name: frontend-NEW_VERSION
 spec:
   selector:
     matchLabels:
@@ -24,15 +10,14 @@ spec:
     metadata:
       labels:
         app: frontend
-        version: v2
+        version: NEW_VERSION
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       containers:
         - name: server
-          image: gcr.io/pancakes20/frontend:v2
+          image: meganokeefe/frontend:NEW_VERSION
           imagePullPolicy: Always
-          # image: gcr.io/google-samples/microservices-demo/frontend:v0.1.3
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -77,4 +62,3 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
----

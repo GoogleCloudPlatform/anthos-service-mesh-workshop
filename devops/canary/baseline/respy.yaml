@@ -11,5 +11,5 @@ spec:
     spec:
       containers:
       - name: respy
-        image: gcr.io/pancakes20/respy:v0.0.1
+        image: meganokeefe/respy:v0.0.1
         imagePullPolicy: Always

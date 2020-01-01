@@ -9,13 +9,7 @@ spec:
   - route:
     - destination:
         host: frontend
-        subset: v1
+        subset: NEW_VERSION
         port:
           number: 80
-      weight: 20
-    - destination:
-        host: frontend
-        subset: v2
-        port:
-          number: 80
-      weight: 80
+      weight: 100
