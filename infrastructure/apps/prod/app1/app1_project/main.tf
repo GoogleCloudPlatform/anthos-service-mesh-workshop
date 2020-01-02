@@ -29,6 +29,9 @@ module "create_dev1_project" {
   activate_apis = [
     "compute.googleapis.com",
     "container.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "monitoring.googleapis.com",
+    "cloudtrace.googleapis.com"
   ]
 }
 

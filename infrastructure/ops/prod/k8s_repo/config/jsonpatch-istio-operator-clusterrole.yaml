@@ -1,0 +1,11 @@
+- op: add
+  path: "/rules/-"
+  value:
+    apiGroups:
+      - extensions
+    resources:
+      - podsecuritypolicies
+    resourceNames:
+      - istio-operator
+    verbs:
+      - use

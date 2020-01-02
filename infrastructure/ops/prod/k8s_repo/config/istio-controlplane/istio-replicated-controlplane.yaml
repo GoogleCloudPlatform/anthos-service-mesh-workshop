@@ -65,6 +65,8 @@ spec:
                     cloud.google.com/load-balancer-type: "Internal"
                 - path: spec.type
                   value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: POLICY_ILB_IP
     enabled: true
   security:
     components:
@@ -89,6 +91,8 @@ spec:
                     cloud.google.com/load-balancer-type: "Internal"
                 - path: spec.type
                   value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: TELEMETRY_ILB_IP
     enabled: true
   trafficManagement:
     enabled: true
@@ -108,6 +112,8 @@ spec:
                     cloud.google.com/load-balancer-type: "Internal"
                 - path: spec.type
                   value: LoadBalancer
+                - path: spec.loadBalancerIP
+                  value: PILOT_ILB_IP
   values:
     global:
       controlPlaneSecurityEnabled: true

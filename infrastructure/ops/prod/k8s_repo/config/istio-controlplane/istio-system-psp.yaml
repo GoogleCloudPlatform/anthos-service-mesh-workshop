@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: istio-system
+spec:
+  privileged: false # Prevents creation of privileged Pods
+  hostNetwork: true # required for istio-cni-node
+  allowedHostPaths: # required for istio-cni-node
+    - pathPrefix: /home/kubernetes/bin
+    - pathPrefix: /etc/cni/net.d
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  volumes:
+    - "*"

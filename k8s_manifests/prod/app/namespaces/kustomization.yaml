@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace-ad.yaml
+  - namespace-cart.yaml
+  - namespace-checkout.yaml
+  - namespace-currency.yaml
+  - namespace-email.yaml
+  - namespace-frontend.yaml
+  - namespace-payment.yaml
+  - namespace-product-catalog.yaml
+  - namespace-recommendation.yaml
+  - namespace-shipping.yaml
