@@ -30,5 +30,5 @@ infrastructure/gcp/*/*/shared_state*
 infrastructure/ops/prod/istio_prep/istio-operator-*.yaml
 infrastructure/ops/prod/istio_prep/operator-*/
 infrastructure/ops/prod/k8s_repo/k8s-repo/
-infrastructure/ops/prod/k8s_repo/data.zipops/prod/k8s_repo/data.zip
+infrastructure/ops/prod/k8s_repo/data.zip
 infrastructure/ops/prod/k8s_repo/tmp/
