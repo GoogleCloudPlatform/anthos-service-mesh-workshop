@@ -132,23 +132,23 @@ for d in $(ls -d ${k8s_repo_name}/*/); do
 done
 
 # Copy app-ingress template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
+for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
   [[ ! -d "${d}/app-ingress" ]] && cp -r config/app-ingress ${d}/
 done
 
 # Copy app-cnrm template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
+for d in ${dev1_gke_1_name} ${dev1_gke_2_name} ${dev2_gke_3_name} ${dev2_gke_4_name}; do
   [[ ! -d "${d}/app-cnrm" ]] && cp -r config/app-cnrm ${d}/
 done
 
 # Copy istio-networking template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
-  [[ ! -d "${d}/app-cnrm" ]] && cp -r config/istio-networking ${d}/
+for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
+  [[ ! -d "${d}/istio-networking" ]] && cp -r config/istio-networking ${d}/
 done
 
 # Copy istio-authentication template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
-  [[ ! -d "${d}/app-cnrm" ]] && cp -r config/istio-authentication ${d}/
+for d in ${dev1_gke_1_name} ${dev1_gke_2_name} ${dev2_gke_3_name} ${dev2_gke_4_name}; do
+  [[ ! -d "${d}/istio-authentication" ]] && cp -r config/istio-authentication ${d}/
 done
 
 # Push changes to the repo
