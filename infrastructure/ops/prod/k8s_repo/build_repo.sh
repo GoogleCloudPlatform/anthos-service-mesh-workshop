@@ -141,6 +141,16 @@ for d in $(ls -d ${k8s_repo_name}/*/); do
   [[ ! -d "${d}/app-cnrm" ]] && cp -r config/app-cnrm ${d}/
 done
 
+# Copy istio-networking template if it doesn't already exist.
+for d in $(ls -d ${k8s_repo_name}/*/); do
+  [[ ! -d "${d}/app-cnrm" ]] && cp -r config/istio-networking ${d}/
+done
+
+# Copy istio-authentication template if it doesn't already exist.
+for d in $(ls -d ${k8s_repo_name}/*/); do
+  [[ ! -d "${d}/app-cnrm" ]] && cp -r config/istio-authentication ${d}/
+done
+
 # Push changes to the repo
 cd ${k8s_repo_name}
 git diff
