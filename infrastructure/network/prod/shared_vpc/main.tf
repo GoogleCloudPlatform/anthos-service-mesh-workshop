@@ -51,6 +51,13 @@ module "create_vpc_in_host_project" {
       subnet_flow_logs = "true"
       description      = var.subnet_04_description
     },
+    {
+      subnet_name      = var.subnet_05_name
+      subnet_ip        = var.subnet_05_ip
+      subnet_region    = var.subnet_05_region
+      subnet_flow_logs = "true"
+      description      = var.subnet_05_description
+    },
   ]
 
   secondary_ranges = {
@@ -108,6 +115,20 @@ module "create_vpc_in_host_project" {
       {
         range_name    = var.subnet_04_secondary_pod_name
         ip_cidr_range = var.subnet_04_secondary_pod_range
+      },
+    ]
+    "${var.subnet_05_name}" = [
+      {
+        range_name    = var.subnet_05_secondary_svc_1_name
+        ip_cidr_range = var.subnet_05_secondary_svc_1_range
+      },
+      {
+        range_name    = var.subnet_05_secondary_svc_2_name
+        ip_cidr_range = var.subnet_05_secondary_svc_2_range
+      },
+      {
+        range_name    = var.subnet_05_secondary_pod_name
+        ip_cidr_range = var.subnet_05_secondary_pod_range
       },
     ]
   }

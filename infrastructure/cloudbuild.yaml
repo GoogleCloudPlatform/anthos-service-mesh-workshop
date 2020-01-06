@@ -165,3 +165,25 @@ steps:
         terraform init
         terraform plan -out terraform.tfplan
         terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app3-project"
+    dir: apps/prod/app3/app3_project
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-app3-project-gke-clusters"
+    dir: apps/prod/app3/app3_gke
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
