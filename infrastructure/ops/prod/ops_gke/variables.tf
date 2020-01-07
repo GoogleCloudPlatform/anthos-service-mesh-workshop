@@ -15,4 +15,5 @@
 variable "kubernetes_version" { default = "1.14.8" }
 variable "gke_asm_r1" { default = "gke-asm-1-r1-prod" }
 variable "gke_asm_r2" { default = "gke-asm-2-r2-prod" }
+variable "gke_asm_r3" { default = "gke-asm-3-r3-prod" }
 variable "project_editor" {}

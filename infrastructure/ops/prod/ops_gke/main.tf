@@ -120,6 +120,53 @@ module "create_gke_2_ops_asm_subnet_02" {
   }
 }
 
+# gke-asm-3-r3-prod - Create GKE regional cluster in ops-asm project using subnet-06
+module "create_gke_3_ops_asm_subnet_06" {
+  source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
+  project_id         = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  name               = var.gke_asm_r3
+  kubernetes_version = var.kubernetes_version
+  region             = var.subnet_06_region
+  zones              = ["${var.subnet_06_region}-b", "${var.subnet_06_region}-c", "${var.subnet_06_region}-d"]
+  network_project_id = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
+  network            = data.terraform_remote_state.shared_vpc.outputs.network_name
+  subnetwork         = var.subnet_06_name
+  ip_range_pods      = var.subnet_06_secondary_pod_name
+  ip_range_services  = var.subnet_06_secondary_svc_1_name
+  network_policy     = true
+  node_metadata      = "GKE_METADATA_SERVER"
+  identity_namespace = "${data.terraform_remote_state.ops_project.outputs.ops_project_id}.svc.id.goog"
+  monitoring_service = "monitoring.googleapis.com/kubernetes"
+  logging_service    = "logging.googleapis.com/kubernetes"
+
+  pod_security_policy_config = [{
+    enabled = true
+  }]
+
+  node_pools = [
+    {
+      name               = "default-node-pool"
+      machine_type       = "n1-standard-2"
+      min_count          = 3
+      max_count          = 10
+      disk_size_gb       = 100
+      disk_type          = "pd-standard"
+      image_type         = "COS"
+      auto_repair        = true
+      auto_upgrade       = false
+      preemptible        = false
+      initial_node_count = 1
+    },
+  ]
+
+  node_pools_oauth_scopes = {
+    all = []
+
+    default-node-pool = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
+}
 # Check Cloudbuild SA is created
 resource "null_resource" "exec_check_for_cloudbuild_service_accounts_in_ops_project" {
   provisioner "local-exec" {
@@ -158,8 +205,10 @@ resource "null_resource" "exec_gke_clusteradmin_ops" {
     command = <<EOT
     gcloud container clusters get-credentials "${module.create_gke_1_ops_asm_subnet_01.name}" --region "${module.create_gke_1_ops_asm_subnet_01.region}" --project "${data.terraform_remote_state.ops_project.outputs.ops_project_id}"
     gcloud container clusters get-credentials "${module.create_gke_2_ops_asm_subnet_02.name}" --region "${module.create_gke_2_ops_asm_subnet_02.region}" --project "${data.terraform_remote_state.ops_project.outputs.ops_project_id}"
+    gcloud container clusters get-credentials "${module.create_gke_3_ops_asm_subnet_06.name}" --region "${module.create_gke_3_ops_asm_subnet_06.region}" --project "${data.terraform_remote_state.ops_project.outputs.ops_project_id}"
     kubectl create clusterrolebinding user-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account) --user=${var.project_editor} --dry-run -oyaml | kubectl apply --context gke_"${data.terraform_remote_state.ops_project.outputs.ops_project_id}"_"${module.create_gke_1_ops_asm_subnet_01.region}"_"${module.create_gke_1_ops_asm_subnet_01.name}" -f -
     kubectl create clusterrolebinding user-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account) --user=${var.project_editor} --dry-run -oyaml | kubectl apply --context gke_"${data.terraform_remote_state.ops_project.outputs.ops_project_id}"_"${module.create_gke_2_ops_asm_subnet_02.region}"_"${module.create_gke_2_ops_asm_subnet_02.name}" -f -
+    kubectl create clusterrolebinding user-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account) --user=${var.project_editor} --dry-run -oyaml | kubectl apply --context gke_"${data.terraform_remote_state.ops_project.outputs.ops_project_id}"_"${module.create_gke_3_ops_asm_subnet_06.region}"_"${module.create_gke_3_ops_asm_subnet_06.name}" -f -
     EOT
 
     environment = {
@@ -169,6 +218,7 @@ resource "null_resource" "exec_gke_clusteradmin_ops" {
   depends_on = [
     module.create_gke_1_ops_asm_subnet_01,
     module.create_gke_2_ops_asm_subnet_02,
+    module.create_gke_3_ops_asm_subnet_06,
     google_project_iam_member.ops_cloudbuild_sa_gke_admin_in_ops_project,
   ]
 }
@@ -197,7 +247,8 @@ resource "google_service_account_iam_member" "cnrm-sa-workload-identity" {
   member             = "serviceAccount:${google_service_account.cnrm-system.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]"
   depends_on = [
     module.create_gke_1_ops_asm_subnet_01,
-    module.create_gke_2_ops_asm_subnet_02
+    module.create_gke_2_ops_asm_subnet_02,
+    module.create_gke_3_ops_asm_subnet_06,
   ]
 }
 
@@ -287,6 +338,9 @@ locals {
   ops_gke_2_policy_ilb_address    = "10.12.1.1"
   ops_gke_2_telemetry_ilb_address = "10.12.1.2"
   ops_gke_2_pilot_ilb_address     = "10.12.1.3"
+  ops_gke_3_policy_ilb_address    = "10.44.1.1"
+  ops_gke_3_telemetry_ilb_address = "10.44.1.2"
+  ops_gke_3_pilot_ilb_address     = "10.44.1.3"
 }
 
 /*

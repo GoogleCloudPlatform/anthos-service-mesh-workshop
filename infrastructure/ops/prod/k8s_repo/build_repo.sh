@@ -2,10 +2,13 @@ mkdir -p tmp
 gsutil cp gs://${tfadmin_proj?env not set}/ops/k8s/cloudbuild.yaml tmp/cloudbuild.yaml
 mkdir -p tmp/${ops_gke_1_name?env not set}/istio-controlplane
 mkdir -p tmp/${ops_gke_2_name?env not set}/istio-controlplane
+mkdir -p tmp/${ops_gke_3_name?env not set}/istio-controlplane
 mkdir -p tmp/${dev1_gke_1_name?env not set}/istio-controlplane
 mkdir -p tmp/${dev1_gke_2_name?env not set}/istio-controlplane
 mkdir -p tmp/${dev2_gke_3_name?env not set}/istio-controlplane
 mkdir -p tmp/${dev2_gke_4_name?env not set}/istio-controlplane
+mkdir -p tmp/${dev3_gke_5_name?env not set}/istio-controlplane
+mkdir -p tmp/${dev3_gke_6_name?env not set}/istio-controlplane
 
 # Copy core resources to every cluster
 echo $(ls -d tmp/*/istio-controlplane) | xargs -n 1 cp config/istio-controlplane/istio-system-namespace.yaml
@@ -38,10 +41,13 @@ rm -Rf install-bundle
 # Replace project ID in cnrm resources
 sed -i 's/${PROJECT_ID?}/'${ops_project_id?}'/g' tmp/${ops_gke_1_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${ops_project_id?}'/g' tmp/${ops_gke_2_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
+sed -i 's/${PROJECT_ID?}/'${ops_project_id?}'/g' tmp/${ops_gke_3_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${dev1_project_id?}'/g' tmp/${dev1_gke_1_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${dev1_project_id?}'/g' tmp/${dev1_gke_2_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${dev2_project_id?}'/g' tmp/${dev2_gke_3_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${dev2_project_id?}'/g' tmp/${dev2_gke_4_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
+sed -i 's/${PROJECT_ID?}/'${dev3_project_id?}'/g' tmp/${dev3_gke_5_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
+sed -i 's/${PROJECT_ID?}/'${dev3_project_id?}'/g' tmp/${dev3_gke_6_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 
 # Copy autoneg-system resources to ops clusters
 for c in ${ops_gke_2_name} ${ops_gke_1_name}; do
@@ -91,6 +97,18 @@ sed \
   -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb?env not set}/g" \
   -e "s/OPS_PROJECT/${ops_project_id}/g" \
   $SRC > $DEST
+
+# Update kustomization
+(cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
+
+# Patch ops 3 cluster istio controlplane CR with static ILB IPs
+SRC="config/istio-controlplane/istio-replicated-controlplane.yaml"
+DEST="tmp/${ops_gke_3_name}/istio-controlplane/$(basename $SRC)"
+sed \
+    -e "s/POLICY_ILB_IP/${ops_gke_3_policy_ilb?env not set}/g" \
+    -e "s/TELEMETRY_ILB_IP/${ops_gke_3_telemetry_ilb?env not set}/g" \
+    -e "s/PILOT_ILB_IP/${ops_gke_3_pilot_ilb?env not set}/g" \
+    $SRC > $DEST
 
 # Update kustomization
 (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))

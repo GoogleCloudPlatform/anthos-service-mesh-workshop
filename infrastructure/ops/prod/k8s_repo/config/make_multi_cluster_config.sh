@@ -19,17 +19,23 @@ wget -qO- https://github.com/kubernetes-sigs/kustomize/releases/download/kustomi
 # Save cluster credentials to $KUBECONFIG
 gcloud container clusters get-credentials "${OPS_GKE_1_CLUSTER}" --region "${OPS_GKE_1_LOCATION}" --project "${OPS_PROJECT_ID}"
 gcloud container clusters get-credentials "${OPS_GKE_2_CLUSTER}" --region "${OPS_GKE_2_LOCATION}" --project "${OPS_PROJECT_ID}"
+gcloud container clusters get-credentials "${OPS_GKE_3_CLUSTER}" --region "${OPS_GKE_3_LOCATION}" --project "${OPS_PROJECT_ID}"
 gcloud container clusters get-credentials "${DEV1_GKE_1_CLUSTER}" --zone "${DEV1_GKE_1_LOCATION}" --project "${DEV1_PROJECT_ID}"
 gcloud container clusters get-credentials "${DEV1_GKE_2_CLUSTER}" --zone "${DEV1_GKE_2_LOCATION}" --project "${DEV1_PROJECT_ID}"
 gcloud container clusters get-credentials "${DEV2_GKE_1_CLUSTER}" --zone "${DEV2_GKE_1_LOCATION}" --project "${DEV2_PROJECT_ID}"
 gcloud container clusters get-credentials "${DEV2_GKE_2_CLUSTER}" --zone "${DEV2_GKE_2_LOCATION}" --project "${DEV2_PROJECT_ID}"
+gcloud container clusters get-credentials "${DEV3_GKE_1_CLUSTER}" --zone "${DEV3_GKE_1_LOCATION}" --project "${DEV3_PROJECT_ID}"
+gcloud container clusters get-credentials "${DEV3_GKE_2_CLUSTER}" --zone "${DEV3_GKE_2_LOCATION}" --project "${DEV3_PROJECT_ID}"
 
 export OPS_GKE_1=gke_${OPS_PROJECT_ID}_${OPS_GKE_1_LOCATION}_${OPS_GKE_1_CLUSTER}
 export OPS_GKE_2=gke_${OPS_PROJECT_ID}_${OPS_GKE_2_LOCATION}_${OPS_GKE_2_CLUSTER}
+export OPS_GKE_3=gke_${OPS_PROJECT_ID}_${OPS_GKE_3_LOCATION}_${OPS_GKE_3_CLUSTER}
 export DEV1_GKE_1=gke_${DEV1_PROJECT_ID}_${DEV1_GKE_1_LOCATION}_${DEV1_GKE_1_CLUSTER}
 export DEV1_GKE_2=gke_${DEV1_PROJECT_ID}_${DEV1_GKE_2_LOCATION}_${DEV1_GKE_2_CLUSTER}
 export DEV2_GKE_1=gke_${DEV2_PROJECT_ID}_${DEV2_GKE_1_LOCATION}_${DEV2_GKE_1_CLUSTER}
 export DEV2_GKE_2=gke_${DEV2_PROJECT_ID}_${DEV2_GKE_2_LOCATION}_${DEV2_GKE_2_CLUSTER}
+export DEV3_GKE_1=gke_${DEV3_PROJECT_ID}_${DEV3_GKE_1_LOCATION}_${DEV3_GKE_1_CLUSTER}
+export DEV3_GKE_2=gke_${DEV3_PROJECT_ID}_${DEV3_GKE_2_LOCATION}_${DEV3_GKE_2_CLUSTER}
 
 
 # Build dev cluster kubeconfig secrets for the ops clusters
@@ -116,7 +122,13 @@ add_cluster_config ${DEV2_GKE_1} ${DEST_DIR}
 # Config for dev2-gke-2 cluster
 add_cluster_config ${DEV2_GKE_2} ${DEST_DIR}
 
-for cluster in ${OPS_GKE_1} ${OPS_GKE_2}; do
+# Config for dev3-gke-1 cluster
+add_cluster_config ${DEV3_GKE_1} ${DEST_DIR}
+
+# Config for dev3-gke-2 cluster
+add_cluster_config ${DEV3_GKE_2} ${DEST_DIR}
+
+for cluster in ${OPS_GKE_1} ${OPS_GKE_2} ${OPS_GKE_3}; do
   # Apply the kustomization to the ops cluster
   kubectl config use-context ${cluster}
   kubectl apply -k ${DEST_DIR}

@@ -24,6 +24,7 @@ module "create_ops_asm_project" {
   shared_vpc_subnets = [
     "projects/${data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id}/regions/${var.subnet_01_region}/subnetworks/${var.subnet_01_name}",
     "projects/${data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id}/regions/${var.subnet_02_region}/subnetworks/${var.subnet_02_name}",
+    "projects/${data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id}/regions/${var.subnet_06_region}/subnetworks/${var.subnet_06_name}",
   ]
 
   activate_apis = [

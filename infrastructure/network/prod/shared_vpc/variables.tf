@@ -71,3 +71,14 @@ variable "subnet_05_secondary_svc_2_name" { default = "dev3-subnet-01-svc-2" }
 variable "subnet_05_secondary_svc_2_range" { default = "10.37.16.0/20" }
 variable "subnet_05_secondary_pod_name" { default = "dev3-subnet-01-pod" }
 variable "subnet_05_secondary_pod_range" { default = "10.32.0.0/14" }
+
+variable "subnet_06_name" { default = "ops-subnet-03" }
+variable "subnet_06_ip" { default = "10.44.0.0/22" }
+variable "subnet_06_region" { default = "us-east1" }
+variable "subnet_06_description" { default = "ops-subnet-03 primary" }
+variable "subnet_06_secondary_svc_1_name" { default = "ops-subnet-03-svc-1" }
+variable "subnet_06_secondary_svc_1_range" { default = "10.45.0.0/20" }
+variable "subnet_06_secondary_svc_2_name" { default = "ops-subnet-03-svc-2" }
+variable "subnet_06_secondary_svc_2_range" { default = "10.45.16.0/20" }
+variable "subnet_06_secondary_pod_name" { default = "ops-subnet-03-pod" }
+variable "subnet_06_secondary_pod_range" { default = "10.40.0.0/14" }
