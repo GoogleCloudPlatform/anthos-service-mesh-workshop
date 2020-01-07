@@ -136,10 +136,23 @@ for cluster in ${dev2_gke_3_name} ${dev2_gke_4_name}; do
     -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb}/g" \
     -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb}/g" \
     $SRC > $DEST
-  
   # Update kustomization
   (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 done
+
+# Patch dev 3 clusters 5 and 5 with ILB IPs from ops 3.
+for cluster in ${dev3_gke_5_name} ${dev3_gke_6_name}; do
+  SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
+  DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
+  sed \
+    -e "s/POLICY_ILB_IP/${ops_gke_3_policy_ilb}/g" \
+    -e "s/TELEMETRY_ILB_IP/${ops_gke_3_telemetry_ilb}/g" \
+    -e "s/PILOT_ILB_IP/${ops_gke_3_pilot_ilb}/g" \
+    $SRC > $DEST
+  # Update kustomization
+  (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
+done
+    
 
 # Clone the git ops repo to the workspace
 rm -rf ${k8s_repo_name}

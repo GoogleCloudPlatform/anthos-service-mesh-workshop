@@ -36,6 +36,8 @@ data "template_file" "cloudbuild_yaml" {
     ops_gke_1_name      = data.terraform_remote_state.ops_gke.outputs.ops_gke_1_name
     ops_gke_2_location  = data.terraform_remote_state.ops_gke.outputs.ops_gke_2_location
     ops_gke_2_name      = data.terraform_remote_state.ops_gke.outputs.ops_gke_2_name
+    ops_gke_3_location  = data.terraform_remote_state.ops_gke.outputs.ops_gke_3_location
+    ops_gke_3_name      = data.terraform_remote_state.ops_gke.outputs.ops_gke_3_name
     dev1_project_id     = data.terraform_remote_state.app1_project.outputs.dev1_project_id
     dev1_gke_1_location = data.terraform_remote_state.app1_gke.outputs.dev1_gke_1_location
     dev1_gke_1_name     = data.terraform_remote_state.app1_gke.outputs.dev1_gke_1_name
