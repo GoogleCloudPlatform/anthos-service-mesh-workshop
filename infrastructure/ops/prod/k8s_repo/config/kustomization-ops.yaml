@@ -7,7 +7,6 @@ bases:
   - istio-operator/
   - istio-controlplane/
   - cnrm-system/
-  - app-cnrm/
   - app/
   - app-ingress/
   - istio-networking/
