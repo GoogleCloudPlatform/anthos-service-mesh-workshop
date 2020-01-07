@@ -14,13 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO - remove
-
 source ./env.sh
 
 gcloud container clusters create $CLUSTER_NAME --zone $CLUSTER_ZONE --username "admin" \
 --machine-type "n1-standard-4" --image-type "COS" --disk-size "100" \
---num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --no-enable-autoupgrade
-
-gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
-kubectl config use-context $CTX
+--num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --async

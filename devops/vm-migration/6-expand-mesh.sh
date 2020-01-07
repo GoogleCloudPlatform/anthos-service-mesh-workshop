@@ -15,31 +15,37 @@
 # limitations under the License.
 
 source ./env.sh
+GCE_IP=$(gcloud compute instances describe $VM_NAME --zone $VM_ZONE --format=text  | grep '^networkInterfaces\[[0-9]\+\]\.networkIP:' | sed 's/^.* //g' 2>&1)
+log "$VM_NAME's IP is $GCE_IP"
 
-export GCE_IP=$(gcloud --format="value(networkInterfaces[0].networkIP)" compute instances describe ${SVC_NAME} --zone=${ZONE})
-"kubectl -n ${VM_SERVICE_NAMESPACE} apply -f - <<EOF
+
+kubectl config use-context $CTX
+
+# register VM with GKE istio
+./istio-${ISTIO_VERSION}/bin/istioctl register $VM_NAME $GCE_IP "grpc:${VM_PORT}"
+
+# output result of registration
+kubectl get endpoints $VM_NAME -o yaml
+
+# add a ServiceEntry for ProductCatalog
+kubectl apply -n default -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: ${VM_SERVICE_NAME}
+  name: ${VM_NAME}
 spec:
   hosts:
-  - ${VM_SERVICE_NAME}.${VM_SERVICE_NAMESPACE}.svc.cluster.local
+  - ${VM_NAME}.${VM_NAMESPACE}.svc.cluster.local
+  location: MESH_INTERNAL
   ports:
-  - number: ${VM_SERVICE_PORT}
+  - number: ${VM_PORT}
     name: grpc
     protocol: GRPC
   resolution: STATIC
   endpoints:
   - address: ${GCE_IP}
     ports:
-      grpc: ${VM_SERVICE_PORT}
+      grpc: ${VM_PORT}
     labels:
-      app: ${VM_SERVICE_NAME}
-EOF"
-
-# generate selector-less service / Endpoint
-istioctl register -n ${VM_SERVICE_NAMESPACE} productcatalogservice ${GCE_IP} grpc:${VM_SERVICE_PORT} --labels version=vm
-
-# deploy hipstershop - all services except productcatalog - to GKE cluster
-kubectl apply -f manifests/hipstershop.yaml
+      app: ${VM_NAME}
+EOF

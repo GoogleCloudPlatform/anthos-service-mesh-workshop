@@ -14,19 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-log() { echo "$1" >&2; }
+source ./env.sh
 
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-CLUSTER_ZONE="us-central1-b"
-CLUSTER_NAME="mesh-exp-gke2"
-CTX="gke_${PROJECT_ID}_${CLUSTER_ZONE}_${CLUSTER_NAME}"
-gcloud config set project $PROJECT_ID
+kubectl config use-context $CTX
+GWIP=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-ISTIO_VERSION="1.3.6"
-
-VM_NAME="productcatalogservice2"
-VM_ZONE="us-east1-b"
-VM_NAMESPACE="default"
-VM_PORT="3550"
-VM_IMAGE="gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3"
+gcloud compute ssh --zone $VM_ZONE $VM_NAME -- "GWIP=${GWIP} ISTIO_VERSION=${ISTIO_VERSION} VM_IMAGE=${VM_IMAGE} VM_NAME=${VM_NAME} VM_PORT=${VM_PORT} ./run-on-vm.sh"

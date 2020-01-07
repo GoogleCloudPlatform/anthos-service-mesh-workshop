@@ -14,19 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-log() { echo "$1" >&2; }
+source ./env.sh
+gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
+kubectl config use-context $CTX
 
-PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
-CLUSTER_ZONE="us-central1-b"
-CLUSTER_NAME="mesh-exp-gke2"
-CTX="gke_${PROJECT_ID}_${CLUSTER_ZONE}_${CLUSTER_NAME}"
-gcloud config set project $PROJECT_ID
+# deploy sample app to GKE
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/istio-manifests.yaml
 
-ISTIO_VERSION="1.3.6"
-
-VM_NAME="productcatalogservice2"
-VM_ZONE="us-east1-b"
-VM_NAMESPACE="default"
-VM_PORT="3550"
-VM_IMAGE="gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3"
+# remove the cluster-based productcatalog - we'll deploy this on the VM
+kubectl delete svc productcatalogservice; kubectl delete deployment productcatalogservice

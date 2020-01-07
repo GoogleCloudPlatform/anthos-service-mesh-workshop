@@ -14,28 +14,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# install docker
+# NOTE - THIS SCRIPT RUNS ON THE GCE INSTANCE, NOT ON YOUR HOST / IN K8s
+
+# set vars
+ISTIO_VERSION=${ISTIO_VERSION:=1.4.2}
+GWIP="${GWIP}"
+
+# setup --  install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable";
 sudo apt-get update;
 sudo apt-get install -y docker-ce;
 
-# add ingressgateway IP to /etc/hosts
-echo "${GWIP} istio-citadel istio-pilot istio-pilot.istio-system" | sudo tee -a /etc/hosts
+# update /etc/hosts for DNS resolution
+echo -e "\n$GWIP istio-citadel istio-pilot istio-pilot.istio-system" | \
+   sudo tee -a /etc/hosts
 
-# install istio sidecar and node agent
+# install + run the istio remote - version ${ISTIO_VERSION}
 curl -L https://storage.googleapis.com/istio-release/releases/${ISTIO_VERSION}/deb/istio-sidecar.deb > istio-sidecar.deb
+
 sudo dpkg -i istio-sidecar.deb
+
+ls -ld /var/lib/istio
+
 sudo mkdir -p /etc/certs
 sudo cp {root-cert.pem,cert-chain.pem,key.pem} /etc/certs
 sudo cp cluster.env /var/lib/istio/envoy
 sudo chown -R istio-proxy /etc/certs /var/lib/istio/envoy
 
+ls -l /var/lib/istio/envoy/envoy_bootstrap_tmpl.json
+ls -l /var/lib/istio/envoy/sidecar.env
 sudo systemctl start istio-auth-node-agent
 sudo systemctl start istio
 
-sudo docker run -d --name ${VM_NAME} -p ${VM_PORT}:${VM_PORT} $VM_IMAGE
-
 
 # run productcatalog service
-sudo docker run -d -p 3550:3550 gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3
+sudo docker run -d -p ${VM_PORT}:${VM_PORT} ${VM_IMAGE}
