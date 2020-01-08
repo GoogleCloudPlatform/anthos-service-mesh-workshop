@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dev1_project_name="${TF_VAR_dev1_project_name}"
+dev3_project_name="${TF_VAR_dev3_project_name}"
