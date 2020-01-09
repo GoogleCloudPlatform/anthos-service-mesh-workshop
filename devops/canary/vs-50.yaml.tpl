@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: frontend
+  namespace: frontend
 spec:
   hosts:
   - frontend

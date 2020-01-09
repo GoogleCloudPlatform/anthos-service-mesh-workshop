@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-v1
+  namespace: frontend
 spec:
   selector:
     matchLabels:

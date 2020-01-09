@@ -2,6 +2,7 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: respy
+  namespace: frontend
 spec:
   replicas: 1
   template:
