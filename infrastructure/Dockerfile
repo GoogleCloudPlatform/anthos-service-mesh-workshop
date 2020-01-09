@@ -15,7 +15,7 @@
 FROM gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
 RUN apk add -u jq python3 openssl
 
-ENV TERRAFORM_VERSION=0.12.18
+ENV TERRAFORM_VERSION=0.12.19
 ENV KUBECTL_VERSION=1.16.1
 ENV KUSTOMIZE_VERSION=3.5.3
 ENV TF_PLUGIN_CACHE_DIR /workspace/.terraform.d/plugin-cache
