@@ -8,13 +8,13 @@ steps:
   args:
   - '-c'
   - |
-     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/deployment.yaml.tpl > devops/canary/deployment.yaml
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" ./deployment.yaml.tpl > ./deployment.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply deployment
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/deployment.yaml'
+  - './deployment.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -34,13 +34,13 @@ steps:
   args:
   - '-c'
   - |
-     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g" devops/canary/destinationrule-canary.yaml.tpl > devops/canary/destinationrule-canary.yaml
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g" ./destinationrule-canary.yaml.tpl > ./destinationrule-canary.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply DestinationRule
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/destinationrule-canary.yaml'
+  - './destinationrule-canary.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -53,13 +53,13 @@ steps:
   args:
   - '-c'
   - |
-     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-20.yaml.tpl > devops/canary/vs-20.yaml
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  ./vs-20.yaml.tpl > ./vs-20.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply 80/20 VirtualService
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/vs-20.yaml'
+  - './vs-20.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -79,13 +79,13 @@ steps:
   args:
   - '-c'
   - |
-     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-50.yaml.tpl > devops/canary/vs-50.yaml
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  ./vs-50.yaml.tpl > ./vs-50.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply 50/50 VirtualService
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/vs-50.yaml'
+  - './vs-50.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -105,13 +105,13 @@ steps:
   args:
   - '-c'
   - |
-     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  devops/canary/vs-80.yaml.tpl > devops/canary/vs-80.yaml
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g"  ./vs-80.yaml.tpl > ./vs-80.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply 20/80 VirtualService
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/vs-80.yaml'
+  - './vs-80.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -131,13 +131,13 @@ steps:
   args:
   - '-c'
   - |
-     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/vs-100.yaml.tpl > devops/canary/vs-100.yaml
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" ./vs-100.yaml.tpl > ./vs-100.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply 0/100 VirtualService
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/vs-100.yaml'
+  - './vs-100.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
@@ -150,13 +150,13 @@ steps:
   args:
   - '-c'
   - |
-     sed "s/NEW_VERSION/${_NEW_VERSION}/g" devops/canary/destinationrule-cleanup.yaml.tpl > devops/canary/destinationrule-cleanup.yaml
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" ./destinationrule-cleanup.yaml.tpl > ./destinationrule-cleanup.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply DestinationRule - Remove old version
   args:
   - 'apply'
   - '-f'
-  - 'devops/canary/destinationrule-cleanup.yaml'
+  - './destinationrule-cleanup.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'

@@ -44,9 +44,9 @@ sudo chown -R istio-proxy /etc/certs /var/lib/istio/envoy
 
 ls -l /var/lib/istio/envoy/envoy_bootstrap_tmpl.json
 ls -l /var/lib/istio/envoy/sidecar.env
-sudo systemctl start istio-auth-node-agent
-sudo systemctl start istio
+# sudo systemctl start istio-auth-node-agent
+# sudo systemctl start istio
 
 
-# run productcatalog service
-sudo docker run -d -p ${VM_PORT}:${VM_PORT} ${VM_IMAGE}
+# # run productcatalog service
+# sudo docker run -d -p ${VM_PORT}:${VM_PORT} ${VM_IMAGE}

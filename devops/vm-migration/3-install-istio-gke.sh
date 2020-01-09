@@ -13,15 +13,15 @@
 # limitations under the License.
 #!/bin/bash
 
-# installs standard single-cluster Istio on GKE + the Istio Stackdriver adapter
+# # installs standard single-cluster Istio on GKE + the Istio Stackdriver adapter
 source ./env.sh
 gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
 kubectl config use-context $CTX
 
 
-# Download Istio
+# # Download Istio
 WORKDIR="`pwd`"
-log "Downloading Istio ${ISTIO_VERSION}..."
+# log "Downloading Istio ${ISTIO_VERSION}..."
 curl -L https://git.io/getLatestIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
 
 

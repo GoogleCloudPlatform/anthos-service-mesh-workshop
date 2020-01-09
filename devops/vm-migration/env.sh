@@ -19,14 +19,15 @@ log() { echo "$1" >&2; }
 
 PROJECT_ID="${PROJECT_ID:?PROJECT_ID env variable must be specified}"
 CLUSTER_ZONE="us-central1-b"
-CLUSTER_NAME="mesh-exp-gke2"
+CLUSTER_NAME="cosmicbrownie"
 CTX="gke_${PROJECT_ID}_${CLUSTER_ZONE}_${CLUSTER_NAME}"
 gcloud config set project $PROJECT_ID
 
-ISTIO_VERSION="1.3.6"
+ISTIO_VERSION="1.4.2"
 
-VM_NAME="productcatalogservice2"
-VM_ZONE="us-east1-b"
+VM_NAME="igloo"
+VM_SVC_NAME="productcatalogservice"
+VM_ZONE="us-west1-b"
 VM_NAMESPACE="default"
 VM_PORT="3550"
 VM_IMAGE="gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.3"

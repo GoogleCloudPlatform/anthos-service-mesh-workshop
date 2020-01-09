@@ -16,6 +16,7 @@
 
 source ./env.sh
 kubectl config use-context $CTX
+mkdir -p vm/
 
 ISTIO_SERVICE_CIDR=$(gcloud container clusters describe ${CLUSTER_NAME?} \
                        --zone ${CLUSTER_ZONE?} --project ${PROJECT_ID?} \
@@ -24,19 +25,18 @@ echo $ISTIO_SERVICE_CIDR
 
 log "istio CIDR is: ${ISTIO_SERVICE_CIDR}"
 
-echo -e "ISTIO_CP_AUTH=MUTUAL_TLS\nISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\n" | tee ./cluster.env
-echo "ISTIO_INBOUND_PORTS=${VM_PORT},8080" >> ./cluster.env
+echo -e "ISTIO_CP_AUTH=MUTUAL_TLS\nISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\n" | tee ./vm/cluster.env
+echo "ISTIO_INBOUND_PORTS=${VM_PORT},8080" >> ./vm/cluster.env
 
 
 # Get istio control plane certs
 kubectl -n ${VM_NAMESPACE?} get secret istio.default \
-  -o jsonpath='{.data.root-cert\.pem}' | base64 --decode | tee ./root-cert.pem
+  -o jsonpath='{.data.root-cert\.pem}' | base64 --decode | tee ./vm/root-cert.pem
 kubectl -n ${VM_NAMESPACE?} get secret istio.default \
-  -o jsonpath='{.data.key\.pem}' | base64 --decode | tee ./key.pem
+  -o jsonpath='{.data.key\.pem}' | base64 --decode | tee ./vm/key.pem
 kubectl -n ${VM_NAMESPACE?} get secret istio.default \
-  -o jsonpath='{.data.cert-chain\.pem}' | base64 --decode | tee ./cert-chain.pem
-
+  -o jsonpath='{.data.cert-chain\.pem}' | base64 --decode | tee ./vm/cert-chain.pem
 
 log "sending cluster.env, certs, and script to VM..."
-gcloud compute --project ${PROJECT_ID?} scp --zone ${VM_ZONE?} ./cluster.env ./run-on-vm.sh ./*.pem ${VM_NAME?}:
+gcloud compute --project ${PROJECT_ID?} scp --zone ${VM_ZONE?} ./vm/* ./run-on-vm.sh ${VM_NAME?}:
 log "...done."

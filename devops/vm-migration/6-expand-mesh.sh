@@ -22,20 +22,20 @@ log "$VM_NAME's IP is $GCE_IP"
 kubectl config use-context $CTX
 
 # register VM with GKE istio
-./istio-${ISTIO_VERSION}/bin/istioctl register $VM_NAME $GCE_IP "grpc:${VM_PORT}"
+./istio-${ISTIO_VERSION}/bin/istioctl register $VM_SVC_NAME $GCE_IP "grpc:${VM_PORT}"
 
 # output result of registration
-kubectl get endpoints $VM_NAME -o yaml
+kubectl get endpoints $VM_SVC_NAME -o yaml
 
 # add a ServiceEntry for ProductCatalog
 kubectl apply -n default -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: ${VM_NAME}
+  name: ${VM_SVC_NAME}
 spec:
   hosts:
-  - ${VM_NAME}.${VM_NAMESPACE}.svc.cluster.local
+  - ${VM_SVC_NAME}.${VM_NAMESPACE}.svc.cluster.local
   location: MESH_INTERNAL
   ports:
   - number: ${VM_PORT}
@@ -47,5 +47,5 @@ spec:
     ports:
       grpc: ${VM_PORT}
     labels:
-      app: ${VM_NAME}
+      app: ${VM_SVC_NAME}
 EOF

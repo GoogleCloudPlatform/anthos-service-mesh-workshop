@@ -19,4 +19,4 @@ source ./env.sh
 kubectl config use-context $CTX
 GWIP=$(kubectl get -n istio-system service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-gcloud compute ssh --zone $VM_ZONE $VM_NAME -- "GWIP=${GWIP} ISTIO_VERSION=${ISTIO_VERSION} VM_IMAGE=${VM_IMAGE} VM_NAME=${VM_NAME} VM_PORT=${VM_PORT} ./run-on-vm.sh"
+gcloud compute ssh --zone $VM_ZONE $VM_NAME -- "GWIP=${GWIP} ISTIO_VERSION=${ISTIO_VERSION} VM_IMAGE=${VM_IMAGE} VM_PORT=${VM_PORT} ./run-on-vm.sh"
