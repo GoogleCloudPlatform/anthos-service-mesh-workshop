@@ -1,6 +1,6 @@
 steps:
 ################################################################################################
-# deploy new frontend / don't send traffic yet
+# deploy new frontend, continue sending all traffic to old version
 ################################################################################################
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Generate deployment
