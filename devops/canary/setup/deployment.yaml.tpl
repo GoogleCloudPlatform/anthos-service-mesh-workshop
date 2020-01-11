@@ -2,7 +2,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: frontend-NEW_VERSION
-  namespace: SVC_NAMESPACE
+  namespace: frontend
 spec:
   selector:
     matchLabels:
