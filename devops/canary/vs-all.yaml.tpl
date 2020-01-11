@@ -9,7 +9,7 @@ spec:
   http:
   - route:
     - destination:
-        host: SVC_NAME
+        host: SVC_NAME.SVC_NAMESPACE.svc.cluster.local
         subset: VERSION
         port:
           number: SVC_PORT
