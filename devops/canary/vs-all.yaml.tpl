@@ -5,11 +5,11 @@ metadata:
   namespace: SVC_NAMESPACE
 spec:
   hosts:
-  - SVC_NAME.SVC_NAMESPACE.svc.cluster.local
+  - SVC_NAME
   http:
   - route:
     - destination:
-        host: SVC_NAME.SVC_NAMESPACE.svc.cluster.local
+        host: SVC_NAME
         subset: VERSION
         port:
           number: SVC_PORT
