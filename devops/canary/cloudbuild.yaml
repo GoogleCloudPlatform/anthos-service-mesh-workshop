@@ -105,7 +105,7 @@ steps:
   args:
   - '-c'
   - |
-     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g" -e "s/OLD_PERCENT/20/g" -e "s/NEW_PERCENT/80/g" -e "s/SVC_NAMESPACE/${_SVC_NAMESPACE}/g" -e "s/SVC_NAME/${_SVC_NAME}/g" -e "s/SVC_PORT/${_SVC_PORT}/g"   ./vs-split.yaml.tpl > ./vs-20.yaml
+     sed -e "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/OLD_VERSION/${_OLD_VERSION}/g" -e "s/OLD_PERCENT/20/g" -e "s/NEW_PERCENT/80/g" -e "s/SVC_NAMESPACE/${_SVC_NAMESPACE}/g" -e "s/SVC_NAME/${_SVC_NAME}/g" -e "s/SVC_PORT/${_SVC_PORT}/g"   ./vs-split.yaml.tpl > ./vs-80.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply 20/80 VirtualService
   args:
@@ -142,7 +142,7 @@ steps:
   - 'CLOUDSDK_COMPUTE_ZONE=${_OPS_CLUSTER_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_OPS_CLUSTER_NAME}'
 ################################################################################################
-#  cleanup - removing old version from destinationrule
+#  cleanup - remove old subset from destination rule
 ################################################################################################
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Generate DestinationRule - Remove old version
@@ -150,7 +150,7 @@ steps:
   args:
   - '-c'
   - |
-     sed "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/SVC_NAMESPACE/${_SVC_NAMESPACE}/g"  ./dr-all.yaml.tpl > ./dr-cleanup.yaml
+     sed "s/NEW_VERSION/${_NEW_VERSION}/g" -e "s/SVC_NAMESPACE/${_SVC_NAMESPACE}/g" -e "s/SVC_NAME/${_SVC_NAME}/g"  ./dr-all.yaml.tpl > ./dr-cleanup.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply DestinationRule - Remove old version
   args:
