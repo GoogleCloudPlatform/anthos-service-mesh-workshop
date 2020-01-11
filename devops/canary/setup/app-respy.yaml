@@ -4,6 +4,9 @@ metadata:
   name: respy
   namespace: frontend
 spec:
+  selector:
+    matchLabels:
+      app: respy
   replicas: 1
   template:
     metadata:
