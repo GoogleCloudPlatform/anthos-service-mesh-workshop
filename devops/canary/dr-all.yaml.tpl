@@ -1,14 +1,10 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: frontend
-  namespace: frontend
+  name: SVC_NAME
 spec:
-  host: frontend
+  host: SVC_NAME.SVC_NAMESPACE.svc.cluster.local
   subsets:
-  - name: OLD_VERSION
-    labels:
-      version: OLD_VERSION
   - name: NEW_VERSION
     labels:
       version: NEW_VERSION

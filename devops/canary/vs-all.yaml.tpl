@@ -1,16 +1,15 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: frontend
-  namespace: frontend
+  name: SVC_NAME
 spec:
   hosts:
-  - frontend
+  - SVC_NAME.SVC_NAMESPACE.svc.cluster.local
   http:
   - route:
     - destination:
-        host: frontend
-        subset: NEW_VERSION
+        host: SVC_NAME
+        subset: VERSION
         port:
-          number: 80
+          number: SVC_PORT
       weight: 100

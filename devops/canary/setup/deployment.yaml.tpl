@@ -1,23 +1,23 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: frontend-v1
-  namespace: frontend
+  name: frontend-NEW_VERSION
 spec:
   selector:
     matchLabels:
       app: frontend
+      namespace: frontend
   template:
     metadata:
       labels:
         app: frontend
-        version: v1
+        version: NEW_VERSION
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       containers:
         - name: server
-          image: meganokeefe/frontend:v1
+          image: meganokeefe/frontend:NEW_VERSION
           imagePullPolicy: Always
           ports:
           - containerPort: 8080
@@ -54,8 +54,6 @@ spec:
             value: "checkoutservice:5050"
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
-          # - name: JAEGER_SERVICE_ADDR
-          #   value: "jaeger-collector:14268"
           resources:
             requests:
               cpu: 100m

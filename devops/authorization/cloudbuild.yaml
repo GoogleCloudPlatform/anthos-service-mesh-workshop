@@ -1,3 +1,4 @@
+# deploy onto ops cluster
 steps:
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply all policies
@@ -9,5 +10,5 @@ steps:
   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}'
 substitutions:
-    _CLUSTER: "mycluster"
-    _ZONE: "us-central1-b"
+    _CLUSTER: ""
+    _ZONE: ""
