@@ -1,9 +1,9 @@
-# deny all
+# allow the frontend to access currencyservice
 apiVersion: "security.istio.io/v1beta1"
 kind: "AuthorizationPolicy"
 metadata:
   name: "currency-policy"
-  namespace: default
+  namespace: currency
 spec:
   selector:
     matchLabels:
@@ -11,4 +11,4 @@ spec:
   rules:
   - from:
     - source:
-        principals: ["cluster.local/ns/default/sa/frontend-sa"]
+        principals: ["cluster.local/ns/frontend/sa/default"]

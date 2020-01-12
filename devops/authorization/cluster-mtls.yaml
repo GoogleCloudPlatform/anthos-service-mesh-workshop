@@ -1,3 +1,5 @@
+# NOTE - cluster-wide mTLS is a prerequisite for
+# using source.principal in an AuthorizationPolicy
 apiVersion: "authentication.istio.io/v1alpha1"
 kind: "MeshPolicy"
 metadata:
