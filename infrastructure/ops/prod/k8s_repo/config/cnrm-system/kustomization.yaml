@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - install-bundle/crds.yaml
+  - install-bundle/0-cnrm-system.yaml
+  - cnrm-psp.yaml
+
+patches:
+  - patch-cnrm-system-namespace.yaml
+
+patchesJson6902:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: cnrm-manager-role
+    path: jsonpatch-cnrm-clusterrole.yaml

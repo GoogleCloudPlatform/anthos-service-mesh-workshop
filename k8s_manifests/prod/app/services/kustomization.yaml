@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - app-ad-service-svc.yaml
+  - app-cart-service-svc.yaml
+  - app-checkout-service-svc.yaml
+  - app-currency-service-svc.yaml
+  - app-email-service-svc.yaml
+  - app-frontend-svc.yaml
+  - app-payment-service-svc.yaml
+  - app-product-catalog-service-svc.yaml
+  - app-recommendation-service-svc.yaml
+  - app-redis-cart-svc.yaml
+  - app-shipping-service-svc.yaml

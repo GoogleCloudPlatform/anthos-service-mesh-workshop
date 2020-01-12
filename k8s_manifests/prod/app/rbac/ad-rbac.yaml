@@ -1,0 +1,37 @@
+# ClusterRole to use podsecuritypolicy
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ad
+rules:
+  - apiGroups:
+      - extensions
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+    resourceNames:
+      - ad
+---
+# Authorize all service accounts in namespace to use the podsecuritypolicy
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ad
+  namespace: ad
+roleRef:
+  kind: ClusterRole
+  name: ad
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: system:serviceaccounts
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ad
+  namespace: ad
+  annotations:
+    iam.gke.io/gcp-service-account: microservices@${PROJECT_ID}.iam.gserviceaccount.com

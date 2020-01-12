@@ -32,6 +32,9 @@ module "create_ops_asm_project" {
     "cloudbuild.googleapis.com",
     "sourcerepo.googleapis.com",
     "containeranalysis.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "monitoring.googleapis.com",
+    "cloudtrace.googleapis.com"
   ]
 }
 

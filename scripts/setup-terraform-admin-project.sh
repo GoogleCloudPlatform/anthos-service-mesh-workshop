@@ -167,6 +167,7 @@ echo -e "\n${CYAN}Setting default project and credentials...${NC}"
 export GOOGLE_PROJECT=${TF_ADMIN} 
 
 echo -e "\n${CYAN}Creating vars file...${NC}"
+echo -e "export MY_USER=${MY_USER}" | tee -a ${VARS_FILE}
 echo -e "export RANDOM_PERSIST=${RANDOM_PERSIST}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_org_id=${TF_VAR_org_id}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_billing_account=${TF_VAR_billing_account}" | tee -a ${VARS_FILE}

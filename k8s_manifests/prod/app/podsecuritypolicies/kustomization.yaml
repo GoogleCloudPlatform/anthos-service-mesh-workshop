@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ad-psp.yaml
+  - cart-psp.yaml
+  - checkout-psp.yaml
+  - currency-psp.yaml
+  - email-psp.yaml
+  - frontend-psp.yaml
+  - payment-psp.yaml
+  - product-catalog-psp.yaml
+  - recommendation-psp.yaml
+  - shipping-psp.yaml
