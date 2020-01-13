@@ -6,12 +6,12 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 
-active_v2_weight () {
- w=`kubectl --context=${OPS_CONTEXT} get virtualservice -n frontend frontend -o json \
+active_v2_percent () {
+ p=`kubectl --context=${OPS_CONTEXT} get virtualservice -n default frontend -o json \
  | jq -r '.spec.http[].route[]|select(.destination.subset == "v2") .weight'`
 
- log "v2 deployed weight is ${w}%"
- return w
+ log "v2 deployed percentage is ${p}%"
+ return $p
 }
 
 
@@ -29,10 +29,14 @@ run_canary() {
     cd ../k8s_manifests/prod/app-canary/
 
     # wait for cloud build to finish
-    while ! active_v2_weight(${PERCENT}) == ${PERCENT}) ; do
-        sleep 1
-        echo "hi"
+    ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
+
+    while [ $ACTIVE_PERCENT != $PERCENT ]; do
+        echo "waiting for build to complete..."
+        sleep 2
+        ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
     done
+
     log "✅ ${PERCENT}% successfully deployed"
 }
 
