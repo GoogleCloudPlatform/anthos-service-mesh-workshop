@@ -7,7 +7,7 @@ log() { echo "$1" >&2; }
 
 
 active_v2_percent () {
- p=`kubectl --context=${OPS_CONTEXT} get virtualservice -n default frontend -o json \
+ p=`kubectl --context=${OPS_CONTEXT} get virtualservice -n frontend frontend -o json \
  | jq -r '.spec.http[].route[]|select(.destination.subset == "v2") .weight'`
 
  log "v2 deployed percentage is ${p}%"
