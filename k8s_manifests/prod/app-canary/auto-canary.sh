@@ -38,6 +38,7 @@ run_canary() {
     done
 
     log "✅ ${PERCENT}% successfully deployed"
+    return
 }
 
 
@@ -70,3 +71,5 @@ do
     echo "Starting rollout - ${i}% to v2"
     run_canary ${i}
 done
+
+log "🐤 frontend-v2 Canary Complete for ${OPS_DIR} 🌈"
