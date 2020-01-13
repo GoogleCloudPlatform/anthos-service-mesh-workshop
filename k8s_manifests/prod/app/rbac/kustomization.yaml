@@ -10,4 +10,5 @@ resources:
   - payment-rbac.yaml
   - product-catalog-rbac.yaml
   - recommendation-rbac.yaml
+  - redis-cart-rbac.yaml
   - shipping-rbac.yaml
