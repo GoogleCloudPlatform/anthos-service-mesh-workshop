@@ -7,7 +7,9 @@ log() { echo "$1" >&2; }
 
 
 active_v2_weight () {
- w=`kubectl get virtualservice -o json -n frontend frontend | jq -r '.spec.http[].route[]|select(.destination.subset == "v2") .weight'`
+ w=`kubectl --context=${OPS_CLUSTER} get virtualservice -n frontend frontend -o json \
+ | jq -r '.spec.http[].route[]|select(.destination.subset == "v2") .weight'`
+
  log "v2 deployed weight is ${w}%"
  return w
 }
@@ -16,7 +18,7 @@ active_v2_weight () {
 run_canary() {
     PERCENT=$1
     # copy all manifests in canary-${PERCENT}/  to k8s_repo
-    cp canary-${PERCENT}/*  ../k8s_repo/${OPS_CLUSTER}/
+    cp canary-${PERCENT}/*  ../k8s_repo/${OPS_CLUSTER}/app-canary/
 
     # commit to K8s_repo
     cd ../k8s_repo/${OPS_CLUSTER}/
@@ -24,7 +26,7 @@ run_canary() {
     git commit -m "Canary deployment - ${PERCENT}% to frontend-v2"
     git push origin master
 
-    cd ../k8s_manifests/prod/app-canary
+    cd ../k8s_manifests/prod/app-canary/
 
     # wait for cloud build to finish
     while ! active_v2_weight($PERCENT) == $PERCENT ; do
