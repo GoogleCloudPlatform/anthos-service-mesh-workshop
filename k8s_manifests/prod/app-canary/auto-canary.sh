@@ -18,15 +18,15 @@ active_v2_percent () {
 run_canary() {
     PERCENT=$1
     # copy all manifests in canary-${PERCENT}/  to k8s_repo
-    cp canary${PERCENT}/*  ../k8s_repo/${OPS_DIR}/app-canary/
+    cp canary${PERCENT}/*  ${K8S_REPO}/${OPS_DIR}/app-canary/
 
     # commit to K8s_repo
-    cd ../k8s_repo/${OPS_DIR}/
+    cd ${K8S_REPO}/${OPS_DIR}/
     git add .
     git commit -m "Canary deployment - ${PERCENT}% to frontend-v2"
     git push origin master
 
-    cd ../k8s_manifests/prod/app-canary/
+    cd $CANARY_DIR
 
     # wait for cloud build to finish
     ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
@@ -42,6 +42,10 @@ run_canary() {
 
 
 # make sure ops cluster is set
+export K8S_REPO="/home/`whoami`/anthos-service-mesh-lab/k8s-repo"
+export CANARY_DIR="/home/`whoami`/anthos-service-mesh-lab/asm/k8s_manifests/prod/app-canary"
+
+
 if [ -z "$OPS_DIR" ]
 then
     log "You must set OPS_DIR to continue."
