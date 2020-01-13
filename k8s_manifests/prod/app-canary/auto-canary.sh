@@ -1,8 +1,6 @@
 
 
 #!/bin/bash
-
-set -euo pipefail
 log() { echo "$1" >&2; }
 
 
@@ -33,7 +31,7 @@ run_canary() {
 
     while [[ $ACTIVE_PERCENT != $PERCENT ]]; do
         echo "waiting for build to complete..."
-        sleep 2
+        sleep 10
         ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
     done
 
