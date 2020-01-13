@@ -31,7 +31,7 @@ run_canary() {
     # wait for cloud build to finish
     ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
 
-    while [ $ACTIVE_PERCENT != $PERCENT ]; do
+    while [[ $ACTIVE_PERCENT != $PERCENT ]]; do
         echo "waiting for build to complete..."
         sleep 2
         ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
