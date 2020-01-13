@@ -63,6 +63,6 @@ declare -a percentages=("20" "50" "80" "100")
 
 for i in "${percentages[@]}"
 do
-    echo "Starting rollout - ${PERCENT}% to v2"
-    run_canary ${PERCENT}
+    echo "Starting rollout - ${i}% to v2"
+    run_canary ${i}
 done
