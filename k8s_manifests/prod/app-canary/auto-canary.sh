@@ -29,8 +29,9 @@ run_canary() {
     cd ../k8s_manifests/prod/app-canary/
 
     # wait for cloud build to finish
-    while ! active_v2_weight($PERCENT) == $PERCENT ; do
-        sleep 10
+    while ! active_v2_weight(${PERCENT}) == ${PERCENT}) ; do
+        sleep 1
+        echo "hi"
     done
     log "✅ ${PERCENT}% successfully deployed"
 }
