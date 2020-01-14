@@ -33,6 +33,7 @@ run_canary() {
         echo "waiting for build to complete..."
         sleep 10
         ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
+        echo "end of loop"
     done
 
     log "✅ ${PERCENT}% successfully deployed"
