@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 log() { echo "$1" >&2; }
 
@@ -8,7 +6,6 @@ active_v2_percent () {
  p=`kubectl --context=${OPS_CONTEXT} get virtualservice -n frontend frontend -o json \
  | jq -r '.spec.http[].route[]|select(.destination.subset == "v2") .weight'`
 
- log "v2 deployed percentage is ${p}%"
  return $p
 }
 
@@ -21,7 +18,7 @@ run_canary() {
     # commit to K8s_repo
     cd ${K8S_REPO}/${OPS_DIR}/
     git add .
-    git commit -m "Canary deployment - ${PERCENT}% to frontend-v2"
+    git commit -m "Canary: ${OPS_DIR}- ${PERCENT}% to frontend-v2"
     git push origin master
 
     cd $CANARY_DIR
@@ -31,7 +28,7 @@ run_canary() {
     ACTIVE_PERCENT=$(echo $?)
 
     while [[ "${ACTIVE_PERCENT}" != "${PERCENT}" ]]; do
-        echo "waiting for build to complete. active percent is ${ACTIVE_PERCENT} and target percent is ${PERCENT}"
+        echo "⏱ Waiting for build to complete. active percent is ${ACTIVE_PERCENT} and target percent is ${PERCENT}"
         sleep 10
          VAL=$(active_v2_percent $PERCENT)
         ACTIVE_PERCENT=$(echo $?)
@@ -68,8 +65,8 @@ declare -a percentages=("20" "50" "80" "100")
 
 for i in "${percentages[@]}"
 do
-    echo "Starting rollout - ${i}% to v2"
+    echo "🏁 Starting rollout - ${i}% to v2"
     run_canary ${i}
 done
 
-log "🐤 frontend-v2 Canary Complete for ${OPS_DIR} 🌈"
+log " 🌈 frontend-v2 Canary Complete for ${OPS_DIR}"
