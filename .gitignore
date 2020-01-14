@@ -36,8 +36,8 @@ infrastructure/ops/prod/k8s_repo/istio-operator-*.yaml
 infrastructure/ops/prod/k8s_repo/data.zip
 infrastructure/ops/prod/k8s_repo/tmp/
 
-devops/vm-migration/vm/
-devops/vm-migration/istio-*
-devops/*/*.env
-devops/*/*.pem
+infrastructure/vm-migration/vm/
+infrastructure/vm-migration/istio-*
+infrastructure/*/*.env
+infrastructure/*/*.pem
 .DS_Store
