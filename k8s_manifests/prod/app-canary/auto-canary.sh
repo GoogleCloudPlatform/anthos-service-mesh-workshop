@@ -33,8 +33,8 @@ run_canary() {
     while [[ "${ACTIVE_PERCENT}" != "${PERCENT}" ]]; do
         echo "waiting for build to complete. active percent is ${ACTIVE_PERCENT} and target percent is ${PERCENT}"
         sleep 10
-        ACTIVE_PERCENT=$(active_v2_percent $PERCENT)
-        echo "end of loop"
+         VAL=$(active_v2_percent $PERCENT)
+        ACTIVE_PERCENT=$(echo $?)
     done
 
     log "✅ ${PERCENT}% successfully deployed"
