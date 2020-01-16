@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fortio-deploy
+  namespace: shipping
 spec:
   replicas: 1
   selector:
@@ -14,6 +15,7 @@ spec:
       labels:
         app: fortio
     spec:
+      serviceAccount: shipping
       containers:
       - name: fortio
         image: fortio/fortio:latest_release
