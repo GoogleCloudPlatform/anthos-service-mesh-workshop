@@ -252,3 +252,4 @@ git init
 git remote add infra "https://source.developers.google.com/p/${TF_ADMIN}/r/infrastructure"
 git add . && git commit -am "first commit"
 git push infra master
+cd ..
