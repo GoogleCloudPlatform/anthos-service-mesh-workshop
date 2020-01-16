@@ -12,7 +12,6 @@ echo $(ls -d tmp/*/istio-controlplane) | xargs -n 1 cp config/istio-controlplane
 echo $(ls -d tmp/*/istio-controlplane) | xargs -n 1 cp config/istio-controlplane/istio-system-psp.yaml
 echo $(ls -d tmp/*/istio-controlplane) | xargs -n 1 cp config/istio-controlplane/istio-system-rbac.yaml
 echo $(ls -d tmp/*/istio-controlplane) | xargs -n 1 cp config/istio-controlplane/kustomization.yaml
-echo $(ls -d tmp/*/) | xargs -n 1 cp config/kustomization.yaml
 
 # Copy script used to setup multi-cluster service discovery
 cp config/make_multi_cluster_config.sh tmp/
@@ -121,7 +120,7 @@ gcloud source repos clone ${k8s_repo_name} --project=${ops_project_id}
 # Copy repo files, overwrite existing files.
 cp -r tmp/. ${k8s_repo_name}
 
-# Copy multi-cluster service disscovery kubeconfig template if it doesn't already exist
+# Copy multi-cluster service discovery kubeconfig template if it doesn't already exist
 if [[ ! -d ${k8s_repo_name}/.kubeconfigs ]]; then
   cp -r config/kubeconfigs ${k8s_repo_name}/.kubeconfigs
 fi
@@ -129,16 +128,22 @@ fi
 # Copy app template if it doesn't already exist.
 for d in $(ls -d ${k8s_repo_name}/*/); do
   [[ ! -d "${d}/app" ]] && cp -r config/app ${d}/
-done
-
-# Copy app-ingress template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
-  [[ ! -d "${d}/app-ingress" ]] && cp -r config/app-ingress ${d}/
-done
-
-# Copy app-cnrm template if it doesn't already exist.
-for d in $(ls -d ${k8s_repo_name}/*/); do
   [[ ! -d "${d}/app-cnrm" ]] && cp -r config/app-cnrm ${d}/
+done
+
+# Copy app-ingress, istio-networking and istio-authentication templates if they don't already exist in ops clusters.
+# Also Copy kustomization.yaml
+for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
+  [[ ! -d "${k8s_repo_name}/${d}/app-ingress" ]] && cp -r config/app-ingress ${k8s_repo_name}/${d}/
+  [[ ! -d "${k8s_repo_name}/${d}/istio-networking" ]] && cp -r config/istio-networking ${k8s_repo_name}/${d}/
+  [[ ! -d "${k8s_repo_name}/${d}/istio-authentication" ]] && cp -r config/istio-authentication ${k8s_repo_name}/${d}/
+  cp config/kustomization-ops.yaml ${k8s_repo_name}/${d}/kustomization.yaml
+done
+
+# Copy app-cnrm template to dev clusters if it doesn't already exist.
+# Also Copy kustomization.yaml
+for d in ${dev1_gke_1_name} ${dev1_gke_2_name} ${dev2_gke_3_name} ${dev2_gke_4_name}; do
+  cp config/kustomization-app.yaml ${k8s_repo_name}/${d}/kustomization.yaml
 done
 
 # Push changes to the repo
