@@ -19,7 +19,7 @@ ENV TERRAFORM_VERSION=0.12.19
 ENV KUBECTL_VERSION=1.16.1
 ENV KUSTOMIZE_VERSION=3.5.3
 ENV TF_PLUGIN_CACHE_DIR /workspace/.terraform.d/plugin-cache
-
+#Amina
 # Install terraform
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
