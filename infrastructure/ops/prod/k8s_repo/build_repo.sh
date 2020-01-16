@@ -119,7 +119,6 @@ gcloud source repos clone ${k8s_repo_name} --project=${ops_project_id}
 
 # Copy repo files, overwrite existing files.
 cp -r tmp/. ${k8s_repo_name}
-ls tmp/
 
 # Copy multi-cluster service discovery kubeconfig template if it doesn't already exist
 if [[ ! -d ${k8s_repo_name}/.kubeconfigs ]]; then
