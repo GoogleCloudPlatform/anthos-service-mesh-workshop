@@ -1,10 +1,10 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+apiVersion: "networking.istio.io/v1alpha3"
+kind: "DestinationRule"
 metadata:
-  name: frontend
-  namespace: frontend
+  name: "frontend-frontend-destrule"
+  namespace: "frontend"
 spec:
-  host: frontend
+  host: "frontend.frontend.svc.cluster.local"
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
@@ -15,3 +15,4 @@ spec:
   - name: v2
     labels:
       version: v2
+

@@ -11,4 +11,4 @@ spec:
   rules:
   - from:
     - source:
-        principals: ["cluster.local/ns/frontend/sa/default"]
+        principals: ["cluster.local/ns/frontend/sa/frontend"]
