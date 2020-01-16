@@ -72,8 +72,8 @@ echo -e "\n${CYAN}Defining terraform admin project ID, SA and SA credentials loc
 ORG_USER=${MY_USER?env not set}
 ORG_USER=${MY_USER%@*}
 ORG_USER=${ORG_USER:0:11}
-export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm-workshop
-export TF_ADMIN=${ORG_USER}-${RANDOM_PERSIST}-tf-admin 
+export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm
+export TF_ADMIN=${ORG_USER}-${RANDOM_PERSIST}-tf
 
 echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}" 
 export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
@@ -180,13 +180,15 @@ echo -e "export TF_CLOUDBUILD_SA=$(gcloud projects describe ${TF_ADMIN} --format
 
 
 echo -e "\n${CYAN}Setting new project names...${NC}" 
-echo -e "export TF_VAR_host_project_name=${ORG_USER}-${RANDOM_PERSIST}-00-host" | tee -a ${VARS_FILE}
-echo -e "export TF_VAR_ops_project_name=${ORG_USER}-${RANDOM_PERSIST}-01-ops" | tee -a ${VARS_FILE}
-echo -e "export TF_VAR_dev1_project_name=${ORG_USER}-${RANDOM_PERSIST}-02-dev1" | tee -a ${VARS_FILE}
-echo -e "export TF_VAR_dev2_project_name=${ORG_USER}-${RANDOM_PERSIST}-03-dev2" | tee -a ${VARS_FILE}
-echo -e "export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm-workshop" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_host_project_name=${ORG_USER}-${RANDOM_PERSIST}-host" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_ops_project_name=${ORG_USER}-${RANDOM_PERSIST}-ops" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_dev1_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev1" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_dev2_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev2" | tee -a ${VARS_FILE}
 
 source ${VARS_FILE}
+
+# Add vars.sh to gcs bucket
+gsutil cp ${VARS_FILE} gs://${TF_ADMIN}/vars/vars.sh
 
 echo -e "\n${CYAN}Preparing terraform backends, shared states and vars...${NC}"
 # Define an array of GCP resources
@@ -239,7 +241,7 @@ done
 
 echo -e "\n${CYAN}Committing infrastructure terraform to cloud source repo...${NC}"
 cd ./infrastructure
-git config --local user.email $(gcloud config get-value account)
+git config --local user.email ${TF_CLOUDBUILD_SA}
 git config --local user.name "terraform"
 git config --local credential.'https://source.developers.google.com'.helper gcloud.sh
 git init
