@@ -76,7 +76,7 @@ export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm
 PROJECT_ID_SUFFIX=$(od -An -N4 -D /dev/random | tr -d " ")
 PROJECT_ID_SUFFIX=${PROJECT_ID_SUFFIX:1:5}
 export TF_ADMIN_NAME=${ORG_USER}-${RANDOM_PERSIST}-tf
-export TF_ADMIN=${TF_ADMIN_NAME}-tf-${PROJECT_ID_SUFFIX}
+export TF_ADMIN=${TF_ADMIN_NAME}-${PROJECT_ID_SUFFIX}
 
 echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}" 
 export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
