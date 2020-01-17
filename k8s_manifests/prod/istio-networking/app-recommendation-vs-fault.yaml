@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: recommendation-delay-fault
+spec:
+  hosts:
+  - recommendationservice.recommendation.svc.cluster.local
+  http:
+  - route:
+    - destination:
+        host: recommendationservice.recommendation.svc.cluster.local
+    fault:
+      delay:
+        percentage:
+          value: 100
+        fixedDelay: 5s
