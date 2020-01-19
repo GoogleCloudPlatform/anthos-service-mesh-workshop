@@ -1,5 +1,5 @@
-set -euo pipefail
-log() { echo "$1" >&2; }
+#!/bin/bash
+# 💳 PAYMENTSERVICE VARS
 
 VM_NAME_PREFIX="gce-vm-external"
 VM_NAME=`gcloud compute instances list --filter="name~'${VM_NAME_PREFIX}*'" --format=json | \

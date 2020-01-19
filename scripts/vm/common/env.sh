@@ -1,1 +1,2 @@
-PROJECT_ID=${DEV1}
+set -euo pipefail
+log() { echo "$1" >&2; }
