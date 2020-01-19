@@ -15,16 +15,16 @@
 # limitations under the License.
 
 # Import functions
-. ./scripts/functions.sh 
+. ./scripts/functions.sh
 
 # TASK 2: Setup Istio
 
 # Font colors
-export CYAN='\033[1;36m' 
+export CYAN='\033[1;36m'
 export GREEN='\033[1;32m'
 export NC='\033[0m' # No Color
 
-# Create a log file and send stdout and stderr to console and log file 
+# Create a log file and send stdout and stderr to console and log file
 mkdir -p logs
 export LOG_FILE=setup-istio-$(date +%s).log
 touch ./logs/${LOG_FILE}
@@ -37,7 +37,7 @@ source ./vars/vars.sh
 # Define your OPS and DEV clusters here
 # OPS clusters will get the replicated controlplane configs
 # DEV clusters will get the shared control plane configs
-# OPS cluster number and DEV project number should match i.e. OPS_GKE_1 cluster will 
+# OPS cluster number and DEV project number should match i.e. OPS_GKE_1 cluster will
 # service as the controlplane for all DEV1  GKE clusters and so on
 # In the current setup, you have two OPS clusters and two associated DEV clusters for each OPS cluster as shown below
 
@@ -55,12 +55,12 @@ export OPS_CLUSTER_NAMES=(
 
 # Define OPS cluster deployments - the full Istio controlplane
 declare -a OPS_ISTIO_DEPLOYMENTS
-export OPS_ISTIO_DEPLOYMENTS=(grafana 
-                          istio-citadel 
-                          istio-ingressgateway 
-                          istio-egressgateway 
-                          istio-galley 
-                          istio-pilot 
+export OPS_ISTIO_DEPLOYMENTS=(grafana
+                          istio-citadel
+                          istio-ingressgateway
+                          istio-egressgateway
+                          istio-galley
+                          istio-pilot
                           istio-policy
                           istio-telemetry
                           istio-tracing
@@ -104,11 +104,11 @@ export OPS_2_DEV_CLUSTER_NAMES=(
     ${DEV2_GKE_2_CLUSTER}
 )
 
-# Define deployments running in shared clusters 
+# Define deployments running in shared clusters
 # only citadel, sidecar-injector and optionally coredns should be running
 declare -a DEV_ISTIO_DEPLOYMENTS
-export DEV_ISTIO_DEPLOYMENTS=( 
-        istio-citadel 
+export DEV_ISTIO_DEPLOYMENTS=(
+        istio-citadel
         istio-sidecar-injector
         istiocoredns
         )
@@ -119,6 +119,7 @@ export DEV_ISTIO_DEPLOYMENTS=(
 echo -e "\n${CYAN}Creating helm template using Istio replicated control plane values...${NC}"
 helm template ./istio-${ISTIO_VERSION}/install/kubernetes/helm/istio \
 --name istio --namespace istio-system --values ./istio/01_istio-replicated-controlplane-values.yaml \
+--set values.global.proxy.accessLogFile="/dev/stdout" \
 > ./tmp/02_istio-replicated-controlplane-manifest.yaml
 
 
@@ -138,10 +139,10 @@ echo -e "\n${CYAN}Waiting until all deployments are ready...${NC}"
 for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
     do
         for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
-            do 
+            do
                 is_istio_deployment_ready ${cluster} ${deployment}
-            done 
-    done 
+            done
+    done
 echo -e "\n${CYAN}All Istio deployments are ready in ops clusters.${NC}"
 
 echo -e "\n${CYAN}Exposing pilot, policy and telemetry using ILB...${NC}"
@@ -166,7 +167,7 @@ echo -e "\n${CYAN}ILB IP addresses assigned.${NC}"
 
 echo -e "\n${CYAN}Exporting ILB IP as variables...${NC}"
 for idx in ${!OPS_CLUSTER_CONTEXTS[@]}
-    do 
+    do
         ops_idx=$((idx + 1))
         echo -e "export OPS_GKE_${ops_idx}_PILOT_ILB_IP=$(kubectl --context ${OPS_CLUSTER_CONTEXTS[idx]} -n istio-system get svc istio-pilot -o json | jq -r '.status.loadBalancer.ingress[].ip')" | tee -a ${VARS_FILE}
         echo -e "export OPS_GKE_${ops_idx}_POLICY_ILB_IP=$(kubectl --context ${OPS_CLUSTER_CONTEXTS[idx]} -n istio-system get svc istio-policy -o json | jq -r '.status.loadBalancer.ingress[].ip')" | tee -a ${VARS_FILE}
@@ -176,17 +177,18 @@ for idx in ${!OPS_CLUSTER_CONTEXTS[@]}
 source ./vars/vars.sh
 
 for idx in ${!OPS_CLUSTER_CONTEXTS[@]}
-    do 
+    do
         ops_idx=$((idx + 1))
         echo -e "\n${CYAN}Creating helm template using Istio shared control plane values for dev${ops_idx} clusters...${NC}"
-        
+
         PILOT_ILB_IP=OPS_GKE_${ops_idx}_PILOT_ILB_IP
         POLICY_ILB_IP=OPS_GKE_${ops_idx}_POLICY_ILB_IP
         TELEMETRY_ILB_IP=OPS_GKE_${ops_idx}_TELEMETRY_ILB_IP
-        
+
         helm template ./istio-${ISTIO_VERSION}/install/kubernetes/helm/istio \
         --name istio-remote --namespace istio-system \
         --values ./istio/01_istio-shared-controlplane-values.yaml \
+        --set values.global.proxy.accessLogFile="/dev/stdout" \
         --set global.remotePilotAddress=${!PILOT_ILB_IP} \
         --set global.remotePolicyAddress=${!POLICY_ILB_IP} \
         --set global.remoteTelemetryAddress=${!TELEMETRY_ILB_IP} > ./tmp/02_istio-shared-controlplane-dev${ops_idx}-manifest.yaml
@@ -219,9 +221,9 @@ for idx in ${!OPS_CLUSTER_CONTEXTS[@]}
         for dev_cluster in ${!DEV_CLUSTER_CONTEXTS}
             do
             for deployment in ${DEV_ISTIO_DEPLOYMENTS[@]}
-                do 
+                do
                     is_istio_deployment_ready ${dev_cluster} ${deployment}
-                done 
+                done
             done
-    done 
+    done
 echo -e "\n${CYAN}All Istio deployments are ready in dev clusters.${NC}"
