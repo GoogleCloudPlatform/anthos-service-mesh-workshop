@@ -38,6 +38,7 @@ echo $SCRIPT_DIR
 # use this in clean up script instead
 export ADMIN_USER=$(gcloud config get-value account)
 
+# If we want to split creation of users on multiple runs then the start of the sequence needs to be a variable
 for i in $(seq 1 $NUM_USERS)
 do
   USER_ID=$(printf "%03d" $i)
@@ -46,8 +47,39 @@ do
   echo "RANDOM PERSIST: ${RANDOM_PERSIST} - MY_USER: ${MY_USER} - ADMIN_USER: ${ADMIN_USER}"
 
   $SCRIPT_DIR/setup-terraform-admin-project.sh
+
+  # ************************
+  # Clean Up
+  # ************************
   rm -rf ${SCRIPT_DIR}/../vars
   cd infrastructure
   git remote remove infra
+  cd ..
+
+  # Clean up backends and shared states for each GCP prod resource
+  for idx in ${!folders[@]}
+  do
+      # Extract the resource name from the folder
+      resource=$(echo ${folders[idx]} | grep -oP '([^\/]+$)')
+
+      # clean up backends
+      rm infrastructure/${folders[idx]}/backend.tf
+
+      # clean up shared states for every resource
+      rm infrastructure/gcp/prod/shared_states/shared_state_${resource}.tf
+
+      # clean up vars
+      tfvar_tmpl_file=infrastructure/${folders[idx]}/terraform.tfvars_tmpl
+      if [ -f "$tfvar_tmpl_file" ]; then
+          rm infrastructure/${folders[idx]}/terraform.tfvars
+      fi
+
+      # clean up vars
+      auto_tfvar_tmpl_file=infrastructure/${folders[idx]}/variables.auto.tfvars_tmpl
+      if [ -f "$auto_tfvar_tmpl_file" ]; then
+          rm infrastructure/${folders[idx]}/variables.auto.tfvars
+      fi
+
+  done
 
 done
