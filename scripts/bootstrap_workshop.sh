@@ -32,6 +32,8 @@ NUM_USERS=2
 ORG_NAME="gcpworkshops.com"
 
 WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NO}"
+export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
+echo $SCRIPT_DIR
 
 # use this in clean up script instead
 export ADMIN_USER=$(gcloud config get-value account)
@@ -43,9 +45,9 @@ do
   export RANDOM_PERSIST=${WORKSHOP_ID}
   echo "RANDOM PERSIST: ${RANDOM_PERSIST} - MY_USER: ${MY_USER} - ADMIN_USER: ${ADMIN_USER}"
 
-  ./scripts/setup-terraform-admin-project.sh
-
-  cd ../infrastructure
+  $SCRIPT_DIR/setup-terraform-admin-project.sh
+  rm -rf ${SCRIPT_DIR}/../vars
+  cd infrastructure
   git remote remove infra
 
 done
