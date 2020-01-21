@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
+# SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 # TASK: Create a terraform admin project to provision GCP infrastructure
 
@@ -25,7 +25,7 @@ export NC='\033[0m' # No Color
 
 
 # Create a vars folder and file
-mkdir -p vars
+mkdir -p ${SCRIPT_DIR}/../vars
 export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
 touch ${VARS_FILE}
 chmod +x ${VARS_FILE}
