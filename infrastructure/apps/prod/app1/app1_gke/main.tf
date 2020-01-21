@@ -13,6 +13,7 @@
 # limitations under the License.
 
 data "google_container_engine_versions" "subnet_03" {
+  project        = data.terraform_remote_state.app1_project.outputs.dev1_project_id
   location       = var.subnet_03_region
   version_prefix = var.kubernetes_version
 }
