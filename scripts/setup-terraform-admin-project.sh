@@ -88,6 +88,7 @@ if [ "${TF_VAR_folder_id}" ]; then
        export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
 fi
 
+# TODO: If project already exists then have script retry with a diff PROJECT_ID_SUFFIX value
 echo -e "\n${CYAN}Creating terraform admin project...${NC}" 
 gcloud projects create ${TF_ADMIN} \
 --folder ${TF_VAR_folder_id} \
@@ -179,7 +180,7 @@ echo -e "export TF_VAR_org_id=${TF_VAR_org_id}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_billing_account=${TF_VAR_billing_account}" | tee -a ${VARS_FILE}
 echo -e "export TF_ADMIN=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_tfadmin=${TF_ADMIN}" | tee -a ${VARS_FILE}
-echo -e "export TF_VAR_project_editor=${MY_USER}" | tee -a ${VARS_FILE}
+echo -e "export TF_VAR_project_editor=${ADMIN_USER}" | tee -a ${VARS_FILE}
 echo -e "export GOOGLE_PROJECT=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_CLOUDBUILD_SA=$(gcloud projects describe ${TF_ADMIN} --format='value(projectNumber)')@cloudbuild.gserviceaccount.com" | tee -a ${VARS_FILE}
 
@@ -255,3 +256,4 @@ git remote add infra "https://source.developers.google.com/p/${TF_ADMIN}/r/infra
 git add . && git commit -am "first commit"
 git push infra master
 cd ..
+
