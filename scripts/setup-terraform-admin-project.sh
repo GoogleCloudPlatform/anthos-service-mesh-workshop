@@ -74,7 +74,6 @@ ORG_USER=${MY_USER%@*}
 ORG_USER=${ORG_USER:0:11}
 export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm
 PROJECT_ID_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 6 | head -n 1)
-PROJECT_ID_SUFFIX=${PROJECT_ID_SUFFIX:1:5}
 export TF_ADMIN_NAME=${ORG_USER}-${RANDOM_PERSIST}-tf
 export TF_ADMIN=${TF_ADMIN_NAME}-${PROJECT_ID_SUFFIX}
 

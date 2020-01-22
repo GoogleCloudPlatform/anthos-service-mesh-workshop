@@ -25,10 +25,6 @@ SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$
 
 source ${VARS_FILE}
 
-cat ${VARS_FILE}
-
-exit
-
 # Create a logs folder and file and send stdout and stderr to console and log file 
 mkdir -p logs
 export LOG_FILE=${SCRIPT_DIR}/../logs/cleanup-$(date +%s).log
