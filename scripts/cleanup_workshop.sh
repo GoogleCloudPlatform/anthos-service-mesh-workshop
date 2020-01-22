@@ -34,6 +34,5 @@ while read user_tf_project; do
   export VARS_FILE="${SCRIPT_DIR}/../vars/vars_${user_tf_project}.sh"
   gsutil cp gs://${user_tf_project}/vars/vars.sh ${VARS_FILE}
   source ${SCRIPT_DIR}/cleanup_projects.sh
-  unset ${VARS_FILE}
-  rm ${VARS_FILE}
+  unset VARS_FILE
 done <${SCRIPT}/../tmp/workshop.txt

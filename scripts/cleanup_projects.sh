@@ -33,7 +33,7 @@ exec 2>&1
 exec &> >(tee -i ${LOG_FILE})
 
 echo -e "\n${CYAN}Switching users...${NC}" 
-# Check MY_USER variable exists
+# Check ADMIN_USER variable exists
 while [ -z ${ADMIN_USER} ]
     do
     read -p "$(echo -e ${CYAN}"Please provide your user email (your account must be Org Admin): "${NC})" ADMIN_USER
@@ -55,11 +55,8 @@ gcloud projects delete ${TF_VAR_host_project_name} --quiet
 echo -e "\n${CYAN}Deleting terraform admin project...${NC}" 
 gcloud projects delete ${TF_ADMIN} --quiet
 
-echo -e "\n${CYAN}Getting folder ID...${NC}" 
-export FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
-
 echo -e "\n${CYAN}Deleting folder...${NC}" 
-gcloud resource-manager folders delete ${FOLDER_ID}
+gcloud resource-manager folders delete ${TF_VAR_folder_id}
 
 echo -e "\n${CYAN}Removing cloudbuild service account project creator IAM role at the Org level...${NC}" 
 gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
@@ -88,10 +85,10 @@ echo -e "\n${CYAN}Remove infra git repo...${NC}"
 (cd ${SCRIPT_DIR}/../infrastructure && rm -Rf .git)
 
 echo -e "\n${CYAN}Remove gke, istio-${ISTIO_VERSION}, vars and tmp folder...${NC}" 
-rm -rf ${SCRIPT_DIR}/../gke
-rm -rf ${SCRIPT_DIR}/../istio-${ISTIO_VERSION}
-rm -rf ${SCRIPT_DIR}/../vars
-rm -rf ${SCRIPT_DIR}/../tmp
+#rm -rf ${SCRIPT_DIR}/../gke
+#rm -rf ${SCRIPT_DIR}/../istio-${ISTIO_VERSION}
+#rm -rf ${SCRIPT_DIR}/../vars
+#rm -rf ${SCRIPT_DIR}/../tmp
 
 echo -e "\n${CYAN}Unsetting RANDOM_PERSIST variable...${NC}" 
 unset RANDOM_PERSIST
