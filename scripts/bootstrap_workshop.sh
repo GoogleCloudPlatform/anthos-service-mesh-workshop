@@ -59,7 +59,6 @@ do
   source $SCRIPT_DIR/setup-terraform-admin-project.sh
   echo "TF_ADMIN: ${TF_ADMIN}"
   echo "$TF_ADMIN" | tee -a ${SCRIPT_DIR}/../tmp/workshop.txt
-  continue
 
   # ************************
   # Clean Up
