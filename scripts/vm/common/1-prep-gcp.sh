@@ -14,7 +14,7 @@ export DEV1_GKE_1_POD_CIDR=$(gcloud container clusters describe \
  --zone ${DEV1_GKE_1_LOCATION} --format=json | jq -r '.clusterIpv4Cidr')
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
---project=${TF_VAR_dev1_project_name} \
+--project=${TF_VAR_ops_project_name} \
 --network="dev1-subnet-01" \
 --source-ranges=${DEV1_GKE_1_POD_CIDR} \
 --target-tags=${VM_NAME} \
@@ -28,7 +28,7 @@ export DEV1_GKE_2_POD_CIDR=$(gcloud container clusters describe \
  --zone ${DEV1_GKE_2_LOCATION} --format=json | jq -r '.clusterIpv4Cidr')
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
---project=${TF_VAR_dev1_project_name} \
+--project=${TF_VAR_ops_project_name} \
 --network="dev1-subnet-01" \
 --source-ranges=${DEV1_GKE_2_POD_CIDR} \
 --target-tags=${VM_NAME} \
