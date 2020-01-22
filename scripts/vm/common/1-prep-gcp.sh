@@ -4,7 +4,8 @@ source ../${1}/env.sh
 
 # add network tags to VM  - needed for firewall rules
 log "🏷 Adding network tag to VM..."
-gcloud compute instances add-tags ${VM_NAME} --zone ${VM_ZONE} --tags=${VM_NAME}
+gcloud compute instances add-tags ${VM_NAME} \
+ --project ${TF_VAR_dev1_project_name} --zone ${VM_ZONE} --tags=${VM_NAME}
 
 # cluster 1 --> VM firewall rule
 log "🔥 Adding Cluster1 firewall rule..."
@@ -13,7 +14,7 @@ export DEV1_GKE_1_POD_CIDR=$(gcloud container clusters describe \
  --zone ${DEV1_GKE_1_LOCATION} --format=json | jq -r '.clusterIpv4Cidr')
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
---PROJECT_ID=${TF_VAR_dev1_project_name} \
+--project=${TF_VAR_dev1_project_name} \
 --source-ranges=${DEV1_GKE_1_POD_CIDR} \
 --target-tags=${VM_NAME} \
 --action=ALLOW \
@@ -26,7 +27,7 @@ export DEV1_GKE_2_POD_CIDR=$(gcloud container clusters describe \
  --zone ${DEV1_GKE_2_LOCATION} --format=json | jq -r '.clusterIpv4Cidr')
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
---PROJECT_ID=${TF_VAR_dev1_project_name} \
+--project=${TF_VAR_dev1_project_name} \
 --source-ranges=${DEV1_GKE_2_POD_CIDR} \
 --target-tags=${VM_NAME} \
 --action=ALLOW \
