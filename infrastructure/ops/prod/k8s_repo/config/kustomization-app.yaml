@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Using pre-defined bases spec here instead of `kustomize edit add base` until this is resolved:
+#  https://github.com/kubernetes-sigs/kustomize/issues/1556
+bases:
+  - istio-operator/
+  - istio-controlplane/
+  - cnrm-system/
+  - app-cnrm/
+  - app/
+
+resources:
+  - istio-operator-psp.yaml
+
+patchesJson6902:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: istio-operator
+    path: jsonpatch-istio-operator-clusterrole.yaml
