@@ -18,6 +18,9 @@
 # TF_VAR_org_id, TF_VAR_billing_account, MY_USER
 # RANDOM_PERSIST is YYMMDD-workshop_number
 
+# TODO: make this an input
+ORG_ADMIN_PROJECT="gcpworkshops-gsuite-admin"
+
 #export TF_VAR_org_id=$1
 #export ORG_NAME=$2
 #export TF_VAR_billing_account=$3
@@ -27,16 +30,23 @@
 export TF_VAR_billing_account=0109A7-3E7048-9068C9
 export TF_VAR_org_id=145197157826
 
+# TODO: args
 WORKSHOP_NO="01"
 NUM_USERS=2
 ORG_NAME="gcpworkshops.com"
+ADMIN_GCS_BUCKET="gcpworkshops-gsuite-admin"
 
 WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NO}"
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
-echo $SCRIPT_DIR
 
 # use this in clean up script instead
 export ADMIN_USER=$(gcloud config get-value account)
+
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
+if [ $? -eq 1 ]; then
+  rm ${SCRIPT_DIR}/../tmp/workshop.txt
+  touch ${SCRIPT_DIR}/../tmp/workshop.txt
+fi
 
 # If we want to split creation of users on multiple runs then the start of the sequence needs to be a variable
 for i in $(seq 1 $NUM_USERS)
@@ -46,7 +56,10 @@ do
   export RANDOM_PERSIST=${WORKSHOP_ID}
   echo "RANDOM PERSIST: ${RANDOM_PERSIST} - MY_USER: ${MY_USER} - ADMIN_USER: ${ADMIN_USER}"
 
-  $SCRIPT_DIR/setup-terraform-admin-project.sh
+  source $SCRIPT_DIR/setup-terraform-admin-project.sh
+  echo "TF_ADMIN: ${TF_ADMIN}"
+  echo "$TF_ADMIN" | tee -a ${SCRIPT_DIR}/../tmp/workshop.txt
+  continue
 
   # ************************
   # Clean Up
@@ -83,3 +96,6 @@ do
   done
 
 done
+
+# Update GCS with workshop.txt
+gsutil cp ${SCRIPT_DIR}/../tmp/workshop.txt gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt

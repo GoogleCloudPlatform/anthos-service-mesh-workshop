@@ -78,7 +78,8 @@ PROJECT_ID_SUFFIX=${PROJECT_ID_SUFFIX:1:5}
 export TF_ADMIN_NAME=${ORG_USER}-${RANDOM_PERSIST}-tf
 export TF_ADMIN=${TF_ADMIN_NAME}-${PROJECT_ID_SUFFIX}
 
-echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}" 
+
+echo -e "\n${CYAN}Checking for existing asm workshop folder...${NC}"
 export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
 if [ "${TF_VAR_folder_id}" ]; then
    echo -e "\n${CYAN}Folder ${TF_VAR_folder_display_name} already exists.${NC}"
@@ -89,18 +90,18 @@ if [ "${TF_VAR_folder_id}" ]; then
 fi
 
 # TODO: If project already exists then have script retry with a diff PROJECT_ID_SUFFIX value
-echo -e "\n${CYAN}Creating terraform admin project...${NC}" 
+echo -e "\n${CYAN}Creating terraform admin project...${NC}"
 gcloud projects create ${TF_ADMIN} \
 --folder ${TF_VAR_folder_id} \
 --name ${TF_ADMIN_NAME} \
---set-as-default 
+--set-as-default
 
 
-echo -e "\n${CYAN}Linking billing account to the terraform admin project...${NC}" 
+echo -e "\n${CYAN}Linking billing account to the terraform admin project...${NC}"
 gcloud beta billing projects link ${TF_ADMIN} \
---billing-account ${TF_VAR_billing_account} 
+--billing-account ${TF_VAR_billing_account}
 
-echo -e "\n${CYAN}Enabling APIs that are required in the projects that terraform creates...${NC}" 
+echo -e "\n${CYAN}Enabling APIs that are required in the projects that terraform creates...${NC}"
 gcloud services enable cloudresourcemanager.googleapis.com \
 cloudbilling.googleapis.com \
 iam.googleapis.com \
@@ -114,63 +115,63 @@ contextgraph.googleapis.com
 echo -e "\n${CYAN}Getting Terraform admin project cloudbuild service account...${NC}"
 export TF_CLOUDBUILD_SA=$(gcloud projects describe $TF_ADMIN --format='value(projectNumber)')@cloudbuild.gserviceaccount.com
 
-echo -e "\n${CYAN}Giving cloudbuild service account viewer role...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account viewer role...${NC}"
 gcloud projects add-iam-policy-binding ${TF_ADMIN} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/viewer 
+--role roles/viewer
 
-echo -e "\n${CYAN}Giving cloudbuild service account storage admin role...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account storage admin role...${NC}"
 gcloud projects add-iam-policy-binding ${TF_ADMIN} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/storage.admin 
+--role roles/storage.admin
 
-echo -e "\n${CYAN}Giving cloudbuild service account project creator IAM role at the Org level...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account project creator IAM role at the Org level...${NC}"
 gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/resourcemanager.projectCreator 
+--role roles/resourcemanager.projectCreator
 
 
-echo -e "\n${CYAN}Giving cloudbuild service account billing user IAM role at the Org level...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account billing user IAM role at the Org level...${NC}"
 gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/billing.user 
+--role roles/billing.user
 
 
-echo -e "\n${CYAN}Giving cloudbuild service account compute admin IAM role at the Org level...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account compute admin IAM role at the Org level...${NC}"
 gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/compute.admin 
+--role roles/compute.admin
 
 
-echo -e "\n${CYAN}Giving cloudbuild service account folder creator IAM role at the Org level...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account folder creator IAM role at the Org level...${NC}"
 gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
---role roles/resourcemanager.folderCreator 
+--role roles/resourcemanager.folderCreator
 
 
-echo -e "\n${CYAN}Giving cloudbuild service account billing user role for the billing account...${NC}" 
+echo -e "\n${CYAN}Giving cloudbuild service account billing user role for the billing account...${NC}"
 mkdir -p tmp
 gcloud beta billing accounts get-iam-policy ${TF_VAR_billing_account} --format=json | \
     jq '(.bindings[] | select(.role=="roles/billing.user").members) += ["serviceAccount:'${TF_CLOUDBUILD_SA}'"]' > ./tmp/cloudbuild_billing-iam-policy.json
-gcloud beta billing accounts set-iam-policy ${TF_VAR_billing_account} ./tmp/cloudbuild_billing-iam-policy.json 
+gcloud beta billing accounts set-iam-policy ${TF_VAR_billing_account} ./tmp/cloudbuild_billing-iam-policy.json
 
 
-echo -e "\n${CYAN}Creating gcs bucket for terraform state...${NC}" 
-gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN} 
+echo -e "\n${CYAN}Creating gcs bucket for terraform state...${NC}"
+gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
 
-echo -e "\n${CYAN}Enabling versioning on the terraform state gcs bucket...${NC}" 
-gsutil versioning set on gs://${TF_ADMIN} 
+echo -e "\n${CYAN}Enabling versioning on the terraform state gcs bucket...${NC}"
+gsutil versioning set on gs://${TF_ADMIN}
 
-echo -e "\n${CYAN}Creating infrastructure cloud source repo...${NC}" 
+echo -e "\n${CYAN}Creating infrastructure cloud source repo...${NC}"
 gcloud source repos create infrastructure
 
-echo -e "\n${CYAN}Creating cloudbuild trigger for infrastructure deployment...${NC}" 
+echo -e "\n${CYAN}Creating cloudbuild trigger for infrastructure deployment...${NC}"
 gcloud alpha builds triggers create cloud-source-repositories \
 --repo="infrastructure" --description="push to master" --branch-pattern="master" \
 --build-config="cloudbuild.yaml"
 
-echo -e "\n${CYAN}Setting default project and credentials...${NC}" 
-export GOOGLE_PROJECT=${TF_ADMIN} 
+echo -e "\n${CYAN}Setting default project and credentials...${NC}"
+export GOOGLE_PROJECT=${TF_ADMIN}
 
 echo -e "\n${CYAN}Creating vars file...${NC}"
 echo -e "export MY_USER=${MY_USER}" | tee -a ${VARS_FILE}
@@ -184,7 +185,7 @@ echo -e "export GOOGLE_PROJECT=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_CLOUDBUILD_SA=$(gcloud projects describe ${TF_ADMIN} --format='value(projectNumber)')@cloudbuild.gserviceaccount.com" | tee -a ${VARS_FILE}
 
 
-echo -e "\n${CYAN}Setting new project names...${NC}" 
+echo -e "\n${CYAN}Setting new project names...${NC}"
 echo -e "export TF_VAR_host_project_name=${ORG_USER}-${RANDOM_PERSIST}-host-${PROJECT_ID_SUFFIX}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_ops_project_name=${ORG_USER}-${RANDOM_PERSIST}-ops-${PROJECT_ID_SUFFIX}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_dev1_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev1-${PROJECT_ID_SUFFIX}" | tee -a ${VARS_FILE}
@@ -200,7 +201,7 @@ echo -e "\n${CYAN}Preparing terraform backends, shared states and vars...${NC}"
 # Define an array of GCP resources
 declare -a folders
 folders=(
-    'gcp/prod/gcp' 
+    'gcp/prod/gcp'
     'network/prod/host_project'
     'network/prod/shared_vpc'
     'ops/prod/ops_project'
