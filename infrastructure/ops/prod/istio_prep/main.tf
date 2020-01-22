@@ -19,8 +19,7 @@ locals {
 wget -qO- https://github.com/istio/operator/archive/${var.istio_version}.tar.gz | tar -zxf - operator-${var.istio_version}/deploy
 gsutil -m rsync -r -d operator-${var.istio_version}/deploy gs://${var.tfadmin_proj}/ops/istio-operator-${var.istio_version}
 
-wget -qO- --header "Authorization: Bearer $(gcloud auth print-access-token)" \
-  https://us-central1-cnrm-eap.cloudfunctions.net/download/latest/infra/install-bundle-with-workload-identity.tar.gz | tar -zxvf - 
+wget -qO- https://storage.googleapis.com/asm-workshop/install-bundle-with-workload-identity.tar.gz | tar -zxvf - 
 gsutil -m rsync -r -d install-bundle gs://${var.tfadmin_proj}/ops/cnrm/install-bundle
   EOT
 

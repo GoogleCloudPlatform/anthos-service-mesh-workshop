@@ -13,5 +13,5 @@ patchesJson6902:
       group: rbac.authorization.k8s.io
       version: v1
       kind: ClusterRole
-      name: cnrm-manager-role
+      name: cnrm-manager-cluster-role
     path: jsonpatch-cnrm-clusterrole.yaml
