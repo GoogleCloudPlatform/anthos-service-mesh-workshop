@@ -29,7 +29,7 @@ export DEV1_GKE_2_POD_CIDR=$(gcloud container clusters describe \
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
 --project=${TF_VAR_host_project_name} \
---network="shared-vpc \
+--network="shared-vpc" \
 --source-ranges=${DEV1_GKE_2_POD_CIDR} \
 --target-tags=${VM_NAME} \
 --action=ALLOW \
