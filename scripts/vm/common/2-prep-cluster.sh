@@ -1,7 +1,6 @@
 #!/bin/bash
 # Send ops cluster (Istio ctrl plane) info to the VM
 
-source ./env.sh
 source ../${1}/env.sh
 
 log "📦 Generating cluster.env for the VM..."

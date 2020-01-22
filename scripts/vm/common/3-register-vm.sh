@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source ./env.sh
 source ../${1}/env.sh
 
 
