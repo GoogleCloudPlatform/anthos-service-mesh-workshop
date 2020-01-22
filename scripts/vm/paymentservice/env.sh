@@ -5,10 +5,12 @@ set -euo pipefail
 log() { echo "$1" >&2; }
 
 VM_NAME_PREFIX="gce-vm-external"
-VM_NAME=`gcloud compute instances list --filter="name~'${VM_NAME_PREFIX}*'" --format=json | \
- jq -r '.[]|select(.name | startswith("${VM_NAME_PREFIX")) | .name'`
+VM_NAME=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .name'`
 
-VM_ZONE="us-west1-a"
+LONG_ZONE=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .zone'`
+VM_ZONE=`basename $LONG_ZONE | tr -d '"'`
+echo $VM_ZONE
+
 SVC_NAME="paymentservice"
 SVC_PORT="50051"
 SVC_NAMESPACE="payment"

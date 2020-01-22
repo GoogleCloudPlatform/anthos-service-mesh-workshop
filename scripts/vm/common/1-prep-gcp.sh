@@ -2,8 +2,6 @@
 
 source ../${1}/env.sh
 
-gcloud config set project ${TF_VAR_dev1_project_name}
-
 # add network tags to VM  - needed for firewall rules
 log "🏷 Adding network tag to VM..."
 gcloud compute instances add-tags ${VM_NAME} \
