@@ -1,6 +1,5 @@
 #!/bin/bash
 
-log "🌥Getting info..."
 source ../${1}/env.sh
 
 # add network tags to VM  - needed for firewall rules

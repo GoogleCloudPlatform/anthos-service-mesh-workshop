@@ -4,6 +4,7 @@
 set -euo pipefail
 log() { echo "$1" >&2; }
 
+log "🌥Getting info..."
 VM_NAME_PREFIX="gce-vm-external"
 VM_NAME=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .name'`
 VM_NAME=`echo ${VM_NAME} | tr -d '"'`
