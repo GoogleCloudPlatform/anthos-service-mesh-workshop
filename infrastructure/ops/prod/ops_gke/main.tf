@@ -12,12 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+data "google_container_engine_versions" "subnet_01" {
+  project        = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  location       = var.subnet_01_region
+  version_prefix = var.kubernetes_version
+}
+
+data "google_container_engine_versions" "subnet_02" {
+  project        = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  location       = var.subnet_02_region
+  version_prefix = var.kubernetes_version
+}
+
 # gke-asm-1-r1-prod - Create GKE regional cluster in ops-asm project using subnet-01
 module "create_gke_1_ops_asm_subnet_01" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.ops_project.outputs.ops_project_id
   name               = var.gke_asm_r1
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.subnet_01.latest_master_version
   region             = var.subnet_01_region
   zones              = ["${var.subnet_01_region}-a", "${var.subnet_01_region}-b", "${var.subnet_01_region}-c"]
   network_project_id = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
@@ -65,7 +77,7 @@ module "create_gke_2_ops_asm_subnet_02" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.ops_project.outputs.ops_project_id
   name               = var.gke_asm_r2
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.subnet_02.latest_master_version
   region             = var.subnet_02_region
   zones              = ["${var.subnet_02_region}-a", "${var.subnet_02_region}-b", "${var.subnet_02_region}-c"]
   network_project_id = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
