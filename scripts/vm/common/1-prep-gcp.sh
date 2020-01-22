@@ -1,5 +1,6 @@
 #!/bin/bash
 
+log "🌥Getting info..."
 source ../${1}/env.sh
 
 # add network tags to VM  - needed for firewall rules
@@ -15,6 +16,7 @@ export DEV1_GKE_1_POD_CIDR=$(gcloud container clusters describe \
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
 --project=${TF_VAR_dev1_project_name} \
+--network="dev1-subnet-01" \
 --source-ranges=${DEV1_GKE_1_POD_CIDR} \
 --target-tags=${VM_NAME} \
 --action=ALLOW \
@@ -28,6 +30,7 @@ export DEV1_GKE_2_POD_CIDR=$(gcloud container clusters describe \
 
 gcloud compute firewall-rules create k8s-1-to-${VM_NAME} \
 --project=${TF_VAR_dev1_project_name} \
+--network="dev1-subnet-01" \
 --source-ranges=${DEV1_GKE_2_POD_CIDR} \
 --target-tags=${VM_NAME} \
 --action=ALLOW \
