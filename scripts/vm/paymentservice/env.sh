@@ -1,7 +1,7 @@
 #!/bin/bash
 # 💳 PAYMENTSERVICE VARS
 
-set -euo pipefail
+# set -euo pipefail
 log() { echo "$1" >&2; }
 
 log "🌥Getting info..."
