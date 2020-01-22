@@ -9,7 +9,6 @@ VM_NAME=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --f
 
 LONG_ZONE=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .zone'`
 VM_ZONE=`basename $LONG_ZONE | tr -d '"'`
-echo $VM_ZONE
 
 SVC_NAME="paymentservice"
 SVC_PORT="50051"
