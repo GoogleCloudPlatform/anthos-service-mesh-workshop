@@ -34,11 +34,11 @@ exec &> >(tee -i ${LOG_FILE})
 
 echo -e "\n${CYAN}Switching users...${NC}" 
 # Check MY_USER variable exists
-while [ -z ${MY_USER} ]
+while [ -z ${ADMIN_USER} ]
     do
-    read -p "$(echo -e ${CYAN}"Please provide your user email (your account must be Org Admin): "${NC})" MY_USER
+    read -p "$(echo -e ${CYAN}"Please provide your user email (your account must be Org Admin): "${NC})" ADMIN_USER
     done
-gcloud config set account ${MY_USER}
+gcloud config set account ${ADMIN_USER}
 
 echo -e "\n${CYAN}Deleting dev1, dev2 and ops projects...${NC}" 
 gcloud projects delete ${TF_VAR_dev1_project_name} --quiet
