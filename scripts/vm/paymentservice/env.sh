@@ -6,6 +6,7 @@ log() { echo "$1" >&2; }
 
 VM_NAME_PREFIX="gce-vm-external"
 VM_NAME=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .name'`
+VM_NAME=`echo ${VM_NAME} | tr -d '"'`
 
 LONG_ZONE=`gcloud compute instances list --project ${TF_VAR_dev1_project_name} --filter="name~'${VM_NAME_PREFIX}*'" --format=json | jq '.[0] | .zone'`
 VM_ZONE=`basename $LONG_ZONE | tr -d '"'`
