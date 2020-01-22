@@ -1,6 +1,9 @@
 #!/bin/bash
 # 📷 PRODUCTCATALOGSERVICE VARS
 
+set -euo pipefail
+log() { echo "$1" >&2; }
+
 VM_NAME_PREFIX="gce-vm-external"
 VM_NAME=`gcloud compute instances list --filter="name~'${VM_NAME_PREFIX}*'" --format=json | \
  jq -r '.[]|select(.name | startswith("${VM_NAME_PREFIX")) | .name'`
