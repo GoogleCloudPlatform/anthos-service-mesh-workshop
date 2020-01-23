@@ -23,6 +23,7 @@ module "instance_template" {
     email  = data.terraform_remote_state.app1_project.outputs.dev1_project_service_account_email
     scopes = ["cloud-platform"]
   }
+  access_config = [{nat_ip = null, network_tier = null}]
 }
 
 module "gce_vm_mesh" {
