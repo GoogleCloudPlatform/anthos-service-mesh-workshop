@@ -7,6 +7,7 @@ resources:
   - app-currency-service.yaml
   - app-email-service.yaml
   - app-frontend.yaml
+  - app-loadgenerator.yaml
   - app-payment-service.yaml
   - app-product-catalog-service.yaml
   - app-recommendation-service.yaml
