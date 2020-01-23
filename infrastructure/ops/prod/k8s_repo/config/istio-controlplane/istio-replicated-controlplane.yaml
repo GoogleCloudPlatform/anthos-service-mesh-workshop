@@ -83,6 +83,11 @@ spec:
         enabled: true
         k8s:
           overlays:
+            - kind: ServiceAccount
+              name: "istio-telemetry-sa"
+              patches:
+                - path: metadata.annotations
+                  value: kubernetes.io/psp: "istio-telemetry@smcghee-11932-01-ops.iam.gserviceaccount.com"
             - kind: Service
               name: istio-telemetry
               patches:
