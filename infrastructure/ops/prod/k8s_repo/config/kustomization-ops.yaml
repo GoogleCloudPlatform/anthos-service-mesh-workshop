@@ -7,9 +7,11 @@ bases:
   - istio-operator/
   - istio-controlplane/
   - cnrm-system/
-  - app-cnrm/
+  - app-cnrm
   - app/
   - app-ingress/
+  - istio-networking/
+  - istio-authentication/
 
 resources:
   - istio-operator-psp.yaml

@@ -11,4 +11,5 @@ resources:
   - payment-psp.yaml
   - product-catalog-psp.yaml
   - recommendation-psp.yaml
+  - redis-cart-psp.yaml
   - shipping-psp.yaml
