@@ -103,7 +103,8 @@ compute.googleapis.com \
 container.googleapis.com \
 serviceusage.googleapis.com \
 sourcerepo.googleapis.com \
-cloudbuild.googleapis.com 
+cloudbuild.googleapis.com \
+contextgraph.googleapis.com
 
 echo -e "\n${CYAN}Getting Terraform admin project cloudbuild service account...${NC}"
 export TF_CLOUDBUILD_SA=$(gcloud projects describe $TF_ADMIN --format='value(projectNumber)')@cloudbuild.gserviceaccount.com
