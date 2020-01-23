@@ -12,12 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+data "google_container_engine_versions" "r1a_subnet_03" {
+  project        = data.terraform_remote_state.app1_project.outputs.dev1_project_id
+  location       = "${var.subnet_03_region}-a"
+  version_prefix = var.kubernetes_version
+}
+
+data "google_container_engine_versions" "r1b_subnet_03" {
+  project        = data.terraform_remote_state.app1_project.outputs.dev1_project_id
+  location       = "${var.subnet_03_region}-b"
+  version_prefix = var.kubernetes_version
+}
+
 # gke-1-apps-r1a-prod - Create GKE zonal cluster in dev1 project using subnet-03 zone a
 module "create_gke_1_dev1_r1a_subnet_03" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.app1_project.outputs.dev1_project_id
   name               = var.gke_dev1-r1a
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.r1a_subnet_03.latest_master_version
   region             = var.subnet_03_region
   regional           = false
   zones              = ["${var.subnet_03_region}-a"]
@@ -67,7 +79,7 @@ module "create_gke_2_dev1_r1b_subnet_03" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.app1_project.outputs.dev1_project_id
   name               = var.gke_dev1-r1b
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.r1b_subnet_03.latest_master_version
   region             = var.subnet_03_region
   regional           = false
   zones              = ["${var.subnet_03_region}-b"]
