@@ -17,6 +17,7 @@ spec:
         - serviceAccount:${PROJECT_ID}.svc.id.goog[currency/currency]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[email/email]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[frontend/frontend]
+        - serviceAccount:${PROJECT_ID}.svc.id.goog[loadgenerator/loadgenerator]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[payment/payment]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[product-catalog/product-catalog]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[recommendation/recommendation]
