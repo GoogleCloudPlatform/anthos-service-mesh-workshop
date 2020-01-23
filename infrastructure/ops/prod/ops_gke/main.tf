@@ -201,6 +201,34 @@ resource "google_service_account_iam_member" "cnrm-sa-workload-identity" {
   ]
 }
 
+# Service account used by istio-telemetry (mixer).
+resource "google_service_account" "istio-telemetry" {
+  project      = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  account_id   = "istio-telemetry"
+  display_name = "istio-telemetry"
+  depends_on = [
+    null_resource.exec_check_for_cloudbuild_service_accounts_in_ops_project
+  ]
+}
+
+# IAM binding to grant istio-telemetry service account access to the project.
+resource "google_project_iam_member" "istio-telemetry-owner" {
+  project = google_service_account.istio-telemetry.project
+  role    = "roles/owner"  # narrow this down: metrics.write, logs.write, traces.write, contextgraph.write? debug/profiler?
+  member  = "serviceAccount:${google_service_account.istio-telemetry.email}"
+}
+
+# Workload Identity IAM binding for istio-telemetry.
+resource "google_service_account_iam_member" "istio-telemetry-sa-workload-identity" {
+  service_account_id = google_service_account.istio-telemetry.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${google_service_account.istio-telemetry.project}.svc.id.goog[istio-system/istio-telemetry]"
+  depends_on = [
+    module.create_gke_1_ops_asm_subnet_01,
+    module.create_gke_2_ops_asm_subnet_02
+  ]
+}
+
 # Use internal IP reservations when issue with using reserved internal IPs with K8s services:
 #  https://github.com/kubernetes/kubernetes/issues/66762
 locals {

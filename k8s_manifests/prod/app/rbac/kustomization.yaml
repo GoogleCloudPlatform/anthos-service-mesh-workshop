@@ -7,6 +7,7 @@ resources:
   - currency-rbac.yaml
   - email-rbac.yaml
   - frontend-rbac.yaml
+  - loadgenerator-rbac.yaml
   - payment-rbac.yaml
   - product-catalog-rbac.yaml
   - recommendation-rbac.yaml
