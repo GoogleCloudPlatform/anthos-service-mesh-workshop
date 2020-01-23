@@ -84,10 +84,10 @@ spec:
         k8s:
           overlays:
             - kind: ServiceAccount
-              name: "istio-telemetry-sa"
+              name: "istio-mixer-service-account"
               patches:
                 - path: metadata.annotations
-                  value: kubernetes.io/psp: "istio-telemetry@smcghee-11932-01-ops.iam.gserviceaccount.com"
+                  value: iam.gke.io/gcp-service-account:"istio-telemetry@smcghee-11932-01-ops.iam.gserviceaccount.com"
             - kind: Service
               name: istio-telemetry
               patches:
