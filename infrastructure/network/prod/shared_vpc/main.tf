@@ -125,3 +125,17 @@ module "net-firewall" {
     { "protocol" : "all" },
   ]
 }
+
+# create firewall rule - allow ssh / scp from all
+resource "google_compute_firewall" "default" {
+  name    = "ssh-scp-all"
+  network = module.create_vpc_in_host_project.network_name
+  allow {
+    protocol = "ssh"
+    ports    = ["22"]
+  }
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+}
