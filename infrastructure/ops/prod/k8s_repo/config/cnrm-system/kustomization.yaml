@@ -15,3 +15,15 @@ patchesJson6902:
       kind: ClusterRole
       name: cnrm-manager-cluster-role
     path: jsonpatch-cnrm-clusterrole.yaml
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: cnrm-recorder-role
+    path: jsonpatch-cnrm-recorder-role.yaml
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: cnrm-webhook-role
+    path: jsonpatch-cnrm-webhook-role.yaml
