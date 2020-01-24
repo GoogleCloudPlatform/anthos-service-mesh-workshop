@@ -70,6 +70,7 @@ sed \
   -e "s/POLICY_ILB_IP/${ops_gke_1_policy_ilb?env not set}/g" \
   -e "s/TELEMETRY_ILB_IP/${ops_gke_1_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_1_pilot_ilb?env not set}/g" \
+  -e "s/OPS_PROJECT/${ops_project_id}/g" \
   $SRC > $DEST
 
 # Update kustomization
@@ -82,6 +83,7 @@ sed \
   -e "s/POLICY_ILB_IP/${ops_gke_2_policy_ilb?env not set}/g" \
   -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb?env not set}/g" \
+  -e "s/OPS_PROJECT/${ops_project_id}/g" \
   $SRC > $DEST
 
 # Update kustomization
@@ -109,19 +111,6 @@ for cluster in ${dev2_gke_3_name} ${dev2_gke_4_name}; do
     -e "s/POLICY_ILB_IP/${ops_gke_2_policy_ilb}/g" \
     -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb}/g" \
     -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb}/g" \
-    $SRC > $DEST
-  
-  # Update kustomization
-  (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
-done
-
-# Patch ops clusters 1 and 2 with telemetry write permission to stackdriver
-for cluster in ${ops_gke_1_name} ${ops_gke_2_name}; do
-  SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
-  DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
-
-  sed \
-    -e "s/OPS_PROJECT/${ops_project_id}/g" \
     $SRC > $DEST
   
   # Update kustomization
