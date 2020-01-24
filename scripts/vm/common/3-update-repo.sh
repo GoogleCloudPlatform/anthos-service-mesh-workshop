@@ -32,20 +32,21 @@ log "☸️ Generating selector-less Kubernetes Service.."
 sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
 service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
-# sed -i -e "s/{SVC_NAME}/${SVC_NAME}/g" -e "s/{SVC_PORT}/${SVC_PORT}/g" -e "s/{SVC_NAMESPACE}/${SVC_NAMESPACE}/g"  \
-# service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
+service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
-# sed -i -e "s/{SVC_NAME}/${SVC_NAME}/g" -e "s/{SVC_PORT}/${SVC_PORT}/g" -e "s/{SVC_NAMESPACE}/${SVC_NAMESPACE}/g"  \
-# service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
-# sed -i -e "s/{SVC_NAME}/${SVC_NAME}/g" -e "s/{SVC_PORT}/${SVC_PORT}/g" -e "s/{SVC_NAMESPACE}/${SVC_NAMESPACE}/g"  \
-# service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
-# sed -i -e "s/{SVC_NAME}/${SVC_NAME}/g" -e "s/{SVC_PORT}/${SVC_PORT}/g" -e "s/{SVC_NAMESPACE}/${SVC_NAMESPACE}/g"  \
-# service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
-# sed -i -e "s/{SVC_NAME}/${SVC_NAME}/g" -e "s/{SVC_PORT}/${SVC_PORT}/g" -e "s/{SVC_NAMESPACE}/${SVC_NAMESPACE}/g"  \
-# service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
+
 
 # Push to repo
 # log "⬆️ Pushing to repo..."
