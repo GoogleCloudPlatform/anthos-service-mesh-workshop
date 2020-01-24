@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v1
+    spec:
+      serviceAccount: frontend
+      containers:
+        - name: server
+          image: meganokeefe/frontend:v1
+          ports:
+          - containerPort: 8080
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
+          env:
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: "productcatalogservice.product-catalog.svc.cluster.local:3550"
+          - name: CURRENCY_SERVICE_ADDR
+            value: "currencyservice.currency.svc.cluster.local:7000"
+          - name: CART_SERVICE_ADDR
+            value: "cartservice.cart.svc.cluster.local:7070"
+          - name: RECOMMENDATION_SERVICE_ADDR
+            value: "recommendationservice.recommendation.svc.cluster.local:8080"
+          - name: SHIPPING_SERVICE_ADDR
+            value: "shippingservice.shipping.svc.cluster.local:50051"
+          - name: CHECKOUT_SERVICE_ADDR
+            value: "checkoutservice.checkout.svc.cluster.local:5050"
+          - name: AD_SERVICE_ADDR
+            value: "adservice.ad.svc.cluster.local:9555"
+          # - name: JAEGER_SERVICE_ADDR
+          #   value: "jaeger-collector:14268"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

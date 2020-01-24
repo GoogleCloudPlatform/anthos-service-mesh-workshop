@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: respy
+  namespace: frontend
+spec:
+  selector:
+    matchLabels:
+      app: respy
+  replicas: 1
+  template:
+    metadata:
+     labels:
+        app: respy
+    spec:
+      containers:
+      - name: respy
+        image: meganokeefe/respy:v0.0.1
+        imagePullPolicy: Always
