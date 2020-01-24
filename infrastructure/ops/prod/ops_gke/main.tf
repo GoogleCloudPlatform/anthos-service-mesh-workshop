@@ -12,12 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+data "google_container_engine_versions" "subnet_01" {
+  project        = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  location       = var.subnet_01_region
+  version_prefix = var.kubernetes_version
+}
+
+data "google_container_engine_versions" "subnet_02" {
+  project        = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  location       = var.subnet_02_region
+  version_prefix = var.kubernetes_version
+}
+
 # gke-asm-1-r1-prod - Create GKE regional cluster in ops-asm project using subnet-01
 module "create_gke_1_ops_asm_subnet_01" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.ops_project.outputs.ops_project_id
   name               = var.gke_asm_r1
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.subnet_01.latest_master_version
   region             = var.subnet_01_region
   zones              = ["${var.subnet_01_region}-a", "${var.subnet_01_region}-b", "${var.subnet_01_region}-c"]
   network_project_id = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
@@ -65,7 +77,7 @@ module "create_gke_2_ops_asm_subnet_02" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.ops_project.outputs.ops_project_id
   name               = var.gke_asm_r2
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.subnet_02.latest_master_version
   region             = var.subnet_02_region
   zones              = ["${var.subnet_02_region}-a", "${var.subnet_02_region}-b", "${var.subnet_02_region}-c"]
   network_project_id = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
@@ -183,6 +195,34 @@ resource "google_service_account_iam_member" "cnrm-sa-workload-identity" {
   service_account_id = google_service_account.cnrm-system.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${google_service_account.cnrm-system.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]"
+  depends_on = [
+    module.create_gke_1_ops_asm_subnet_01,
+    module.create_gke_2_ops_asm_subnet_02
+  ]
+}
+
+# Service account used by istio-telemetry (mixer).
+resource "google_service_account" "istio-telemetry" {
+  project      = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  account_id   = "istio-telemetry"
+  display_name = "istio-telemetry"
+  depends_on = [
+    null_resource.exec_check_for_cloudbuild_service_accounts_in_ops_project
+  ]
+}
+
+# IAM binding to grant istio-telemetry service account access to the project.
+resource "google_project_iam_member" "istio-telemetry-owner" {
+  project = google_service_account.istio-telemetry.project
+  role    = "roles/owner"  # narrow this down: metrics.write, logs.write, traces.write, contextgraph.write? debug/profiler?
+  member  = "serviceAccount:${google_service_account.istio-telemetry.email}"
+}
+
+# Workload Identity IAM binding for istio-telemetry.
+resource "google_service_account_iam_member" "istio-telemetry-sa-workload-identity" {
+  service_account_id = google_service_account.istio-telemetry.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${google_service_account.istio-telemetry.project}.svc.id.goog[istio-system/istio-telemetry]"
   depends_on = [
     module.create_gke_1_ops_asm_subnet_01,
     module.create_gke_2_ops_asm_subnet_02
