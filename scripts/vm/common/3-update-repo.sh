@@ -8,6 +8,11 @@ rm ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/deployments/${FILE_NAME}.yaml
 rm ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/${FILE_NAME}.yaml
 rm ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/${FILE_NAME}.yaml
 
+sed -i '/  - app-payment-service-svc.yaml/d' ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
+sed -i '/  - app-payment-service-svc.yaml/d' ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
+sed -i '/  - app-payment-service-svc.yaml/d' ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
+sed -i '/  - app-payment-service-svc.yaml/d' ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
+
 # delete svc
 rm ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 rm ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
