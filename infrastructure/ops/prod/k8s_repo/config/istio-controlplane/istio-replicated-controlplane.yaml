@@ -83,6 +83,11 @@ spec:
         enabled: true
         k8s:
           overlays:
+            - kind: ServiceAccount
+              name: "istio-mixer-service-account"
+              patches:
+                - path: metadata.annotations
+                  value: iam.gke.io/gcp-service-account: "istio-telemetry@[[OPS_PROJECT]].iam.gserviceaccount.com"
             - kind: Service
               name: istio-telemetry
               patches:
