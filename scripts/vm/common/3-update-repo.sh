@@ -18,6 +18,10 @@ rm ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
 
 log "⭐️ Generating ServiceEntry.."
+
+GCE_IP=`gcloud compute instances describe $VM_NAME  --project ${TF_VAR_dev1_project_name} --zone=$VM_ZONE --format='get(networkInterfaces[0].networkIP)' --format='get(networkInterfaces[0].accessConfigs[0].natIP)'`
+echo  "GCE IP is ${GCE_IP}"
+
 sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g" -e "s/{GCE_IP}/$GCE_IP/g"  \
 service-entry.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/${FILE_NAME}-service-entry.yaml
 
@@ -48,7 +52,7 @@ sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMES
 service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
 
-Push to repo
+# Push to repo
 log "⬆️ Pushing to repo..."
 cd $K8S_REPO
 git add . && git commit -am "${SVC_NAME}- Adding VM ServiceEntry, Service"

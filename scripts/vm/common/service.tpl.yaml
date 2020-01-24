@@ -7,6 +7,6 @@ spec:
   ports:
   - name: grpc
     port: {SVC_PORT}
-    protocol: GRPC
+    protocol: TCP
     targetPort: {SVC_PORT}
   type: ClusterIP
