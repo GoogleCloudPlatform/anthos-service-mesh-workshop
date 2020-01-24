@@ -113,7 +113,7 @@ module "create_vpc_in_host_project" {
   }
 }
 
-# create firewall rules to allow-all inernally and SSH from external
+# create firewall rules to allow-all internally and SSH from external
 module "net-firewall" {
   source                  = "terraform-google-modules/network/google//modules/fabric-net-firewall"
   version                 = "1.3.0"
