@@ -115,6 +115,19 @@ for cluster in ${dev2_gke_3_name} ${dev2_gke_4_name}; do
   (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 done
 
+# Patch ops clusters 1 and 2 with telemetry write permission to stackdriver
+for cluster in ${ops_gke_1_name} ${ops_gke_2_name}; do
+  SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
+  DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
+
+  sed \
+    -e "s/OPS_PROJECT/${ops_project_id}/g" \
+    $SRC > $DEST
+  
+  # Update kustomization
+  (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
+done
+
 # Clone the git ops repo to the workspace
 rm -rf ${k8s_repo_name}
 git config --global user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)')
