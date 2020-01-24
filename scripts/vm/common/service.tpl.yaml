@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: [[SVC_NAME]]
-  namespace: [[SVC_NAMESPACE]]
+  name: {SVC_NAME}
+  namespace: {SVC_NAMESPACE}
 spec:
   ports:
   - name: grpc
-    port: [[SVC_PORT]]
+    port: {SVC_PORT}
     protocol: GRPC
-    targetPort: [[SVC_PORT]]
+    targetPort: {SVC_PORT}
   type: ClusterIP
