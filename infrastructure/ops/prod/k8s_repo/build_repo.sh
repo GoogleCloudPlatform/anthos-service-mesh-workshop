@@ -27,6 +27,11 @@ echo $(ls -d tmp/*/) | xargs -n 1 cp config/jsonpatch-istio-operator-clusterrole
 # Copy downloaded cnrm controller to every cluster and replace project ID.
 echo $(ls -d tmp/*/) | xargs -n 1 cp -r config/cnrm-system/
 gsutil -m cp -r gs://${tfadmin_proj}/ops/cnrm/install-bundle .
+
+# Patch CNRM CRDs to support IAMCustomRole references until #78 is fixed.
+#  https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/78
+sed -i '/pattern: \^roles/d' install-bundle/crds.yaml
+
 echo $(ls -d tmp/*/cnrm-system) | xargs -n 1 cp -r install-bundle
 rm -Rf install-bundle
 
