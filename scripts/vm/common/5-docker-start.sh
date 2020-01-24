@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ${1}/env.sh
+source ../${1}/env.sh
 
 log "🐳 Starting ${SVC_NAME} on ${VM_NAME}..."
 
