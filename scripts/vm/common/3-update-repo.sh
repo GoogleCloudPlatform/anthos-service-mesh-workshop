@@ -29,7 +29,7 @@ source ../${1}/env.sh
 
 
 log "☸️ Generating selector-less Kubernetes Service.."
-sed -e 's/[[SVC_NAME]]/${SVC_NAME}/g' -e 's/[[SVC_PORT]]/${SVC_PORT}/g' -e 's/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g'  \
+sed -e "s/[[SVC_NAME]]/$SVC_NAME/g" -e "s/[[SVC_PORT]]/$SVC_PORT/g" -e "s/[[SVC_NAMESPACE]]/$SVC_NAMESPACE/g"  \
 service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${FILE_NAME}-svc.yaml
 
 # sed -i -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
