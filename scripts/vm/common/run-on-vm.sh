@@ -4,7 +4,7 @@
 set -euo pipefail
 log() { echo "$1" >&2; }
 
-export ISTIO_VERSION="1.4.2"
+export ISTIO_VERSION="1.4.3"
 
 log "🐋 Installing Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
