@@ -23,5 +23,5 @@ kubectl --context ${OPS_GKE_1} -n ${SVC_NAMESPACE} get secret istio.default \
 
 log "📬 Sending cluster.env and certs to VM..."
 gcloud compute --project ${TF_VAR_dev1_project_name} scp --zone ${VM_ZONE} \
-  vm-install.sh cluster.env *.pem ${VM_NAME}:
+  run-on-vm.sh cluster.env *.pem ${VM_NAME}:
 log "✅ Done."
