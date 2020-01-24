@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: [[SVC_NAME]]
+  namespace: [[SVC_NAMESPACE]]
+spec:
+  hosts:
+  - [[SVC_NAME]].[[SVC_NAMESPACE]].svc.cluster.local
+  ports:
+  - number: [[SVC_PORT]]
+    name: grpc
+    protocol: GRPC
+  resolution: STATIC
+  endpoints:
+  - address: [[GCE_IP]]
+    ports:
+      grpc: [[SVC_PORT]]
+    labels:
+      app: [[SVC_NAME]]

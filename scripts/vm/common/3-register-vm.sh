@@ -3,31 +3,48 @@
 source ../${1}/env.sh
 
 
-log "⭐️ Registering VM with the Istio control plane..."
+log "⭐️ Pushing ServiceEntry and selector-less Service to k8s_repo..."
 
-export GCE_IP=$(gcloud --format="value(networkInterfaces[0].networkIP)" compute instances describe ${VM_NAME} --project ${TF_VAR_dev1_project_name} --zone=${VM_ZONE})
-echo "GCE IP is: ${GCE_IP}"
+# ServiceEntry on Ops clusters
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g" -e "s/[[GCE_IP]]/${GCE_IP}/g" \
+service-entry.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/${SVC_NAME}-service-entry.yaml
 
-"kubectl -n ${SVC_NAMESPACE} apply -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
-metadata:
-  name: ${SVC_NAME}
-spec:
-  hosts:
-  - ${SVC_NAME}.${SVC_NAMESPACE}.svc.cluster.local
-  ports:
-  - number: ${SVC_PORT}
-    name: grpc
-    protocol: GRPC
-  resolution: STATIC
-  endpoints:
-  - address: ${GCE_IP}
-    ports:
-      grpc: 3550
-    labels:
-      app: productcatalogservice
-EOF"
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g" -e "s/[[GCE_IP]]/${GCE_IP}/g" \
+service-entry.tpl.yaml > ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/${SVC_NAME}-service-entry.yaml
 
-istioctl register -n ${SVC_NAMESPACE} ${SVC_NAME} ${GCE_IP} grpc:${SVC_PORT}
+echo "  - ${SVC_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/kustomization.yaml
+echo "  - ${SVC_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/kustomization.yaml
+
+# Service on all (Ops, dev) clusters
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+sed -i '' -e "s/[[SVC_NAME]]/${SVC_NAME}/g" -e "s/[[SVC_PORT]]/${SVC_PORT}/g" -e "s/[[SVC_NAMESPACE]]/${SVC_NAMESPACE}/g"  \
+service.tpl.yaml > ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/${SVC_NAME}-service.yaml
+
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app/services/kustomization.yaml
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app/services/kustomization.yaml
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/services/kustomization.yaml
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/services/kustomization.yaml
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/services/kustomization.yaml
+echo "  - ${SVC_NAME}-service.yaml" >> ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/services/kustomization.yaml
+
+# Push to repo
+cd $K8S_REPO
+git add . && git commit -am "${SVC_NAME}- Adding VM ServiceEntry, Service"
+git push
+cd $VM_DIR
+
 log "✅ Done."
