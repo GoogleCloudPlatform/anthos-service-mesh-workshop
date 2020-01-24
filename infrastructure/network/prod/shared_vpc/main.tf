@@ -132,10 +132,6 @@ resource "google_compute_firewall" "ssh-scp-all" {
   project = module.create_vpc_in_host_project.svpc_host_project_id
   network = module.create_vpc_in_host_project.network_name
   allow {
-    protocol = "ssh"
-    ports    = ["22"]
-  }
-  allow {
     protocol = "tcp"
     ports    = ["22"]
   }
