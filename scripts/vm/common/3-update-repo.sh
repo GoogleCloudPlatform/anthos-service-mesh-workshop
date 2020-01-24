@@ -21,8 +21,11 @@ log "⭐️ Generating ServiceEntry.."
 sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g" -e "s/{GCE_IP}/$GCE_IP/g"  \
 service-entry.tpl.yaml > ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/${FILE_NAME}-service-entry.yaml
 
-# echo "  - ${FILE_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/kustomization.yaml
-# echo "  - ${FILE_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/kustomization.yaml
+sed -e "s/{SVC_NAME}/$SVC_NAME/g" -e "s/{SVC_PORT}/$SVC_PORT/g" -e "s/{SVC_NAMESPACE}/$SVC_NAMESPACE/g" -e "s/{GCE_IP}/$GCE_IP/g"  \
+service-entry.tpl.yaml > ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/${FILE_NAME}-service-entry.yaml
+
+echo "  - ${FILE_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/kustomization.yaml
+echo "  - ${FILE_NAME}-service-entry.yaml" >> ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/kustomization.yaml
 
 
 # log "☸️ Generating selector-less Kubernetes Service.."
