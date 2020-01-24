@@ -1,0 +1,10 @@
+# deny all
+apiVersion: "security.istio.io/v1beta1"
+kind: "AuthorizationPolicy"
+metadata:
+  name: "currency-policy"
+  namespace: currency
+spec:
+  selector:
+    matchLabels:
+      app: currencyservice

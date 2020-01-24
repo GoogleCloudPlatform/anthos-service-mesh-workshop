@@ -31,5 +31,13 @@ infrastructure/gcp/*/*/shared_state*
 infrastructure/ops/prod/istio_prep/istio-operator-*.yaml
 infrastructure/ops/prod/istio_prep/operator-*/
 infrastructure/ops/prod/k8s_repo/k8s-repo/
+infrastructure/ops/prod/k8s_repo/tmp/
+infrastructure/ops/prod/k8s_repo/istio-operator-*.yaml
 infrastructure/ops/prod/k8s_repo/data.zip
 infrastructure/ops/prod/k8s_repo/tmp/
+
+infrastructure/vm-migration/vm/
+infrastructure/vm-migration/istio-*
+infrastructure/*/*.env
+infrastructure/*/*.pem
+.DS_Store
