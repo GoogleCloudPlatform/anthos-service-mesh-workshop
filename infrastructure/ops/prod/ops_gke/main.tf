@@ -201,6 +201,54 @@ resource "google_service_account_iam_member" "cnrm-sa-workload-identity" {
   ]
 }
 
+# Grant Compute Security Admin IAM role to the CNRM system SA on the host project to allow creation of shared VPC network resources.
+resource "google_project_iam_member" "cnrm_sa_security_admin_in_host" {
+  project = data.terraform_remote_state.shared_vpc.outputs.svpc_host_project_id
+  role    = "roles/compute.securityAdmin"
+  member  = "serviceAccount:${google_service_account.cnrm-system.email}"
+}
+
+# Service account used by autoneg controller.
+resource "google_service_account" "autoneg-system" {
+  project      = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  account_id   = "autoneg-system"
+  display_name = "autoneg-system"
+  depends_on = [
+    null_resource.exec_check_for_cloudbuild_service_accounts_in_ops_project
+  ]
+}
+
+resource "google_project_iam_custom_role" "autoneg" {
+  project     = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  role_id     = "autoneg"
+  title       = "AutoNEG Custom Role"
+  description = "AutoNEG controller"
+  permissions = [
+    "compute.backendServices.get",
+    "compute.backendServices.update",
+    "compute.networkEndpointGroups.use",
+    "compute.healthChecks.useReadOnly"
+  ]
+}
+
+# IAM binding to grant AutoNEG service account access to the project.
+resource "google_project_iam_member" "autoneg-system" {
+  project = data.terraform_remote_state.ops_project.outputs.ops_project_id
+  role    = "projects/${google_project_iam_custom_role.autoneg.project}/roles/${google_project_iam_custom_role.autoneg.role_id}"
+  member  = "serviceAccount:${google_service_account.autoneg-system.email}"
+}
+
+# Workload Identity IAM binding for AutoNEG controller.
+resource "google_service_account_iam_member" "autoneg-sa-workload-identity" {
+  service_account_id = google_service_account.autoneg-system.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${google_service_account.autoneg-system.project}.svc.id.goog[autoneg-system/autoneg-system]"
+  depends_on = [
+    module.create_gke_1_ops_asm_subnet_01,
+    module.create_gke_2_ops_asm_subnet_02
+  ]
+}
+
 # Service account used by istio-telemetry (mixer).
 resource "google_service_account" "istio-telemetry" {
   project      = data.terraform_remote_state.ops_project.outputs.ops_project_id
@@ -214,7 +262,7 @@ resource "google_service_account" "istio-telemetry" {
 # IAM binding to grant istio-telemetry service account access to the project.
 resource "google_project_iam_member" "istio-telemetry-owner" {
   project = google_service_account.istio-telemetry.project
-  role    = "roles/owner"  # narrow this down: metrics.write, logs.write, traces.write, contextgraph.write? debug/profiler?
+  role    = "roles/owner" # narrow this down: metrics.write, logs.write, traces.write, contextgraph.write? debug/profiler?
   member  = "serviceAccount:${google_service_account.istio-telemetry.email}"
 }
 

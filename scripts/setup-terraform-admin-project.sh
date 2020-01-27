@@ -104,7 +104,8 @@ container.googleapis.com \
 serviceusage.googleapis.com \
 sourcerepo.googleapis.com \
 cloudbuild.googleapis.com \
-contextgraph.googleapis.com
+contextgraph.googleapis.com \
+servicemanagement.googleapis.com
 
 echo -e "\n${CYAN}Getting Terraform admin project cloudbuild service account...${NC}"
 export TF_CLOUDBUILD_SA=$(gcloud projects describe $TF_ADMIN --format='value(projectNumber)')@cloudbuild.gserviceaccount.com
@@ -197,6 +198,7 @@ folders=(
     'network/prod/shared_vpc'
     'ops/prod/ops_project'
     'ops/prod/ops_gke'
+    'ops/prod/ops_lb'
     'ops/prod/cloudbuild'
     'ops/prod/istio_prep'
     'ops/prod/k8s_repo'
