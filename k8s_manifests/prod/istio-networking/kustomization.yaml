@@ -10,5 +10,4 @@ resources:
   - app-payment-dest-rule-mtls.yaml
   - app-productcatalog-dest-rule-mtls.yaml
   - app-recommendation-dest-rule-mtls.yaml
-  - app-redis-cart-dest-rule-mtls.yaml
   - app-shipping-dest-rule-mtls.yaml
