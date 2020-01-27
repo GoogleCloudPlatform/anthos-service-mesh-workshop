@@ -13,7 +13,6 @@ spec:
       members:
         - serviceAccount:${PROJECT_ID}.svc.id.goog[ad/ad]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[cart/cart]
-        - serviceAccount:${PROJECT_ID}.svc.id.goog[cart/redis-cart]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[checkout/checkout]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[currency/currency]
         - serviceAccount:${PROJECT_ID}.svc.id.goog[email/email]
