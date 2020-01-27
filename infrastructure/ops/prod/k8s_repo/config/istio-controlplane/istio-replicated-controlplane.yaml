@@ -121,6 +121,10 @@ spec:
                   value: PILOT_ILB_IP
   values:
     global:
+      mtls:
+        enabled: true
+      proxy:
+        accessLogFile: "/dev/stdout"
       controlPlaneSecurityEnabled: true
       meshExpansion:
         enabled: true
