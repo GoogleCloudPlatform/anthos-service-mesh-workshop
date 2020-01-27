@@ -138,12 +138,11 @@ for d in $(ls -d ${k8s_repo_name}/*/); do
   [[ ! -d "${d}/app-cnrm" ]] && cp -r config/app-cnrm ${d}/
 done
 
-# Copy app-ingress, istio-networking and istio-authentication templates if they don't already exist in ops clusters.
+# Copy app-ingress and istio-networking templates if they don't already exist in ops clusters.
 # Also Copy kustomization.yaml
 for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
   [[ ! -d "${k8s_repo_name}/${d}/app-ingress" ]] && cp -r config/app-ingress ${k8s_repo_name}/${d}/
   [[ ! -d "${k8s_repo_name}/${d}/istio-networking" ]] && cp -r config/istio-networking ${k8s_repo_name}/${d}/
-  [[ ! -d "${k8s_repo_name}/${d}/istio-authentication" ]] && cp -r config/istio-authentication ${k8s_repo_name}/${d}/
   cp config/kustomization-ops.yaml ${k8s_repo_name}/${d}/kustomization.yaml
 done
 
