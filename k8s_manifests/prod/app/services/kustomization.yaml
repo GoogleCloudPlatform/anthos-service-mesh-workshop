@@ -10,5 +10,4 @@ resources:
   - app-payment-service-svc.yaml
   - app-product-catalog-service-svc.yaml
   - app-recommendation-service-svc.yaml
-  - app-redis-cart-svc.yaml
   - app-shipping-service-svc.yaml

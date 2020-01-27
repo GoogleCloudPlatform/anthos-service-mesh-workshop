@@ -11,7 +11,6 @@ bases:
   - app/
   - app-ingress/
   - istio-networking/
-  - istio-authentication/
 
 resources:
   - istio-operator-psp.yaml
