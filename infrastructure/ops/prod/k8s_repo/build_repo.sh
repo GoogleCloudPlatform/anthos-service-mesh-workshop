@@ -43,6 +43,12 @@ sed -i 's/${PROJECT_ID?}/'${dev1_project_id?}'/g' tmp/${dev1_gke_2_name}/cnrm-sy
 sed -i 's/${PROJECT_ID?}/'${dev2_project_id?}'/g' tmp/${dev2_gke_3_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 sed -i 's/${PROJECT_ID?}/'${dev2_project_id?}'/g' tmp/${dev2_gke_4_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 
+# Copy autoneg-system resources to ops clusters
+for c in ${ops_gke_2_name} ${ops_gke_1_name}; do
+  cp -r config/autoneg-system/ tmp/${c}/
+  sed -i 's/${PROJECT_ID}/'${ops_project_id?}'/g' tmp/${c}/autoneg-system/*.yaml
+done
+
 # Copy generated CA certs to every cluster.
 gsutil cp -r gs://${tfadmin_proj}/ops/istiocerts .
 kubectl create secret generic -n istio-system \
