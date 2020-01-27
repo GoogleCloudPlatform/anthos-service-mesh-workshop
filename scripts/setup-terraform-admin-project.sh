@@ -149,10 +149,10 @@ gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 
 
 echo -e "\n${CYAN}Giving cloudbuild service account billing user role for the billing account...${NC}"
-mkdir -p tmp
+mkdir -p ${SCRIPT_DIR}/../tmp
 gcloud beta billing accounts get-iam-policy ${TF_VAR_billing_account} --format=json | \
-    jq '(.bindings[] | select(.role=="roles/billing.user").members) += ["serviceAccount:'${TF_CLOUDBUILD_SA}'"]' > ./tmp/cloudbuild_billing-iam-policy.json
-gcloud beta billing accounts set-iam-policy ${TF_VAR_billing_account} ./tmp/cloudbuild_billing-iam-policy.json
+    jq '(.bindings[] | select(.role=="roles/billing.user").members) += ["serviceAccount:'${TF_CLOUDBUILD_SA}'"]' > ${SCRIPT_DIR}/../tmp/cloudbuild_billing-iam-policy.json
+gcloud beta billing accounts set-iam-policy ${TF_VAR_billing_account} ${SCRIPT_DIR}/../tmp/cloudbuild_billing-iam-policy.json
 
 
 echo -e "\n${CYAN}Creating gcs bucket for terraform state...${NC}"

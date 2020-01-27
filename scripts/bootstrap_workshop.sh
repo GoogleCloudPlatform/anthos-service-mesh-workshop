@@ -18,26 +18,84 @@
 # TF_VAR_org_id, TF_VAR_billing_account, MY_USER
 # RANDOM_PERSIST is YYMMDD-workshop_number
 
-# TODO: make this an input
-ORG_ADMIN_PROJECT="gcpworkshops-gsuite-admin"
+set -e
 
-#export TF_VAR_org_id=$1
-#export ORG_NAME=$2
-#export TF_VAR_billing_account=$3
-#export WORKSHOP_NO=$4
-#export NUM_USERS=$5
+helpFunction()
+{
+   echo ""
+   echo "Usage: $0 --admin-gcs-path parameterA"
+   echo -e "\t--admin-gcs-path Path to text file in Admin GCS bucket containing list of tf admin projects. Do not include gs:// prefix. Example: 'WORKSHOP_BUCKET/workshop.txt'"
+   exit 1 # Exit script after printing help
+}
 
-export TF_VAR_billing_account=0109A7-3E7048-9068C9
-export TF_VAR_org_id=145197157826
+# Setting default empty values
+WORKSHOP_NUM=
+START_USER_NUM=
+END_USER_NUM=
+ORG_NAME=
+ADMIN_GCS_BUCKET=
+BILLING_ID=
 
-# TODO: args
-WORKSHOP_NO="01"
-NUM_USERS=2
-ORG_NAME="gcpworkshops.com"
-ADMIN_GCS_BUCKET="gcpworkshops-gsuite-admin"
+while [ "$1" != "" ]; do
+    case $1 in
+        --org-name | -on )            shift
+                                      ORG_NAME=$1
+                                      ;;
+        --billing-id | -bi )          shift
+                                      BILLING_ID=$1
+                                      ;;
+        --workshop_num | -wn )        shift
+                                      WORKSHOP_NUM=$1
+                                      ;;
+        --start-user-num | -sun )     shift
+                                      START_USER_NUM=$1
+                                      ;;
+        --end-user-num | -eun )       shift
+                                      END_USER_NUM=$1
+                                      ;;
+        --admin-gcs-bucket | -agb)    shift
+                                      ADMIN_GCS_BUCKET=$1
+                                      ;;
+        --help | -h )                 helpFunction
+                                      exit
+    esac
+    shift
+done
 
-WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NO}"
+# TODO: input validation
+# Validate WORKSHOP_NUM is 2 characters
+[ ${#WORKSHOP_NUM} = 2 ] || echo "workshop-num must be exactly 2 characters."
+
+# Validate START_USER_NUM and END_USER_NUM are numbers
+# Also that START comes before END or is the same number
+[[ ${START_USER_NUM} =~ ^[0-9]+$ && ${END_USER_NUM} =~ ^[0-9]+$ ]] || echo "START_USER_NUM and END_USER_NUM must be numbers."
+[ ${END_USER_NUM} -ge ${START_USER_NUM} ] || echo "END_USER_NUM must be greater than or equal to START_USER_NUM."
+
+# Validate ORG_NAME exists
+ORG_ID = $(gcloud organizations list \
+  --filter="display_name=cloud-pharaoh.com" \
+  --format="value(ID)")
+[ ${ORG_ID} ] || echo "org-name does not exist or you do not have correct permissions in this org."
+
+# Validate ADMIN_GCS_BUCKET
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
+if [ $? -eq 1 ]; then
+  rm ${SCRIPT_DIR}/../tmp/workshop.txt
+  touch ${SCRIPT_DIR}/../tmp/workshop.txt
+else
+  echo "Workshop folder already exists. Exiting..."
+  exit
+fi
+
+# Validate BILLING_ID
+
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
+
+export TF_VAR_org_id=ORG_ID
+
+export TF_VAR_billing_account=${BILLING_ID}
+
+WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NUM}"
 
 # use this in clean up script instead
 export ADMIN_USER=$(gcloud config get-value account)
@@ -46,10 +104,13 @@ gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
 if [ $? -eq 1 ]; then
   rm ${SCRIPT_DIR}/../tmp/workshop.txt
   touch ${SCRIPT_DIR}/../tmp/workshop.txt
+else
+  echo "Workshop folder already exists. Exiting..."
+  exit
 fi
 
 # If we want to split creation of users on multiple runs then the start of the sequence needs to be a variable
-for i in $(seq 1 $NUM_USERS)
+for i in $(seq ${START_USER_NUM} ${END_USER_NUM})
 do
   USER_ID=$(printf "%03d" $i)
   export MY_USER="user${USER_ID}@${ORG_NAME}"
