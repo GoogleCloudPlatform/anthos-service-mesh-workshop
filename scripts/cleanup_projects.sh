@@ -84,6 +84,11 @@ gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
 --role roles/resourcemanager.folderCreator
 
+echo -e "\n${CYAN}Removing CloudBuild SA billing user permissions from billing account ...${NC}"
+gcloud beta billing accounts get-iam-policy ${TF_VAR_billing_account} --format=json | \
+    jq '(.bindings[] | select(.role=="roles/billing.user").members) -= ["serviceAccount:'${TF_CLOUDBUILD_SA}'"]' > ${SCRIPT_DIR}/../tmp/cloudbuild_billing-iam-policy.json
+gcloud beta billing accounts set-iam-policy ${TF_VAR_billing_account} ${SCRIPT_DIR}/../tmp/cloudbuild_billing-iam-policy.json
+
 echo -e "\n${CYAN}Remove infra git repo...${NC}" 
 (cd ${SCRIPT_DIR}/../infrastructure && rm -Rf .git)
 
