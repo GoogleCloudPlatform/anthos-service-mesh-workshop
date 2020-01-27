@@ -73,8 +73,6 @@ spec:
     enabled: false
   values:
     global:
-      mtls:
-        enabled: true
       proxy:
         accessLogFile: "/dev/stdout"
       controlPlaneSecurityEnabled: false

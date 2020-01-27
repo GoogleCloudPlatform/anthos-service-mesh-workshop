@@ -87,7 +87,7 @@ spec:
               name: "istio-mixer-service-account"
               patches:
                 - path: metadata.annotations
-                  value: 
+                  value:
                     iam.gke.io/gcp-service-account: "istio-telemetry@OPS_PROJECT.iam.gserviceaccount.com"
             - kind: Service
               name: istio-telemetry
@@ -122,8 +122,6 @@ spec:
                   value: PILOT_ILB_IP
   values:
     global:
-      mtls:
-        enabled: true
       proxy:
         accessLogFile: "/dev/stdout"
       controlPlaneSecurityEnabled: true
