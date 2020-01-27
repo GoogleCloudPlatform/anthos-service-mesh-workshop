@@ -70,6 +70,7 @@ sed \
   -e "s/POLICY_ILB_IP/${ops_gke_1_policy_ilb?env not set}/g" \
   -e "s/TELEMETRY_ILB_IP/${ops_gke_1_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_1_pilot_ilb?env not set}/g" \
+  -e "s/OPS_PROJECT/${ops_project_id}/g" \
   $SRC > $DEST
 
 # Update kustomization
@@ -82,6 +83,7 @@ sed \
   -e "s/POLICY_ILB_IP/${ops_gke_2_policy_ilb?env not set}/g" \
   -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb?env not set}/g" \
+  -e "s/OPS_PROJECT/${ops_project_id}/g" \
   $SRC > $DEST
 
 # Update kustomization
