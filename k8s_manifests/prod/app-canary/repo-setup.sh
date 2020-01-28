@@ -1,10 +1,6 @@
 #!/bin/bash
 log() { echo "$1" >&2; }
 
-
-cd $CANARY_DIR
-
-
 # DEV1
 log "📑 Generating Dev1 Manifests ..."
 
