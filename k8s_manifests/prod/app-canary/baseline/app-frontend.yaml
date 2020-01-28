@@ -12,6 +12,8 @@ spec:
       labels:
         app: frontend
         version: v1
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       serviceAccount: frontend
       containers:
