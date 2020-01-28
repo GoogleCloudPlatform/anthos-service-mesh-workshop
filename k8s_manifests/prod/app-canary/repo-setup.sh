@@ -7,7 +7,9 @@ log "📑 Generating Dev1 Manifests ..."
 # Frontend v2
 cp baseline/app-frontend* ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/deployments/
 cp baseline/app-frontend* ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/deployments/
+echo "" >> ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV1_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
+echo "" >> ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV1_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
 
 # Respy
@@ -28,7 +30,9 @@ log "📑 Generating Dev2 Manifests ..."
 # Frontend V2
 cp baseline/app-frontend* ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/
 cp baseline/app-frontend* ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/
+echo "" >> ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
+echo "" >> ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
 
 # Respy
