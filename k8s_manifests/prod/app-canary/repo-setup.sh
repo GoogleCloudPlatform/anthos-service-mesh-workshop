@@ -35,6 +35,10 @@ cp baseline/app-frontend* ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
 echo "  - app-frontend-v2.yaml" >> ${K8S_REPO}/${DEV2_GKE_2_CLUSTER}/app/deployments/kustomization.yaml
 
+# Respy
+cp baseline/app-respy.yaml ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/
+echo "  - app-respy.yaml" >> ${K8S_REPO}/${DEV2_GKE_1_CLUSTER}/app/deployments/kustomization.yaml
+
 # VS and DR
 mkdir -p ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary/
 sed -i '/  - app-ingress\//a\ \ - app-canary\/' ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/kustomization.yaml
