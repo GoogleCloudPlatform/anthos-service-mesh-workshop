@@ -11,5 +11,4 @@ resources:
   - app-payment-service.yaml
   - app-product-catalog-service.yaml
   - app-recommendation-service.yaml
-  - app-redis-cart.yaml
   - app-shipping-service.yaml
