@@ -1,7 +1,7 @@
 apiVersion: "networking.istio.io/v1alpha3"
 kind: "DestinationRule"
 metadata:
-  name: "frontend-frontend-destrule"
+  name: "frontend"
   namespace: "frontend"
 spec:
   host: "frontend.frontend.svc.cluster.local"
