@@ -6,6 +6,7 @@ metadata:
 spec:
   hosts:
   - {SVC_NAME}.{SVC_NAMESPACE}.svc.cluster.local
+  location: MESH_INTERNAL
   ports:
   - number: {SVC_PORT}
     name: grpc

@@ -16,12 +16,15 @@ log "⛵️ Installing Istio ${ISTIO_VERSION}..."
 curl -L https://storage.googleapis.com/istio-release/releases/${ISTIO_VERSION}/deb/istio-sidecar.deb > istio-sidecar.deb
 sudo dpkg -i istio-sidecar.deb
 echo "${GWIP} istio-citadel istio-pilot istio-pilot.istio-system" | sudo tee -a /etc/hosts
+
+log "🔑 Setting up Service Account certs..."
 sudo mkdir -p /etc/certs
 sudo cp {root-cert.pem,cert-chain.pem,key.pem} /etc/certs
 sudo cp cluster.env /var/lib/istio/envoy
 sudo chown -R istio-proxy /etc/certs /var/lib/istio/envoy
 
-
 log "🚀 Starting Istio..."
+ls -l /var/lib/istio/envoy/envoy_bootstrap_tmpl.json
+ls -l /var/lib/istio/envoy/sidecar.env
 sudo systemctl start istio-auth-node-agent
 sudo systemctl start istio

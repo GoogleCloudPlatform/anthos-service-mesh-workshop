@@ -9,7 +9,8 @@ ISTIO_SERVICE_CIDR=$(gcloud container clusters describe ${OPS_GKE_1_CLUSTER} \
                        --format "value(servicesIpv4Cidr)")
 
 log "istio CIDR is: ${ISTIO_SERVICE_CIDR}"
-echo -e "ISTIO_CP_AUTH=MUTUAL_TLS\nISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\nISTIO_INBOUND_PORTS=${SVC_PORT}" | tee cluster.env
+echo -e "ISTIO_CP_AUTH=MUTUAL_TLS\nISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR" | tee cluster.env
+# echo -e "ISTIO_CP_AUTH=MUTUAL_TLS\nISTIO_SERVICE_CIDR=$ISTIO_SERVICE_CIDR\nISTIO_INBOUND_PORTS=${SVC_PORT}" | tee cluster.env
 
 # get service account keys for the namespace this service will live in on the cluster
 # (eg. payment, product-catalog) - this is the VM sidecar's "pod identity" that will allow mTLS to work.
