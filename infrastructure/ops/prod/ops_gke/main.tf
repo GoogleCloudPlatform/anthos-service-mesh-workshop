@@ -270,7 +270,7 @@ resource "google_project_iam_member" "istio-telemetry-owner" {
 resource "google_service_account_iam_member" "istio-telemetry-sa-workload-identity" {
   service_account_id = google_service_account.istio-telemetry.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${google_service_account.istio-telemetry.project}.svc.id.goog[istio-system/istio-telemetry]"
+  member             = "serviceAccount:${google_service_account.istio-telemetry.project}.svc.id.goog[istio-system/istio-mixer-service-account]"
   depends_on = [
     module.create_gke_1_ops_asm_subnet_01,
     module.create_gke_2_ops_asm_subnet_02
