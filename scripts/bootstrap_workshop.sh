@@ -18,6 +18,11 @@
 # TF_VAR_org_id, TF_VAR_billing_account, MY_USER
 # RANDOM_PERSIST is YYMMDD-workshop_number
 
+if [[ $OSTYPE != "linux-gnu" ]]; then
+    echo "ERROR: This script and consecutive set up scripts have only been tested on Linux. Currently, only Linux (debian) is supported. Please run in Cloud Shell or in a VM running Linux".
+    exit;
+fi
+
 usage()
 {
    echo ""
