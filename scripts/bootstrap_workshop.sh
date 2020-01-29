@@ -101,9 +101,9 @@ export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "$
 # Validate ADMIN_GCS_BUCKET
 # Also check for existing file in bucket and ask user for input
 [[ ${ADMIN_GCS_BUCKET} ]] || { echo "admin-gcs-bucket is required."; exit; }
-
-gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt &>/dev/null
 mkdir -p ${SCRIPT_DIR}/../tmp
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt &>/dev/null
+
 if [ $? -eq 0 ]; then
   # Allow for appending for creating multiple users in the same workshop using multiple runs of the script.
   echo "Workshop folder already contains workshop.txt file. Overwrite or append? (o/a) > "
