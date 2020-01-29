@@ -71,7 +71,6 @@ while [ "$1" != "" ]; do
     shift
 done
 
-# TODO: input validation
 # Validate WORKSHOP_NUM is 2 characters
 [ ${WORKSHOP_NUM} ] & [ ${#WORKSHOP_NUM} = 2 ] || { echo "workshop-num must be exactly 2 characters."; exit; }
 

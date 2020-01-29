@@ -41,17 +41,17 @@ while [ "$1" != "" ]; do
     shift
 done
 
-echo $ADMIN_GCS_BUCKET
+[[ ${ADMIN_GCS_BUCKET} ]] || { echo "admin-gcs-bucket is required."; exit; }
+[[ ${WORKSHOP_ID} ]] || { echo "workshop-id is required."; exit; }
 
-exit
 
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 # Check if workshop.txt containing tf projects list for clean up exists on ADMIN_GCS_BUCKET
 # Exit if it does not exists
-gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt
 if [ $? -eq 1 ]; then
-  echo "gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID} does not exist. Exiting..."
+  echo "gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt does not exist. Exiting..."
   exit
 fi
 
