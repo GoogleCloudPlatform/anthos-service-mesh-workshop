@@ -102,7 +102,7 @@ export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "$
 # Also check for existing file in bucket and ask user for input
 [[ ${ADMIN_GCS_BUCKET} ]] || { echo "admin-gcs-bucket is required."; exit; }
 mkdir -p ${SCRIPT_DIR}/../tmp
-gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt &>/dev/null
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt &>/dev/null
 
 if [ $? -eq 0 ]; then
   # Allow for appending for creating multiple users in the same workshop using multiple runs of the script.
@@ -112,7 +112,7 @@ if [ $? -eq 0 ]; then
             # Initialize empty file -- assuming prior run cleaned up
             touch ${SCRIPT_DIR}/../tmp/workshop.txt
         elif [ "$response" = "a" ]; then
-            gsutil cp gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt ${SCRIPT_DIR}/../tmp/workshop.txt
+            gsutil cp gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt ${SCRIPT_DIR}/../tmp/workshop.txt
         else
             echo "Unknown response. Only 'o' or 'a' accepted. Exiting..."
             exit
@@ -181,5 +181,5 @@ do
 done
 
 # Update GCS with workshop.txt
-gsutil cp ${SCRIPT_DIR}/../tmp/workshop.txt gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt
+gsutil cp ${SCRIPT_DIR}/../tmp/workshop.txt gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt
 rm ${SCRIPT_DIR}/../tmp/workshop.txt
