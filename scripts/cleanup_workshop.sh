@@ -14,18 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-<<<<<<< HEAD
-helpFunction()
-{
-   echo ""
-   echo "Usage: $0 -workshop-id parameterA -admin-gcs-bucket parameterB"
-=======
 usage()
 {
    echo ""
    echo "Usage: $0"
    echo -e "\t--org-name | -on Name of Organization"
->>>>>>> bootstrap_workshop
    echo -e "\t--workshop-id Workshop ID that needs to be cleaned up. Example: '200120-01'"
    echo -e "\t--admin-gcs-bucket Admin GCS bucket containing file with list of tf admin projects. Do not include gs:// prefix."
    exit 1 # Exit script after printing help
@@ -65,7 +58,6 @@ export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "$
 
 # Check if workshop.txt containing tf projects list for clean up exists on ADMIN_GCS_BUCKET
 # Exit if it does not exists
-
 gsutil ls gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt
 if [ $? -eq 1 ]; then
   echo "gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt does not exist. Exiting..."
