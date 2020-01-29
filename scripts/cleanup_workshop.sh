@@ -56,7 +56,8 @@ if [ $? -eq 1 ]; then
 fi
 
 # Copy workshop.txt to tmp
-gsutil cp gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt ${SCRIPT}/../tmp/workshop.txt
+mkdir -p ${SCRIPT_DIR}/../tmp
+gsutil cp gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt ${SCRIPT_DIR}/../tmp/workshop.txt
 
 # Loop over tf admin projects and copy vars file to clean up projects
 while read user_tf_project; do
@@ -64,4 +65,4 @@ while read user_tf_project; do
   gsutil cp gs://${user_tf_project}/vars/vars.sh ${VARS_FILE}
   source ${SCRIPT_DIR}/cleanup_projects.sh
   unset VARS_FILE
-done <${SCRIPT}/../tmp/workshop.txt
+done <${SCRIPT_DIR}/../tmp/workshop.txt

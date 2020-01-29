@@ -32,7 +32,7 @@ usage()
    echo -e "\t--workshop_num | -wn 2 digit workshop identifying number with leading zero. Start with 01 for first workshop in a day and increment as needed."
    echo -e "\t--start-user-num | -sun start of sequence for users to be created. Example: If you want to create users 018 to 024 pass 18 for this argument."
    echo -e "\t--end-user-num | -eun end of sequence for users to be created. Example: If you want to create users 018 to 024 pass 24 for this argument."
-   echo -e "\t--admin-gcs-bucket | -agb Admin GCS bucket containing file with list of tf admin projects. Do not include gs:// prefix. Example: 'WORKSHOP_BUCKET'"
+   echo -e "\t--admin-gcs-bucket | -agb Admin GCS bucket containing file with list of tf admin projects. Do not include gs:// prefix."
 
    exit 1 # Exit script after printing help
 }
@@ -102,8 +102,9 @@ export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "$
 # Validate ADMIN_GCS_BUCKET
 # Also check for existing file in bucket and ask user for input
 [[ ${ADMIN_GCS_BUCKET} ]] || { echo "admin-gcs-bucket is required."; exit; }
-echo "gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt"
+
 gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt &>/dev/null
+mkdir -p ${SCRIPT_DIR}/../tmp
 if [ $? -eq 0 ]; then
   # Allow for appending for creating multiple users in the same workshop using multiple runs of the script.
   echo "Workshop folder already contains workshop.txt file. Overwrite or append? (o/a) > "
