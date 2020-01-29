@@ -7,7 +7,6 @@ resources:
   - namespace-currency.yaml
   - namespace-email.yaml
   - namespace-frontend.yaml
-  - namespace-loadgenerator.yaml
   - namespace-payment.yaml
   - namespace-product-catalog.yaml
   - namespace-recommendation.yaml
