@@ -33,7 +33,7 @@ while [ "$1" != "" ]; do
                                       ADMIN_GCS_BUCKET=$1
                                       ;;
         --workshop-id | -wi )         shift
-                                      ADMIN_GCS_BUCKET=$1
+                                      WORKSHOP_ID=$1
                                       ;;
         --help | -h )                 helpFunction
                                       exit
