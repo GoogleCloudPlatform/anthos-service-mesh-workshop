@@ -18,13 +18,17 @@
 # TF_VAR_org_id, TF_VAR_billing_account, MY_USER
 # RANDOM_PERSIST is YYMMDD-workshop_number
 
-set -e
-
-helpFunction()
+usage()
 {
    echo ""
-   echo "Usage: $0 --admin-gcs-path parameterA"
-   echo -e "\t--admin-gcs-path Path to text file in Admin GCS bucket containing list of tf admin projects. Do not include gs:// prefix. Example: 'WORKSHOP_BUCKET/workshop.txt'"
+   echo "Usage: $0"
+   echo -e "\t--org-name | -on Name of Organization"
+   echo -e "\t--billing-id | -bi  Billing Account ID. User must have admin permissions on account."
+   echo -e "\t--workshop_num | -wn 2 digit workshop identifying number with leading zero. Start with 01 for first workshop in a day and increment as needed."
+   echo -e "\t--start-user-num | -sun start of sequence for users to be created. Example: If you want to create users 018 to 024 pass 18 for this argument."
+   echo -e "\t--end-user-num | -eun end of sequence for users to be created. Example: If you want to create users 018 to 024 pass 24 for this argument."
+   echo -e "\t--admin-gcs-bucket | -agb Admin GCS bucket containing file with list of tf admin projects. Do not include gs:// prefix. Example: 'WORKSHOP_BUCKET'"
+
    exit 1 # Exit script after printing help
 }
 
@@ -56,7 +60,7 @@ while [ "$1" != "" ]; do
         --admin-gcs-bucket | -agb)    shift
                                       ADMIN_GCS_BUCKET=$1
                                       ;;
-        --help | -h )                 helpFunction
+        --help | -h )                 usage
                                       exit
     esac
     shift
@@ -64,52 +68,66 @@ done
 
 # TODO: input validation
 # Validate WORKSHOP_NUM is 2 characters
-[ ${#WORKSHOP_NUM} = 2 ] || echo "workshop-num must be exactly 2 characters."
+[ ${WORKSHOP_NUM} ] & [ ${#WORKSHOP_NUM} = 2 ] || { echo "workshop-num must be exactly 2 characters."; exit; }
 
 # Validate START_USER_NUM and END_USER_NUM are numbers
 # Also that START comes before END or is the same number
-[[ ${START_USER_NUM} =~ ^[0-9]+$ && ${END_USER_NUM} =~ ^[0-9]+$ ]] || echo "START_USER_NUM and END_USER_NUM must be numbers."
-[ ${END_USER_NUM} -ge ${START_USER_NUM} ] || echo "END_USER_NUM must be greater than or equal to START_USER_NUM."
+[[ ${START_USER_NUM} =~ ^[0-9]+$ && ${END_USER_NUM} =~ ^[0-9]+$ ]] || { echo "START_USER_NUM and END_USER_NUM must be numbers."; exit; }
+[ ${END_USER_NUM} -ge ${START_USER_NUM} ] || { echo "END_USER_NUM must be greater than or equal to START_USER_NUM."; exit; }
+[[ ${START_USER_NUM} -le 999 && ${END_USER_NUM} -le 999 ]] || { echo "START_USER_NUM and END_USER_NUM must be less than 999."; exit; }
 
 # Validate ORG_NAME exists
-ORG_ID = $(gcloud organizations list \
-  --filter="display_name=cloud-pharaoh.com" \
+[[ ${ORG_NAME} ]] || { echo "org-name required."; exit; }
+ORG_ID=$(gcloud organizations list \
+  --filter="display_name=${ORG_NAME}" \
   --format="value(ID)")
-[ ${ORG_ID} ] || echo "org-name does not exist or you do not have correct permissions in this org."
+[ ${ORG_ID} ] || { echo "org-name does not exist or you do not have correct permissions in this org."; exit; }
+
+# Validate active user is org admin
+# TODO: use this in clean up script instead
+export ADMIN_USER=$(gcloud config get-value account)
+gcloud organizations get-iam-policy $ORG_ID --format=json | \
+jq '.bindings[] | select(.role=="roles/resourcemanager.organizationAdmin")' | grep $ADMIN_USER  &>/dev/null
+
+[[ $? -eq 0 ]] || { echo "Active user is not an organization admin in $ORG_NAME"; exit; }
+
+WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NUM}"
+export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 # Validate ADMIN_GCS_BUCKET
-gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
-if [ $? -eq 1 ]; then
-  rm ${SCRIPT_DIR}/../tmp/workshop.txt
-  touch ${SCRIPT_DIR}/../tmp/workshop.txt
+# Also check for existing file in bucket and ask user for input
+[[ ${ADMIN_GCS_BUCKET} ]] || { echo "admin-gcs-bucket is required."; exit; }
+echo "gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt"
+gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt &>/dev/null
+if [ $? -eq 0 ]; then
+  # Allow for appending for creating multiple users in the same workshop using multiple runs of the script.
+  echo "Workshop folder already contains workshop.txt file. Overwrite or append? (o/a) > "
+        read response
+        if [ "$response" = "o" ]; then
+            # Initialize empty file -- assuming prior run cleaned up
+            touch ${SCRIPT_DIR}/../tmp/workshop.txt
+        elif [ "$response" = "a" ]; then
+            gsutil cp gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt ${SCRIPT_DIR}/../tmp/workshop.txt
+        else
+            echo "Unknown response. Only 'o' or 'a' accepted. Exiting..."
+            exit
+        fi
 else
-  echo "Workshop folder already exists. Exiting..."
-  exit
+  touch ${SCRIPT_DIR}/../tmp/workshop.txt
 fi
 
 # Validate BILLING_ID
+[[ ${BILLING_ID} ]] || { echo "billing-id is required."; exit; }
+# Validate active user is billing admin for billing account
+gcloud beta billing accounts get-iam-policy $BILLING_ID --format=json | \
+jq '.bindings[] | select(.role=="roles/billing.admin")' | grep $ADMIN_USER &>/dev/null
 
-export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
+[[ $? -eq 0 ]] || { echo "Active user is not an billing account billing admin in $BILLING_ID"; exit; }
 
-export TF_VAR_org_id=ORG_ID
+export TF_VAR_org_id=$ORG_ID
 
-export TF_VAR_billing_account=${BILLING_ID}
+export TF_VAR_billing_account=$BILLING_ID
 
-WORKSHOP_ID="$(date '+%y%m%d')-${WORKSHOP_NUM}"
-
-# use this in clean up script instead
-export ADMIN_USER=$(gcloud config get-value account)
-
-gsutil ls gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}
-if [ $? -eq 1 ]; then
-  rm ${SCRIPT_DIR}/../tmp/workshop.txt
-  touch ${SCRIPT_DIR}/../tmp/workshop.txt
-else
-  echo "Workshop folder already exists. Exiting..."
-  exit
-fi
-
-# If we want to split creation of users on multiple runs then the start of the sequence needs to be a variable
 for i in $(seq ${START_USER_NUM} ${END_USER_NUM})
 do
   USER_ID=$(printf "%03d" $i)
@@ -159,3 +177,4 @@ done
 
 # Update GCS with workshop.txt
 gsutil cp ${SCRIPT_DIR}/../tmp/workshop.txt gs://${ADMIN_GCS_BUCKET}/${WORKSHOP_ID}/workshop.txt
+rm ${SCRIPT_DIR}/../tmp/workshop.txt
