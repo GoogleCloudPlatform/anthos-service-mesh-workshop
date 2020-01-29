@@ -139,10 +139,12 @@ for d in $(ls -d ${k8s_repo_name}/*/); do
 done
 
 # Copy app-ingress and istio-networking templates if they don't already exist in ops clusters.
+# Copy istio-telemetry to both Ops clusters
 # Also Copy kustomization.yaml
 for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
   [[ ! -d "${k8s_repo_name}/${d}/app-ingress" ]] && cp -r config/app-ingress ${k8s_repo_name}/${d}/
   [[ ! -d "${k8s_repo_name}/${d}/istio-networking" ]] && cp -r config/istio-networking ${k8s_repo_name}/${d}/
+  [[ ! -f "${k8s_repo_name}/${d}/istio-telemetry.yaml" ]] && cp config/istio-telemetry.yaml ${k8s_repo_name}/${d}/
   cp config/kustomization-ops.yaml ${k8s_repo_name}/${d}/kustomization.yaml
 done
 
