@@ -71,7 +71,7 @@ RANDOM_PERSIST=${RANDOM_PERSIST:-${RANDOM}}
 echo -e "\n${CYAN}Defining terraform admin project ID, SA and SA credentials location...${NC}"
 ORG_USER=${MY_USER?env not set}
 ORG_USER=${MY_USER%@*}
-ORG_USER=${ORG_USER:0:11}
+ORG_USER=${ORG_USER:0:7}
 export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm
 PROJECT_ID_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 6 | head -n 1)
 export TF_ADMIN_NAME=${ORG_USER}-${RANDOM_PERSIST}-tf
