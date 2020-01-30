@@ -152,7 +152,7 @@ echo -e "\n${CYAN}Giving ${MY_USER} Owner IAM permission at the folder level for
 gcloud alpha resource-manager folders \
   add-iam-policy-binding ${TF_VAR_folder_id} \
   --member=user:${MY_USER} \
-  --role=roles/resourcemanager.folderEditor
+  --role=roles/owner
 
 echo -e "\n${CYAN}Giving cloudbuild service account billing user role for the billing account...${NC}"
 mkdir -p ${SCRIPT_DIR}/../tmp
