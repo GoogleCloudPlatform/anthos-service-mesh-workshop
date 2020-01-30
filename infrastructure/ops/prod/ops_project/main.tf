@@ -34,7 +34,9 @@ module "create_ops_asm_project" {
     "containeranalysis.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "monitoring.googleapis.com",
-    "cloudtrace.googleapis.com"
+    "cloudtrace.googleapis.com",
+    "servicemanagement.googleapis.com",
+    "serviceusage.googleapis.com"
   ]
 }
 

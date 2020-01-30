@@ -13,4 +13,4 @@
 # limitations under the License.
 
 # Istio
-variable "istio_version" { default = "1.4.2" }
+variable "istio_version" { default = "1.4.3" }

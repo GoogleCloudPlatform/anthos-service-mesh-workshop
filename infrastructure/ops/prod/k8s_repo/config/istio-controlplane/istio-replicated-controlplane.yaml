@@ -50,6 +50,30 @@ spec:
               value: external
       ingressGateway:
         enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-ingressgateway
+              patches:
+                # Add annotation to service to use NEG and AutoNEG
+                # Full metadata replacement is a workaround for: https://github.com/istio/istio/issues/19463
+                - path: metadata
+                  value:
+                    name: istio-ingressgateway
+                    namespace: istio-system
+                    labels:
+                      app: istio-ingressgateway
+                      istio: ingressgateway
+                      release: istio
+                    annotations:
+                      cloud.google.com/neg: '{"exposed_ports": {"80":{}}}'
+                      anthos.cft.dev/autoneg: '{"name":"istio-ingressgateway", "max_rate_per_endpoint":100}'
+                # Change type to ClusterIP to remove external IP
+                - path: spec.type
+                  value: ClusterIP
+                # Clear external traffic policy for NEG support.
+                - path: spec.externalTrafficPolicy
+                  value: ""
     enabled: true
   policy:
     components:
