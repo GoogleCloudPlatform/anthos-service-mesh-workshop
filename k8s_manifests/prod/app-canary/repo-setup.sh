@@ -25,6 +25,11 @@ cp $CANARY_DIR/baseline/dr-frontend.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-ca
 cp $CANARY_DIR/baseline/vs-frontend.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary/
 cd ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary/
 kustomize create --autodetect
+cd ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/
+# NOTE - using sed to add the directory to the top-level kustomize until this is fixed:
+# https://github.com/kubernetes-sigs/kustomize/issues/1556
+sed -i '/  - app-ingress\//a\ \ - app-canary\/' ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/kustomization.yaml
+
 
 #DEV2
 log "📑 Generating Dev2 Manifests ..."
@@ -47,6 +52,7 @@ cp $CANARY_DIR/baseline/dr-frontend.yaml ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-ca
 cp $CANARY_DIR/baseline/vs-frontend.yaml ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-canary/
 cd ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-canary/
 kustomize create --autodetect
+sed -i '/  - app-ingress\//a\ \ - app-canary\/' ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/kustomization.yaml
 
 log "✅ Generated baseline Canary manifests."
 cd $CANARY_DIR
