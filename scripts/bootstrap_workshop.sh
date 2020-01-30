@@ -27,6 +27,7 @@ usage()
 {
    echo ""
    echo "Usage: $0"
+   echo -e "\t--set-up-for-admin | -sufa Boolean flag to set up for admin user currently logged in to gcloud. If present, --start-user-num and --end-user-num are ignored and only 1 set up is created."
    echo -e "\t--org-name | -on Name of Organization"
    echo -e "\t--billing-id | -bi  Billing Account ID. User must have admin permissions on account."
    echo -e "\t--workshop_num | -wn 2 digit workshop identifying number with leading zero. Start with 01 for first workshop in a day and increment as needed."
@@ -38,6 +39,7 @@ usage()
 }
 
 # Setting default empty values
+SETUP_ADMIN=false
 WORKSHOP_NUM=
 START_USER_NUM=
 END_USER_NUM=
@@ -47,6 +49,9 @@ BILLING_ID=
 
 while [ "$1" != "" ]; do
     case $1 in
+        --set-up-for-admin | -sufa )  shift
+                                      SETUP_ADMIN=true
+                                      ;;
         --org-name | -on )            shift
                                       ORG_NAME=$1
                                       ;;
@@ -57,10 +62,10 @@ while [ "$1" != "" ]; do
                                       WORKSHOP_NUM=$1
                                       ;;
         --start-user-num | -sun )     shift
-                                      START_USER_NUM=$1
+                                      [[ $SETUP_ADMIN = true ]] && START_USER_NUM=1 || START_USER_NUM=$1
                                       ;;
         --end-user-num | -eun )       shift
-                                      END_USER_NUM=$1
+                                      [[ $SETUP_ADMIN = true ]] && END_USER_NUM=1 || END_USER_NUM=$1
                                       ;;
         --admin-gcs-bucket | -agb)    shift
                                       ADMIN_GCS_BUCKET=$1
@@ -71,14 +76,18 @@ while [ "$1" != "" ]; do
     shift
 done
 
+[[ $SETUP_ADMIN = true ]] && { END_USER_NUM=1; START_USER_NUM=1; }
+
 # Validate WORKSHOP_NUM is 2 characters
 [ ${WORKSHOP_NUM} ] & [ ${#WORKSHOP_NUM} = 2 ] || { echo "workshop-num must be exactly 2 characters."; exit; }
 
 # Validate START_USER_NUM and END_USER_NUM are numbers
 # Also that START comes before END or is the same number
-[[ ${START_USER_NUM} =~ ^[0-9]+$ && ${END_USER_NUM} =~ ^[0-9]+$ ]] || { echo "START_USER_NUM and END_USER_NUM must be numbers."; exit; }
-[ ${END_USER_NUM} -ge ${START_USER_NUM} ] || { echo "END_USER_NUM must be greater than or equal to START_USER_NUM."; exit; }
-[[ ${START_USER_NUM} -le 999 && ${END_USER_NUM} -le 999 ]] || { echo "START_USER_NUM and END_USER_NUM must be less than 999."; exit; }
+if [[ $SETUP_ADMIN = false ]]; then
+  [[ ${START_USER_NUM} =~ ^[0-9]+$ && ${END_USER_NUM} =~ ^[0-9]+$ ]] || { echo "START_USER_NUM and END_USER_NUM must be numbers."; exit; }
+  [ ${END_USER_NUM} -ge ${START_USER_NUM} ] || { echo "END_USER_NUM must be greater than or equal to START_USER_NUM."; exit; }
+  [[ ${START_USER_NUM} -le 999 && ${END_USER_NUM} -le 999 ]] || { echo "START_USER_NUM and END_USER_NUM must be less than 999."; exit; }
+fi
 
 # Validate ORG_NAME exists
 [[ ${ORG_NAME} ]] || { echo "org-name required."; exit; }
@@ -136,10 +145,9 @@ export TF_VAR_billing_account=$BILLING_ID
 for i in $(seq ${START_USER_NUM} ${END_USER_NUM})
 do
   USER_ID=$(printf "%03d" $i)
-  export MY_USER="user${USER_ID}@${ORG_NAME}"
+  export MY_USER="user${USER_ID}@${ORG_NAME}" && [[  $SETUP_ADMIN = true ]] && MY_USER=$ADMIN_USER
   export RANDOM_PERSIST=${WORKSHOP_ID}
   echo "RANDOM PERSIST: ${RANDOM_PERSIST} - MY_USER: ${MY_USER} - ADMIN_USER: ${ADMIN_USER}"
-
   source $SCRIPT_DIR/setup-terraform-admin-project.sh
   echo "TF_ADMIN: ${TF_ADMIN}"
   echo "$TF_ADMIN" | tee -a ${SCRIPT_DIR}/../tmp/workshop.txt
