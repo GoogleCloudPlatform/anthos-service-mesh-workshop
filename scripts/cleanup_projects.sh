@@ -43,6 +43,9 @@ gcloud config set account ${ADMIN_USER}
 echo -e "\n${CYAN}Deleting cloud endpoint service...${NC}" 
 gcloud endpoints services delete frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog --project $TF_VAR_ops_project_name --async --quiet
 
+echo -e "\n${CYAN}Deleting cloud endpoint service...${NC}" 
+gcloud endpoints services delete frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog --project $TF_VAR_ops_project_name --async --quiet
+
 echo -e "\n${CYAN}Deleting dev1, dev2 and ops projects...${NC}" 
 gcloud projects delete ${TF_VAR_dev1_project_name} --quiet
 gcloud projects delete ${TF_VAR_dev2_project_name} --quiet
