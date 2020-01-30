@@ -12,10 +12,10 @@ bases:
   - app/
   - app-ingress/
   - istio-networking/
+  - istio-telemetry/
 
 resources:
   - istio-operator-psp.yaml
-  - istio-telemetry.yaml
 
 patchesJson6902:
   - target:
