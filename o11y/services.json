@@ -1,0 +1,13 @@
+{
+  "name": "projects/smcghee-20995-01-ops/services/smcghee-11932-02-dev1-location-us-central1-gke-1-apps-r1a-prod-currency-currencyservice",
+  "displayName": "smcghee-11932-02-dev1/us-central1/gke-1-apps-r1a-prod/currency/currencyservice",
+  "clusterIstio": {
+    "location": "us-central1",
+    "clusterName": "gke-1-apps-r1a-prod",
+    "serviceNamespace": "currency",
+    "serviceName": "currencyservice"
+  },
+  "telemetry": {
+    "resourceName": "//container.googleapis.com/projects/smcghee-11932-02-dev1/zones/us-central1/clusters/gke-1-apps-r1a-prod/k8s/namespaces/currency/services/currencyservice"
+  }
+}

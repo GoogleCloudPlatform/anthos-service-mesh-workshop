@@ -1,0 +1,14 @@
+{
+   "displayName": "Hipster Availability",
+   "serviceLevelIndicator": {
+      "requestBased": {
+        "goodTotalRatio": {
+          "totalServiceFilter": "metric.type=\"istio.io/service/server/request_count\" resource.type=\"k8s_container\" metric.label.\"destination_service_name\"=\"frontend\""
+          "goodServiceFilter": "metric.type=\"istio.io/service/server/request_count\" resource.type=\"k8s_container\" metric.label.\"destination_service_name\"=\"frontend\" metric.label.\"response_code\"=\"200\""
+        }
+     }
+   },
+   "goal": 0.98,
+   "rollingPeriod": "86400s",
+   "displayName": "98% Successful requests in a rolling day"
+}
