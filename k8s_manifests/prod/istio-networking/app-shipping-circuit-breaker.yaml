@@ -1,7 +1,7 @@
 apiVersion: "networking.istio.io/v1alpha3"
 kind: "DestinationRule"
 metadata:
-  name: "shippingservice-shipping-destrule"
+  name: "shippingservice-circuit-breaker"
   namespace: "shipping"
 spec:
   host: "shippingservice.shipping.svc.cluster.local"
