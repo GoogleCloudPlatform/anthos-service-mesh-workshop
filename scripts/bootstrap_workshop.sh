@@ -58,7 +58,7 @@ while [ "$1" != "" ]; do
         --billing-id | -bi )          shift
                                       BILLING_ID=$1
                                       ;;
-        --workshop_num | -wn )        shift
+        --workshop-num | -wn )        shift
                                       WORKSHOP_NUM=$1
                                       ;;
         --start-user-num | -sun )     shift
