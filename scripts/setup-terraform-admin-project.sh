@@ -148,6 +148,11 @@ gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 --member serviceAccount:${TF_CLOUDBUILD_SA} \
 --role roles/resourcemanager.folderCreator
 
+echo -e "\n${CYAN}Giving ${MY_USER} Owner IAM permission at the folder level for folder ${TF_VAR_folder_display_name}...${NC}"
+gcloud alpha resource-manager folders \
+  add-iam-policy-binding ${TF_VAR_folder_id} \
+  --member=user:${MY_USER} \
+  --role=roles/resourcemanager.folderEditor
 
 echo -e "\n${CYAN}Giving cloudbuild service account billing user role for the billing account...${NC}"
 mkdir -p ${SCRIPT_DIR}/../tmp
