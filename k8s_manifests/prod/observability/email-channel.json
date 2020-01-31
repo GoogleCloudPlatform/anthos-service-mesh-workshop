@@ -1,0 +1,9 @@
+{
+    "type": "email",
+    "displayName": "test e-mail channel",
+    "description": "E-mail channel created by gcloud as a test",
+    "labels": {
+      "email_address": "user@example.com"
+    },
+    "enabled": false
+}
