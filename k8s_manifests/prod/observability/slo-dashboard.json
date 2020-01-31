@@ -1,24 +1,50 @@
 {
     "name": "projects/smcghee-11932-01-ops/dashboards/slo-dash",
     "displayName": "slo dashboard",
-    "etag": "",
+    "etag": "d0bdf1f394c04f449e59c35e17e0feb2",
     "gridLayout": {
-      "columns": 3,
-      "widgets": [
-        {
-          "title": "test SLO",
-          "xyChart": {
-            "dataSets": [
-              {
-                "plotType": "LINE",
-                "timeSeriesQuery": {
-                  "timeSeriesFilter": {
-                    "filter": "select_slo_health(\"projects/155533936254/services/ist:smcghee-11932-02-dev1-zone-us-west1-a-gke-1-apps-r1a-prod-frontend-frontend/serviceLevelObjectives/T8ACRF3vShK-iEQ-b85ydQ\")"
-                  }
+        "columns": 3,
+        "widgets": [
+            {
+                "title": "SLO health",
+                "xyChart": {
+                    "dataSets": [
+                        {
+                            "plotType": "LINE",
+                            "timeSeriesQuery": {
+                                "timeSeriesFilter": {
+                                    "filter": "select_slo_health(\"projects/155533936254/services/ist:smcghee-11932-02-dev1-zone-us-west1-a-gke-1-apps-r1a-prod-frontend-frontend/serviceLevelObjectives/9fokWMvZTEWtueoGNGsxjw\")",
+                                    "aggregation": {
+                                        "alignmentPeriod": "60s",
+                                        "perSeriesAligner": "ALIGN_MEAN",
+                                        "crossSeriesReducer": "REDUCE_SUM",
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 }
-              }
-            ]
-          }
-        }
-    ]}
+            },
+            {
+                "title": "Error Budget",
+                "xyChart": {
+                    "dataSets": [
+                        {
+                            "plotType": "LINE",
+                            "timeSeriesQuery": {
+                                "timeSeriesFilter": {
+                                    "filter": "select_slo_budget(\"projects/155533936254/services/ist:smcghee-11932-02-dev1-zone-us-west1-a-gke-1-apps-r1a-prod-frontend-frontend/serviceLevelObjectives/9fokWMvZTEWtueoGNGsxjw\")",
+                                    "aggregation": {
+                                        "alignmentPeriod": "60s",
+                                        "perSeriesAligner": "ALIGN_MEAN",
+                                        "crossSeriesReducer": "REDUCE_SUM",
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
 }

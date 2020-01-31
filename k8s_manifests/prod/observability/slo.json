@@ -1,5 +1,4 @@
 {
-   "displayName": "Hipster Availability",
    "serviceLevelIndicator": {
       "requestBased": {
         "goodTotalRatio": {
@@ -10,5 +9,17 @@
    },
    "goal": 0.98,
    "rollingPeriod": "86400s",
-   "displayName": "98% Successful requests in a rolling day"
+   "displayName": "Hipster Availability - 98% Successful requests in a rolling day"
+},
+{
+  "serviceLevelIndicator": {
+    "basicSli": {
+      "latency": {
+        "threshold": "0.500s"
+      }
+    }
+  },
+  "goal": 0.98,
+  "rollingPeriod": "1209600s",
+  "displayName": "Hipster Latency - 98% \u003c 500ms Latency in Rolling 14 Days"
 }
