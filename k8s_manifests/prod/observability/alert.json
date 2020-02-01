@@ -5,7 +5,7 @@
       {
         "displayName":"SLO burn rate alert for SLO_ID exceeds 2",
         "conditionThreshold": {
-          "filter":"select_slo_burn_rate(\"projects/smcghee-11932-01-ops/services/my-test-service/serviceLevelObjectives/KuugmbPlRfCIO-HNe56k1g\", \"60m\")",
+          "filter":"select_slo_burn_rate(\"projects/OPS_PROJECT/services/my-test-service/serviceLevelObjectives/SLO_ID_1\", \"60m\")",
           "comparison":"COMPARISON_GT",
           "thresholdValue": 2,
           "duration": {
@@ -14,7 +14,7 @@
         },
       }
     ],
-    "notificationChannels": ["projects/smcghee-11932-01-ops/notificationChannels/5959483650518336200"],
+    "notificationChannels": ["projects/OPS_PROJECT/notificationChannels/NOTIFICATION_ID"],
     "documentation": {
        "content": "SLO burn for the past 60m exceeded twice the normal budget burn rate.",
        "mime_type": "text/markdown",
