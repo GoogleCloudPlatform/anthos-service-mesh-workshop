@@ -1,9 +1,9 @@
 {
-    "name": "projects/smcghee-11932-01-ops/notificationChannelDescriptors/slack",
+    "name": "projects/OPS_PROJECT/notificationChannelDescriptors/slack",
     "type": "slack",
     "displayName": "slack"
     "labels": {
-        "auth_token": "asdfasdfasdf",
+        "auth_token": "AUTH_TOKEN",
         "channel_name": "prod alerts"
       },
     "enabled": false
