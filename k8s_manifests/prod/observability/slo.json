@@ -1,5 +1,4 @@
 {
-   "displayName": "Hipster Availability",
    "serviceLevelIndicator": {
       "requestBased": {
         "goodTotalRatio": {
@@ -10,5 +9,5 @@
    },
    "goal": 0.98,
    "rollingPeriod": "86400s",
-   "displayName": "98% Successful requests in a rolling day"
+   "displayName": "Hipster Availaibity: 98% Successful requests in a rolling day"
 }
