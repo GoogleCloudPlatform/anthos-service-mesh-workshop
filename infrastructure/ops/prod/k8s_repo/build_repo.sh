@@ -151,6 +151,7 @@ for d in ${ops_gke_2_name} ${ops_gke_1_name}; do
   [[ ! -d "${k8s_repo_name}/${d}/app-ingress" ]] && cp -r config/app-ingress ${k8s_repo_name}/${d}/
   [[ ! -d "${k8s_repo_name}/${d}/istio-networking" ]] && cp -r config/istio-networking ${k8s_repo_name}/${d}/
   [[ ! -d "${k8s_repo_name}/${d}/istio-telemetry" ]] && cp -r config/istio-telemetry ${k8s_repo_name}/${d}/
+  [[ ! -d "${k8s_repo_name}/${d}/app-loadgenerator" ]] && cp -r config/app-loadgenerator ${k8s_repo_name}/${d}/
   cp config/kustomization-ops.yaml ${k8s_repo_name}/${d}/kustomization.yaml
 done
 

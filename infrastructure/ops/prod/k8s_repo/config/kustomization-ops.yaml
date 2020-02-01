@@ -11,6 +11,7 @@ bases:
   - app-cnrm
   - app/
   - app-ingress/
+  - app-loadgenerator/
   - istio-networking/
   - istio-telemetry/
 
