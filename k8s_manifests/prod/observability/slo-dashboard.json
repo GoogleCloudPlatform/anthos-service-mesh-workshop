@@ -1,5 +1,5 @@
 {
-    "name": "projects/smcghee-11932-01-ops/dashboards/slo-dash",
+    "name": "projects/OPS_PROJECT/dashboards/slo-dash",
     "displayName": "slo dashboard",
     "etag": "",
     "gridLayout": {
@@ -13,7 +13,7 @@
                 "plotType": "LINE",
                 "timeSeriesQuery": {
                   "timeSeriesFilter": {
-                    "filter": "select_slo_health(\"projects/155533936254/services/ist:smcghee-11932-02-dev1-zone-us-west1-a-gke-1-apps-r1a-prod-frontend-frontend/serviceLevelObjectives/T8ACRF3vShK-iEQ-b85ydQ\")"
+                    "filter": "select_slo_health(\"projects/OPS_PROJECT/services/ist:DEV1_PROJECT-zone-us-west1-a-DEV1_CLUSTER-frontend-frontend/serviceLevelObjectives/SLO_ID\")"
                   }
                 }
               }
