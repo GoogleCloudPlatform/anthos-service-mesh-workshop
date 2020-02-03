@@ -1,0 +1,78 @@
+{
+  "name": "projects/user006-200202-01-ops-azmo7d/dashboards/servicesdash",
+  "displayName": "services dashboard",
+  "etag": "",
+  "gridLayout": {
+    "columns": 4,
+    "widgets": [
+      {
+        "title": "Request Rates",
+        "xyChart": {
+          "dataSets": [
+            {
+              "plotType": "LINE",
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type=\"k8s_container\" AND metric.type=\"istio.io/service/server/request_count\"",
+                  "aggregation": {
+                    "alignmentPeriod": "60s",
+                    "perSeriesAligner": "ALIGN_RATE",
+                    "crossSeriesReducer": "REDUCE_SUM",
+                    "groupByFields": [
+                      "metric.labels.destination_service_name"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Error Rates",
+        "xyChart": {
+          "dataSets": [
+            {
+              "plotType": "LINE",
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type=\"k8s_container\" AND metric.type=\"istio.io/service/server/request_count\" AND metric.labels.response_code!=200",
+                  "aggregation": {
+                    "alignmentPeriod": "60s",
+                    "perSeriesAligner": "ALIGN_RATE",
+                    "crossSeriesReducer": "REDUCE_SUM",
+                    "groupByFields": [
+                      "metric.labels.destination_service_name"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Service Latencies",
+        "xyChart": {
+          "dataSets": [
+            {
+              "plotType": "LINE",
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type=\"k8s_container\" AND metric.type=\"istio.io/service/server/response_latencies\" AND metric.labels.response_code=200",
+                  "aggregation": {
+                    "crossSeriesReducer": "REDUCE_PERCENTILE_99",
+                    "perSeriesAligner": "ALIGN_SUM",
+                    "groupByFields": [
+                      "metric.labels.destination_service_name"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
