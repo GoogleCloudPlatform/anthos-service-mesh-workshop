@@ -200,7 +200,6 @@ echo -e "export TF_VAR_dev1_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev1-${PR
 echo -e "export TF_VAR_dev2_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev2-${PROJECT_ID_SUFFIX}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_dev3_project_name=${ORG_USER}-${RANDOM_PERSIST}-dev3-${PROJECT_ID_SUFFIX}" | tee -a ${VARS_FILE}
 
-
 source ${VARS_FILE}
 
 # Add vars.sh to gcs bucket
