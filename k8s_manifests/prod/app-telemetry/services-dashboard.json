@@ -3,7 +3,7 @@
   "displayName": "services dashboard",
   "etag": "",
   "gridLayout": {
-    "columns": 4,
+    "columns": 1,
     "widgets": [
       {
         "title": "Request Rates",
