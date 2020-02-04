@@ -12,12 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+data "google_container_engine_versions" "r3a_subnet_05" {
+  project        = data.terraform_remote_state.app3_project.outputs.dev3_project_id
+  location       = "${var.subnet_05_region}-a"
+  version_prefix = var.kubernetes_version
+}
+
+data "google_container_engine_versions" "r3b_subnet_05" {
+  project        = data.terraform_remote_state.app3_project.outputs.dev3_project_id
+  location       = "${var.subnet_05_region}-b"
+  version_prefix = var.kubernetes_version
+}
+
+
 # gke-5-apps-r3b-prod - Create GKE zonal cluster in dev3 project using subnet-05 zone a
 module "create_gke_5_dev3_r3b_subnet_05" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.app3_project.outputs.dev3_project_id
   name               = var.gke_dev3-r3b
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.r3a_subnet_05.latest_master_version
   region             = var.subnet_05_region
   regional           = false
   zones              = ["${var.subnet_05_region}-b"]
@@ -67,7 +80,7 @@ module "create_gke_6_dev3_r3c_subnet_05" {
   source             = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/beta-public-cluster?ref=v5.1.1"
   project_id         = data.terraform_remote_state.app3_project.outputs.dev3_project_id
   name               = var.gke_dev3-r3c
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = data.google_container_engine_versions.r3b_subnet_05.latest_master_version
   region             = var.subnet_05_region
   regional           = false
   zones              = ["${var.subnet_05_region}-c"]
