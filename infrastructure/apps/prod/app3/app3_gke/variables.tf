@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "kubernetes_version" { default = "1.14.7-gke.25" }
+variable "kubernetes_version" { default = "1.14.8" }
 variable "gke_dev3-r3b" { default = "gke-5-apps-r3b-prod" }
 variable "gke_dev3-r3c" { default = "gke-6-apps-r3c-prod" }
 variable "project_editor" {}
