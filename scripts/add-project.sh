@@ -25,27 +25,15 @@ export NC='\033[0m' # No Color
 
 
 # Create a vars folder and file
-mkdir -p vars
 export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
-touch ${VARS_FILE}
-chmod +x ${VARS_FILE}
 source ${VARS_FILE}
 
 # Create a logs folder and file and send stdout and stderr to console and log file 
-mkdir -p logs
+mkdir -p ${SCRIPT_DIR}/../logs
 export LOG_FILE=${SCRIPT_DIR}/../logs/add-project-$(date +%s).log
 touch ${LOG_FILE}
 exec 2>&1
 exec &> >(tee -i ${LOG_FILE})
-
-source ${VARS_FILE}
-ORG_USER=${MY_USER?env not set}
-ORG_USER=${MY_USER%@*}
-ORG_USER=${ORG_USER:0:11}
-echo -e "\n${CYAN}Setting new project name...${NC}"
-echo -e "export TF_VAR_dev3_project_name=${ORG_USER}-${RANDOM_PERSIST}-04-dev3" | tee -a ${VARS_FILE}
-
-source ${VARS_FILE}
 
 echo -e "\n${CYAN}Preparing terraform backends, shared states and vars...${NC}"
 # Define an array of GCP resources
@@ -63,29 +51,29 @@ do
 
     # Create backends
     sed -e s/PROJECT_ID/${TF_ADMIN}/ -e s/ENV/prod/ -e s/RESOURCE/${resource}/ \
-    infrastructure/templates/backend.tf_tmpl > infrastructure/${folders[idx]}/backend.tf
+    ${SCRIPT_DIR}/../infrastructure/templates/backend.tf_tmpl > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/backend.tf
 
     # Create shared states for every resource
     sed -e s/PROJECT_ID/${TF_ADMIN}/ -e s/RESOURCE/${resource}/ \
-    infrastructure/templates/shared_state.tf_tmpl > infrastructure/gcp/prod/shared_states/shared_state_${resource}.tf
+    ${SCRIPT_DIR}/../infrastructure/templates/shared_state.tf_tmpl > ${SCRIPT_DIR}/../../infra-repo/gcp/prod/shared_states/shared_state_${resource}.tf
 
     # Create vars from terraform.tfvars_tmpl files
-    tfvar_tmpl_file=infrastructure/${folders[idx]}/terraform.tfvars_tmpl
+    tfvar_tmpl_file=${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars_tmpl
     if [ -f "$tfvar_tmpl_file" ]; then
-        envsubst <infrastructure/${folders[idx]}/terraform.tfvars_tmpl \
-        > infrastructure/${folders[idx]}/terraform.tfvars
+        envsubst <${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars_tmpl \
+        > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars
     fi
 
     # Create vars from variables.auto.tfvars_tmpl files
-    auto_tfvar_tmpl_file=infrastructure/${folders[idx]}/variables.auto.tfvars_tmpl
+    auto_tfvar_tmpl_file=${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars_tmpl
     if [ -f "$auto_tfvar_tmpl_file" ]; then
-        envsubst <infrastructure/${folders[idx]}/variables.auto.tfvars_tmpl \
-        > infrastructure/${folders[idx]}/variables.auto.tfvars
+        envsubst <${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars_tmpl \
+        > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars
     fi
 
 done
 
 echo -e "\n${CYAN}Committing infrastructure terraform to cloud source repo...${NC}"
-cd ./infrastructure
+cd ${SCRIPT_DIR}/../../infra-repo
 git add . && git commit -am "add new project"
-git push infra master
+git push
