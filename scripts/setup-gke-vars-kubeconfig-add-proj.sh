@@ -55,7 +55,7 @@ echo -e "export DEV3_GKE_2=gke_${TF_VAR_dev3_project_name}_${DEV3_GKE_2_LOCATION
 
 # Create kubeconfig file
 source ${VARS_FILE}
-export KUBECONFIG=./gke/kubemesh
+export KUBECONFIG=${SCRIPT_DIR}/../gke/kubemesh
 gcloud container clusters get-credentials "${OPS_GKE_3_CLUSTER}" --region "${OPS_GKE_3_LOCATION}" --project "${TF_VAR_ops_project_name}"
 gcloud container clusters get-credentials "${DEV3_GKE_1_CLUSTER}" --zone "${DEV3_GKE_1_LOCATION}" --project "${TF_VAR_dev3_project_name}"
 gcloud container clusters get-credentials "${DEV3_GKE_2_CLUSTER}" --zone "${DEV3_GKE_2_LOCATION}" --project "${TF_VAR_dev3_project_name}"
