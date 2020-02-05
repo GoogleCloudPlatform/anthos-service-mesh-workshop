@@ -50,7 +50,7 @@ sed -i 's/${PROJECT_ID?}/'${dev3_project_id?}'/g' tmp/${dev3_gke_5_name}/cnrm-sy
 sed -i 's/${PROJECT_ID?}/'${dev3_project_id?}'/g' tmp/${dev3_gke_6_name}/cnrm-system/{install-bundle/0-cnrm-system.yaml,patch-cnrm-system-namespace.yaml}
 
 # Copy autoneg-system resources to ops clusters
-for c in ${ops_gke_2_name} ${ops_gke_1_name}; do
+for c in ${ops_gke_2_name} ${ops_gke_1_name} ${ops_gke_3_name}; do
   cp -r config/autoneg-system/ tmp/${c}/
   sed -i 's/${PROJECT_ID}/'${ops_project_id?}'/g' tmp/${c}/autoneg-system/*.yaml
 done
