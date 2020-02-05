@@ -190,7 +190,7 @@ done
 
 # Copy app-cnrm template to dev clusters if it doesn't already exist.
 # Also Copy kustomization.yaml
-for d in ${dev1_gke_1_name} ${dev1_gke_2_name} ${dev2_gke_3_name} ${dev2_gke_4_name}; do
+for d in ${dev1_gke_1_name} ${dev1_gke_2_name} ${dev2_gke_3_name} ${dev2_gke_4_name} ${dev3_gke_5_name} ${dev3_gke_6_name}; do
   cp config/kustomization-app.yaml ${k8s_repo_name}/${d}/kustomization.yaml
 done
 
