@@ -54,7 +54,7 @@ fi
 #echo -e "\n"
 #echo "${bold}Copy the Hipster Shop namespaces and services to the source repo for all clusters${normal}"
 #read -p ''
-#print_and_execute "cd ${WORKDIR}/asm"
+print_and_execute "cd ${WORKDIR}/asm"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV1_GKE_2_CLUSTER}/app/"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
@@ -171,13 +171,14 @@ fi
 #print_and_execute "kustomize edit add resource loadgenerator-rbac.yaml"
 #print_and_execute "kustomize edit add resource loadgenerator-deployment.yaml"
 #
-#echo -e "\n"
-#echo "${bold}View changes to k8s-repo.${normal}"
-#read -p ''
-#print_and_execute "cd ${WORKDIR}/k8s-repo"
-#print_and_execute "git status"
 
-cp k8s_manifests/prod/app/podsecuritypolicies/ad-psp.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/podsecuritypolicies/ad-psp2.yaml
+cp k8s_manifests/prod/app/podsecuritypolicies/ad-psp.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/podsecuritypolicies/ad-psp3.yaml
+
+echo -e "\n"
+echo "${bold}View changes to k8s-repo.${normal}"
+read -p ''
+print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "git status"
 
 echo -e "\n"
 echo "${bold}Commit to k8s-repo to trigger deployment.${normal}"
@@ -189,12 +190,12 @@ echo -e "\n"
 echo "${bold}Wait for Cloud Build to finish.${normal}"
 read -p ''
 
-BUILD_STATUS=gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"
-while [[ " ${BUILD_STATUS} " == "WORKING" ]]
+BUILD_STATUS=${gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"}
+while [[ "${BUILD_STATUS}" == "WORKING" ]]
   do
+      echo -e "Still waiting for cloud build to finish. Sleeping for 10s"
       sleep 10
-      echo -e "Waiting for cloud build to finish. Sleeping for 10s"
-      BUILD_STATUS=gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"
+      BUILD_STATUS=${gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"}
   done
 
 echo -e "\n"
