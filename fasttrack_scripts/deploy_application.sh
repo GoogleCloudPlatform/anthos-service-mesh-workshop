@@ -198,7 +198,6 @@ print_and_execute "git push --set-upstream origin master"
 
 echo -e "\n"
 echo "${bold}Wait for Cloud Build to finish.${normal}"
-read -p ''
 
 BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 while [[ "${BUILD_STATUS}" == "WORKING" ]]
