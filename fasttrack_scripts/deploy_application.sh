@@ -78,7 +78,7 @@ print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DE
 print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
 print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/"
 print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/"
 
 
 #echo -e "\n"
@@ -200,12 +200,12 @@ echo -e "\n"
 echo "${bold}Wait for Cloud Build to finish.${normal}"
 read -p ''
 
-BUILD_STATUS=${gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"}
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)")
 while [[ "${BUILD_STATUS}" == "WORKING" ]]
   do
       echo -e "Still waiting for cloud build to finish. Sleeping for 10s"
       sleep 10
-      BUILD_STATUS=${gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)"}
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)")
   done
 
 echo -e "\n"
@@ -213,7 +213,7 @@ echo "Build finished with status: $BUILD_STATUS"
 echo -e "\n"
 
 if [[ $BUILD_STATUS != "SUCCESS" ]]; then
-  echo "Build unsuccessful. Check build logs at https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}.\n Exiting...."
+  echo "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
   exit
 fi
 
