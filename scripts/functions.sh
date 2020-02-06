@@ -74,7 +74,7 @@ print_and_execute () {
     color='\e[1;32m' # green
     nc='\e[0m'
 
-    printf "${color}\$ ${@/eval/}${nc}" | pv -qL $SPEED;
+    printf "${color}\$ ${@}${nc}" | pv -qL $SPEED;
     printf "\n"
     "$@" ;
 }
