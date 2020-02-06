@@ -45,7 +45,7 @@ if [[ $? -ne 0 ]]; then
   print_and_execute "git init && git remote add origin https://source.developers.google.com/p/${TF_VAR_ops_project_name}/r/k8s-repo"
   print_and_execute "git config --local user.email ${MY_USER} && git config --local user.name \"K8s repo user\""
   print_and_execute "git config --local credential.'https://source.developers.google.com'.helper gcloud.sh"
-  print_and_execute "git fetch origin"
+  print_and_execute "git pull origin master"
 else
   echo "git repo already initialized."
 fi
@@ -194,7 +194,7 @@ echo -e "\n"
 echo "${bold}Commit to k8s-repo to trigger deployment.${normal}"
 read -p ''
 print_and_execute "git add . && git commit -am \"create app namespaces and install hipster shop\""
-print_and_execute "git push"
+print_and_execute "git push --set-upstream origin master"
 
 echo -e "\n"
 echo "${bold}Wait for Cloud Build to finish.${normal}"
