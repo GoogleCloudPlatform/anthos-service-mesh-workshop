@@ -46,7 +46,6 @@ if [[ $? -ne 0 ]]; then
   print_and_execute "git config --local user.email ${MY_USER} && git config --local user.name \"K8s repo user\""
   print_and_execute "git config --local credential.'https://source.developers.google.com'.helper gcloud.sh"
   print_and_execute "git fetch origin"
-  print_and_execute "git checkout master"
 else
   echo "git repo already initialized."
 fi
