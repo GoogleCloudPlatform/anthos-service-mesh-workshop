@@ -43,6 +43,7 @@ print_and_execute "cd ${WORKDIR}/k8s-repo"
 git remote -v &>/dev/null
 if [[ $? -ne 0 ]]; then
   print_and_execute "git init && git remote add origin https://source.developers.google.com/p/${TF_VAR_ops_project_name}/r/k8s-repo"
+  print_and_execute "git config --local user.email ${MY_USER} && git config --local user.name \"K8s repo user\""
   print_and_execute "git pull origin master"
 else
   echo "git repo already initialized."

@@ -76,7 +76,7 @@ print_and_execute () {
 
     printf "${color}\$ ${@}${nc}" | pv -qL $SPEED;
     printf "\n"
-    "$@" ;
+    eval "$@" ;
 }
 
 export -f is_istio_deployment_ready
