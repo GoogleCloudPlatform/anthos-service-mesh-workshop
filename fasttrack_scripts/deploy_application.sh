@@ -54,7 +54,7 @@ fi
 #echo -e "\n"
 #echo "${bold}Copy the Hipster Shop namespaces and services to the source repo for all clusters${normal}"
 #read -p ''
-print_and_execute "cd ${WORKDIR}/asm"
+#print_and_execute "cd ${WORKDIR}/asm"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV1_GKE_2_CLUSTER}/app/"
 #print_and_execute "cp -r k8s_manifests/prod/app/namespaces ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
@@ -72,13 +72,13 @@ print_and_execute "cd ${WORKDIR}/asm"
 #echo -e "\n"
 #echo "${bold}Copy the app directory kustomization.yaml to all clusters"
 #read -p ''
-print_and_execute "cd ${WORKDIR}/asm"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_2_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
-print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/"
+#print_and_execute "cd ${WORKDIR}/asm"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_2_CLUSTER}/app/"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
+#print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/"
 
 
 #echo -e "\n"
@@ -104,7 +104,7 @@ print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OP
 #read -p ''
 #print_and_execute "sed -i -e '/- deployments\//d' -e '/- podsecuritypolicies\//d'  -e '/- rbac\//d' ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/kustomization.yaml"
 #print_and_execute "sed -i -e '/- deployments\//d' -e '/- podsecuritypolicies\//d'  -e '/- rbac\//d' ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/kustomization.yaml"
-#
+
 #echo -e "\n"
 #echo "${bold}Remove cartservice from all but one dev cluster ${normal}"
 #read -p ''
@@ -184,28 +184,28 @@ print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OP
 #print_and_execute "kustomize edit add resource loadgenerator-deployment.yaml"
 #
 
-echo -e "\n"
-echo "${bold}View changes to k8s-repo.${normal}"
-read -p ''
-print_and_execute "cd ${WORKDIR}/k8s-repo"
-print_and_execute "git status"
-
-echo -e "\n"
-echo "${bold}Commit to k8s-repo to trigger deployment.${normal}"
-read -p ''
-print_and_execute "git add . && git commit -am \"create app namespaces and install hipster shop\""
-print_and_execute "git push"
+#echo -e "\n"
+#echo "${bold}View changes to k8s-repo.${normal}"
+#read -p ''
+#print_and_execute "cd ${WORKDIR}/k8s-repo"
+#print_and_execute "git status"
+#
+#echo -e "\n"
+#echo "${bold}Commit to k8s-repo to trigger deployment.${normal}"
+#read -p ''
+#print_and_execute "git add . && git commit -am \"create app namespaces and install hipster shop\""
+#print_and_execute "git push"
 
 echo -e "\n"
 echo "${bold}Wait for Cloud Build to finish.${normal}"
 read -p ''
 
-BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)")
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 while [[ "${BUILD_STATUS}" == "WORKING" ]]
   do
       echo -e "Still waiting for cloud build to finish. Sleeping for 10s"
       sleep 10
-      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --format="value(status)")
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
   done
 
 echo -e "\n"
@@ -213,7 +213,7 @@ echo "Build finished with status: $BUILD_STATUS"
 echo -e "\n"
 
 if [[ $BUILD_STATUS != "SUCCESS" ]]; then
-  echo "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  echo -e "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
   exit
 fi
 
