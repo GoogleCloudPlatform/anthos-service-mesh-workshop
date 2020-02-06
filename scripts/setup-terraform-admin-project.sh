@@ -72,8 +72,10 @@ echo -e "\n${CYAN}Defining terraform admin project ID, SA and SA credentials loc
 ORG_USER=${MY_USER?env not set}
 ORG_USER=${MY_USER%@*}
 ORG_USER=${ORG_USER:0:7}
-export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm
+
 PROJECT_ID_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 6 | head -n 1)
+
+export TF_VAR_folder_display_name=${ORG_USER}-${RANDOM_PERSIST}-asm-${PROJECT_ID_SUFFIX}
 export TF_ADMIN_NAME=${ORG_USER}-${RANDOM_PERSIST}-tf
 export TF_ADMIN=${TF_ADMIN_NAME}-${PROJECT_ID_SUFFIX}
 
@@ -257,10 +259,10 @@ done
 
 echo -e "\n${CYAN}Committing infrastructure terraform to cloud source repo...${NC}"
 cd ./infrastructure
+git init
 git config --local user.email ${TF_CLOUDBUILD_SA}
 git config --local user.name "terraform"
 git config --local credential.'https://source.developers.google.com'.helper gcloud.sh
-git init
 git remote add infra "https://source.developers.google.com/p/${TF_ADMIN}/r/infrastructure"
 git add . && git commit -am "first commit"
 git push infra master

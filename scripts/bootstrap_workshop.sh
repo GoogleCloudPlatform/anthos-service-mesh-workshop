@@ -14,10 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Take input no of users, workshop number, ORG_ID, BILLING_ID
-# TF_VAR_org_id, TF_VAR_billing_account, MY_USER
-# RANDOM_PERSIST is YYMMDD-workshop_number
-
 if [[ $OSTYPE != "linux-gnu" ]]; then
     echo "ERROR: This script and consecutive set up scripts have only been tested on Linux. Currently, only Linux (debian) is supported. Please run in Cloud Shell or in a VM running Linux".
     exit;
@@ -140,7 +136,6 @@ jq '.bindings[] | select(.role=="roles/billing.admin")' | grep $ADMIN_USER &>/de
 [[ $? -eq 0 ]] || { echo "Active user is not an billing account billing admin in $BILLING_ID"; exit; }
 
 export TF_VAR_org_id=$ORG_ID
-
 export TF_VAR_billing_account=$BILLING_ID
 
 for i in $(seq ${START_USER_NUM} ${END_USER_NUM})
@@ -149,7 +144,9 @@ do
   export MY_USER="user${USER_ID}@${ORG_NAME}" && [[  $SETUP_ADMIN = true ]] && MY_USER=$ADMIN_USER
   export RANDOM_PERSIST=${WORKSHOP_ID}
   echo "RANDOM PERSIST: ${RANDOM_PERSIST} - MY_USER: ${MY_USER} - ADMIN_USER: ${ADMIN_USER}"
+
   source $SCRIPT_DIR/setup-terraform-admin-project.sh
+
   echo "TF_ADMIN: ${TF_ADMIN}"
   echo "$TF_ADMIN" | tee -a ${SCRIPT_DIR}/../tmp/workshop.txt
 
@@ -157,9 +154,7 @@ do
   # Clean Up
   # ************************
   rm -rf ${SCRIPT_DIR}/../vars
-  cd infrastructure
-  git remote remove infra
-  cd ..
+  rm -rf ${SCRIPT_DIR}/../infrastructure/.git
 
   # Clean up backends and shared states for each GCP prod resource
   for idx in ${!folders[@]}
@@ -184,9 +179,7 @@ do
       if [ -f "$auto_tfvar_tmpl_file" ]; then
           rm infrastructure/${folders[idx]}/variables.auto.tfvars
       fi
-
   done
-
 done
 
 # Update GCS with workshop.txt
