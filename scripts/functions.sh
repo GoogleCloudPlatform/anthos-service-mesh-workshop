@@ -68,6 +68,18 @@ get_istio_svc_ingress_ip () {
 
 }
 
+print_and_execute () {
+
+    SPEED=40
+    color='\e[1;32m' # green
+    nc='\e[0m'
+
+    printf "${color}\$ ${@/eval/}${nc}" | pv -qL $SPEED;
+    printf "\n"
+    "$@" ;
+}
+
 export -f is_istio_deployment_ready
 export -f expose_istio_svc_via_ilb
 export -f get_istio_svc_ingress_ip
+export -f print_and_execute
