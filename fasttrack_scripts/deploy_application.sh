@@ -44,6 +44,7 @@ git remote -v &>/dev/null
 if [[ $? -ne 0 ]]; then
   print_and_execute "git init && git remote add origin https://source.developers.google.com/p/${TF_VAR_ops_project_name}/r/k8s-repo"
   print_and_execute "git config --local user.email ${MY_USER} && git config --local user.name \"K8s repo user\""
+  print_and_execute "git config --local credential.'https://source.developers.google.com'.helper gcloud.sh"
   print_and_execute "git pull origin master"
 else
   echo "git repo already initialized."
@@ -89,16 +90,8 @@ print_and_execute "cp -r k8s_manifests/prod/app/podsecuritypolicies ../k8s-repo/
 echo -e "\n"
 echo "${bold}Remove podsecuritypolicies, deployments and rbac directories from ops clusters kustomization.yaml${normal}"
 read -p ''
-print_and_execute "cd ../k8s-repo/${OPS_GKE_1_CLUSTER}/app"
-print_and_execute "kustomize edit remove base deployments"
-print_and_execute "kustomize edit remove base podsecuritypolicies"
-print_and_execute "kustomize edit remove base rbac"
-echo -e "\n"
-print_and_execute "cd ../k8s-repo/${OPS_GKE_2_CLUSTER}/app"
-print_and_execute "kustomize edit remove base deployments"
-print_and_execute "kustomize edit remove base podsecuritypolicies"
-print_and_execute "kustomize edit remove base rbac"
-print_and_execute "cd ${WORKDIR}/asm"
+print_and_execute "sed -i -e '/- deployments\//d' -e '/- podsecuritypolicies\//d'  -e '/- rbac\//d' ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/kustomization.yaml"
+print_and_execute "sed -i -e '/- deployments\//d' -e '/- podsecuritypolicies\//d'  -e '/- rbac\//d' ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/kustomization.yaml"
 
 echo -e "\n"
 echo "${bold}Remove cartservice from all but one dev cluster ${normal}"
