@@ -70,6 +70,18 @@ print_and_execute "cd ${WORKDIR}/asm"
 #print_and_execute "cp -r k8s_manifests/prod/app/services ../k8s-repo/${OPS_GKE_2_CLUSTER}/app/"
 #
 #echo -e "\n"
+#echo "${bold}Copy the app directory kustomization.yaml to all clusters"
+#read -p ''
+print_and_execute "cd ${WORKDIR}/asm"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV1_GKE_2_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_1_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
+print_and_execute "cp k8s_manifests/prod/app/kustomization.yaml ../k8s-repo/${OPS_GKE_1_CLUSTER}/app/"
+
+
+#echo -e "\n"
 #echo "${bold}Copy the Hipster Shop deployments, rbac and psp to the source repo for dev clusters${normal}"
 #read -p ''
 #print_and_execute "cp -r k8s_manifests/prod/app/deployments ../k8s-repo/${DEV1_GKE_1_CLUSTER}/app/"
@@ -171,8 +183,6 @@ print_and_execute "cd ${WORKDIR}/asm"
 #print_and_execute "kustomize edit add resource loadgenerator-rbac.yaml"
 #print_and_execute "kustomize edit add resource loadgenerator-deployment.yaml"
 #
-
-cp k8s_manifests/prod/app/podsecuritypolicies/ad-psp.yaml ../k8s-repo/${DEV2_GKE_2_CLUSTER}/app/podsecuritypolicies/ad-psp3.yaml
 
 echo -e "\n"
 echo "${bold}View changes to k8s-repo.${normal}"
