@@ -111,7 +111,6 @@ container.googleapis.com \
 serviceusage.googleapis.com \
 sourcerepo.googleapis.com \
 cloudbuild.googleapis.com \
-contextgraph.googleapis.com \
 servicemanagement.googleapis.com
 
 echo -e "\n${CYAN}Getting Terraform admin project cloudbuild service account...${NC}"
