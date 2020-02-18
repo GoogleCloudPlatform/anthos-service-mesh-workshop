@@ -61,7 +61,7 @@ then
     title_no_wait "oops, MTLS isn't in a permissive state in ${OPS_GKE_1}. maybe you've already done this?"
     title_no_wait "proceeding..."
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-1 cluster looks good! continuing..."
 fi
 
 NUM_PERMISSIVE_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
@@ -70,7 +70,7 @@ then
     title_no_wait "oops, MTLS isn't in a permissive state in ${OPS_GKE_2}. maybe you've already done this?"
     title_no_wait "proceeding..."
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-2 cluster looks good! continuing..."
 fi
 
 title_no_wait "Turn on mTLS. The Istio operator controller is running and we can change the "
