@@ -54,13 +54,25 @@ echo -e "\n"
 title_and_wait "Check MeshPolicy in ops clusters. Note mTLS is PERMISSIVE allowing for both encrypted and non-mTLS traffic."
 print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
 print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
- 
-#Output (do not copy)
-#
-#  spec:
-#    peers:
-#    - mtls:
-#        mode: PERMISSIVE
+
+# validate permissive state
+NUM_PERMISSIVE_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
+if [[ $NUM_PERMISSIVE_1 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't in a permissive state in ${OPS_GKE_1}. maybe you've already done this?"
+    echo "proceeding..."
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_PERMISSIVE_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
+if [[ $NUM_PERMISSIVE_2 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't in a permissive state in ${OPS_GKE_2}. maybe you've already done this?"
+    echo "proceeding..."
+else 
+    echo "looks good! continuing..."
+fi
 
 title_no_wait "Turn on mTLS. The Istio operator controller is running and we can change the "
 title_no_wait "Istio configuration by editing or replacing the IstioControlPlane resource. "
@@ -97,6 +109,24 @@ print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
 #     peers:
 #     - mtls: {}
 
+# validate not-permissive state
+NUM_MTLS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
+if [[ $NUM_MTLS_1 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_MTLS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
+if [[ $NUM_MTLS_2 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
 
 title_and_wait "Describe the DestinationRule created by the Istio operator controller."
 print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml"
@@ -115,5 +145,24 @@ print_and_execute "kubectl --context ${OPS_GKE_2} get DestinationRule default -n
 #    trafficPolicy:
 #      tls:
 #        mode: ISTIO_MUTUAL
+
+# validate not-permissive state
+NUM_ISTIO_MUTUAL_1=`kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
+if [[ $NUM_ISTIO_MUTUAL_1 -eq 0 ]]
+then 
+    echo "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_ISTIO_MUTUAL_2=`kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
+if [[ $NUM_ISTIO_MUTUAL_2 -eq 0 ]]
+then 
+    echo "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
 
 # show some logs that prove secure
