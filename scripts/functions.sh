@@ -79,6 +79,17 @@ print_and_execute () {
     eval "$@" ;
 }
 
+nopv_and_execute () {
+
+    SPEED=130
+    color='\e[1;32m' # green
+    nc='\e[0m'
+
+    printf "${color}\$ ${@}${nc}";
+    printf "\n"
+    eval "$@" ;
+}
+
 export -f is_istio_deployment_ready
 export -f expose_istio_svc_via_ilb
 export -f get_istio_svc_ingress_ip
