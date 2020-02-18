@@ -72,6 +72,8 @@ else
 fi
 echo -e "\n"
 
+title_no_wait "Updating bash prompt..."
+print_and_execute "cat ${SCRIPT_DIR}/../script/krompt.bash >> ${HOME}/.bashrc"
 
 title_and_wait "Verify that you are logged in with the correct user. The user should be ${MY_USER}."
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"
