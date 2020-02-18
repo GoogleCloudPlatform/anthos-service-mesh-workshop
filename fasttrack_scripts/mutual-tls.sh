@@ -153,7 +153,7 @@ then
     error_no_wait "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
     exit 1
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-1 cluster looks good! continuing..."
 fi
 
 NUM_ISTIO_MUTUAL_2=`kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
@@ -162,7 +162,7 @@ then
     error_no_wait "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
     exit 1
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-2 cluster looks good! continuing..."
 fi
 
 # show some logs that prove secure
