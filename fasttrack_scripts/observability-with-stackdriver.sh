@@ -91,14 +91,14 @@ print_and_execute "curl -X POST -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"C
 title_and_wait "Navigate to the output link below to view the newly added dashboard."
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
  
-title_and_wait "We could edit the dashboard in-place using the UX, but in our case \
-    we are going to quickly add a new graph using the API.\
-    In order to do that, you should pull down the latest version\
-    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\
-    You can get an existing dashboard by querying the monitoring API.\
+title_and_wait "We could edit the dashboard in-place using the UX, but in our case \\n
+    we are going to quickly add a new graph using the API.\\n
+    In order to do that, you should pull down the latest version\\n
+    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\\n
+    You can get an existing dashboard by querying the monitoring API.\\n
     Get the existing dashboard that was just added:"
-print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \\"
-print_and_execute "       https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
+print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+    https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
  
 title_and_wait "Add a new graph: (50th %ile latency): [API reference] Now we can add a new graph widget \
     to our dashboard in code. This change can be reviewed by peers and checked into version control.\
@@ -107,9 +107,9 @@ title_and_wait "Add a new graph: (50th %ile latency): [API reference] Now we can
 print_and_execute "jq --argjson newChart \"$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
  
 title_and_wait "Update the existing servicesdashboard:"
-print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \\"
-print_and_execute "     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \\"
-print_and_execute "     -d @patched-services-dashboard.json"
+print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
+     -d @patched-services-dashboard.json"
  
 title_and_wait "View the updated dashboard by navigating to the following output link:"
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
