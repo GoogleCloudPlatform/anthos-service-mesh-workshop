@@ -51,8 +51,19 @@ echo "${bold}*** Lab: Infrastructure Setup - User Workflow ***${normal}"
 echo -e "\n"
 
 # START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
 
+echo "${bold}Download kustomize cli and pv tools. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
+print_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
+print_and_execute "export PATH=$PATH:${HOME}/bin"
+print_and_execute "echo "export PATH=$PATH:${HOME}/bin" >> ~/.bashrc"
+echo -e "\n"
+print_and_execute "sudo apt-get update && sudo apt-get -y install pv"
+print_and_execute "echo -e  '#!/bin/sh' >> $HOME/.customize_environment"
+print_and_execute "echo -e "apt-get update" >> $HOME/.customize_environment"
+print_and_execute "echo -e "apt-get -y install pv" >> $HOME/.customize_environment"
+echo -e "\n"
+
+
+ 
