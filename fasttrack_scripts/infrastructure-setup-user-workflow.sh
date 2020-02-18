@@ -99,7 +99,18 @@ if [ ${TF_ADMIN} == 'null' ]; then
 fi
 echo -e "\n"
 
- 
+echo "${bold}Get the variables for your environment. The variables include projects IDs, GKE cluster context, regions, zones etc. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "mkdir -p ${WORKDIR}/asm/vars"
+export VARS_FILE=${WORKDIR}/asm/vars/vars.sh
+if [ -f ${VARS_FILE} ]; then
+    print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
+    print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
+else
+    echo -e "${VARS_FILE} already exists. Skipping step."
+fi
+echo -e "\n"
+
 
 
  
