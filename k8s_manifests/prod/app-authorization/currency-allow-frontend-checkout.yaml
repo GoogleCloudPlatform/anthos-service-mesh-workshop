@@ -1,0 +1,17 @@
+# allow the frontend to access currencyservice
+apiVersion: "security.istio.io/v1beta1"
+kind: "AuthorizationPolicy"
+metadata:
+  name: "currency-policy"
+  namespace: currency
+spec:
+  selector:
+    matchLabels:
+      app: currencyservice
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/frontend/sa/frontend"]
+  - from:
+    - source:
+        principals: ["cluster.local/ns/checkout/sa/checkout"]

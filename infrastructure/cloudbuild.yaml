@@ -16,7 +16,7 @@
 timeout: 3600s
 logsBucket: "gs://${PROJECT_ID}/logs/cloudbuild"
 steps:
-  - name: "gcr.io/kaniko-project/executor:latest"
+  - name: "gcr.io/kaniko-project/executor:v0.15.0"
     id: "build-installer-image"
     args:
       - --destination=gcr.io/${PROJECT_ID}/asm-installer
@@ -58,6 +58,17 @@ steps:
   - name: gcr.io/${PROJECT_ID}/asm-installer
     id: "tf-ops-project-gke-clusters"
     dir: ops/prod/ops_gke
+    entrypoint: "bash"
+    args:
+      - "-xe"
+      - "-c"
+      - |
+        terraform init
+        terraform plan -out terraform.tfplan
+        terraform apply -input=false terraform.tfplan
+  - name: gcr.io/${PROJECT_ID}/asm-installer
+    id: "tf-ops-project-lb"
+    dir: ops/prod/ops_lb
     entrypoint: "bash"
     args:
       - "-xe"

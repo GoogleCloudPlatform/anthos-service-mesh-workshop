@@ -39,11 +39,6 @@ run_canary() {
 }
 
 
-# make sure ops cluster is set
-export K8S_REPO="/home/`whoami`/anthos-service-mesh-lab/k8s-repo"
-export CANARY_DIR="/home/`whoami`/anthos-service-mesh-lab/asm/k8s_manifests/prod/app-canary"
-
-
 if [ -z "$OPS_DIR" ]
 then
     log "You must set OPS_DIR to continue."

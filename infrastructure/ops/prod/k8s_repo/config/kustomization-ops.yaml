@@ -7,10 +7,13 @@ bases:
   - istio-operator/
   - istio-controlplane/
   - cnrm-system/
+  - autoneg-system/
   - app-cnrm
   - app/
   - app-ingress/
+  - app-loadgenerator/
   - istio-networking/
+  - istio-telemetry/
 
 resources:
   - istio-operator-psp.yaml
