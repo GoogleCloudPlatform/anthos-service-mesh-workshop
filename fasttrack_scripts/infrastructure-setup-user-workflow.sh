@@ -55,13 +55,38 @@ echo -e "\n"
 echo "${bold}Download kustomize cli and pv tools. Press ENTER to continue...${normal}"
 read -p ''
 nopv_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
+export KUSTOMIZE_FILE=`ls ${HOME}/bin/kustomize`
+export KUSTOMIZE_PATH="${HOME}/bin/kustomize"
+if [ ${KUSTOMIZE_FILE} == ${KUSTOMIZE_PATH} ]; then
+    echo -e "kustomize is already installed and in your ~/bin folder."
+else 
 nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
 nopv_and_execute "export PATH=$PATH:${HOME}/bin"
 nopv_and_execute "echo \"export PATH=$PATH:${HOME}/bin\" >> ~/.bashrc"
+fi
 echo -e "\n"
 nopv_and_execute "sudo apt-get update && sudo apt-get -y install pv"
 nopv_and_execute "sudo mv /usr/bin/pv ${HOME}/bin/pv"
 echo -e "\n"
+
+echo "${bold}Verify that you are logged in with the correct user. The user should be userABC@yourdomain.xyz. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "gcloud config list account --format=json | jq -r .core.account"
+echo -e "\n"
+
+echo "${bold}Get the terraform-admin-project ID. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "export TF_ADMIN=$(gcloud projects list | grep tf- | awk '{ print $1 }')"
+print_and_execute "echo ${TF_ADMIN}"
+if [ ${TF_ADMIN} == 'null' ]; then
+  echo -e "Uh oh! We cannot retrieve your terraform-admin project ID. You cannot continue the workshop without this. Please contact your lab administrator"
+  echo -e "Here is a list of all projects accessible by you. Exiting script..." 
+  gcloud projects list 
+  exit 1
+fi
+echo -e "\n"
+
+ 
 
 
  
