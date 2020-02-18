@@ -57,7 +57,7 @@ read -p ''
 nopv_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
 nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
 nopv_and_execute "export PATH=$PATH:${HOME}/bin"
-nopv_and_execute "echo "export PATH=$PATH:${HOME}/bin" >> ~/.bashrc"
+nopv_and_execute "echo \"export PATH=$PATH:${HOME}/bin\" >> ~/.bashrc"
 echo -e "\n"
 nopv_and_execute "sudo apt-get update && sudo apt-get -y install pv"
 nopv_and_execute "sudo mv /usr/bin/pv ${HOME}/bin/pv"
