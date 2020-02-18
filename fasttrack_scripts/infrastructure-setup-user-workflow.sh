@@ -66,7 +66,7 @@ fi
 echo -e "\n"
 
 export PV_INSTALLED=`which pv`
-if [ ${PV_INSTALLED} == 'null' ]; then
+if [ -z ${PV_INSTALLED} ]; then
     nopv_and_execute "sudo apt-get update && sudo apt-get -y install pv"
     nopv_and_execute "sudo mv /usr/bin/pv ${HOME}/bin/pv"
 else
