@@ -156,15 +156,27 @@ echo -e "\n"
 
 echo "${bold}Verify the entire Istio control plane is deployed and all Pods are Running in both ops clusters. Please ENTER to continue...${normal}"
 read -p ''
+echo -e "\n"
+echo -e "Istio Pods in ops-1 cluster:"
 print_and_execute "kubectl --context ${OPS_GKE_1} get pods -n istio-system"
+echo -e "\n"
+echo -e "Istio Pods in ops-2 cluster:"
 print_and_execute "kubectl --context ${OPS_GKE_2} get pods -n istio-system"
 echo -e "\n"
 
 echo "${bold}Verify citadel, istio-sidecar-injector and coredns are deployed and all Pods are Running in all apps clusters. Please ENTER to continue...${normal}"
 read -p ''
+echo -e "\n"
+echo -e "Istio Pods in app-1 cluster in dev1 project:"
 print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n istio-system"
+echo -e "\n"
+echo -e "Istio Pods in app-2 cluster in dev1 project:"
 print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n istio-system"
+echo -e "\n"
+echo -e "Istio Pods in app-3 cluster in dev2 project:"
 print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n istio-system"
+echo -e "\n"
+echo -e "Istio Pods in app-4 cluster in dev2 project:"
 print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n istio-system"
 echo -e "\n"
 
@@ -173,13 +185,17 @@ echo "${bold}The kubeconfig files for all four apps clusters are stored as secre
 echo "${bold}Ensure these secrets are created in both ops clusters.${normal}"
 echo "${bold}Please ENTER to continue...${normal}"
 read -p ''
+echo -e "\n"
+echo -e "Kubeconfig secrets in ops-1 cluster:"
 print_and_execute "kubectl --context ${OPS_GKE_1} get secrets -l istio/multiCluster=true -n istio-system"
+echo -e "\n"
+echo -e "Kubeconfig secrets in ops-2 cluster:"
 print_and_execute "kubectl --context ${OPS_GKE_2} get secrets -l istio/multiCluster=true -n istio-system"
 echo -e "\n"
 export OPS1_NUM_OF_SECRETS=`kubectl --context ${OPS_GKE_1} get secrets -l istio/multiCluster=true -n istio-system | wc -l`
 export OPS2_NUM_OF_SECRETS=`kubectl --context ${OPS_GKE_2} get secrets -l istio/multiCluster=true -n istio-system | wc -l`
-export OPS1_NUM_OF_SECRETS=${OPS2_NUM_OF_SECRETS} - 1
-export OPS2_NUM_OF_SECRETS=${OPS2_NUM_OF_SECRETS} - 1
+export OPS1_NUM_OF_SECRETS=$((${OPS2_NUM_OF_SECRETS}-1)) # num of lines include the header row. subtracting 1 to get num of secrets
+export OPS2_NUM_OF_SECRETS=$((${OPS2_NUM_OF_SECRETS}-1)) # num of lines include the header row. subtracting 1 to get num of secrets
 if [ ${OPS1_NUM_OF_SECRETS} == 4 ]; then
     echo "${bold}You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. One for each app cluster. Looks good.${normal}"
 else
