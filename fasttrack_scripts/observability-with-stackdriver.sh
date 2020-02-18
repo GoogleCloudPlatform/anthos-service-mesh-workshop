@@ -141,4 +141,4 @@ print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward s
 
 echo "https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default"
 
-print_and_execute "Done with o11y!"
+title_no_wait "Done with o11y!"
