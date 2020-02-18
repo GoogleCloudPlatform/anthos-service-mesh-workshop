@@ -55,9 +55,8 @@ echo -e "\n"
 echo "${bold}Download kustomize cli and pv tools. Press ENTER to continue...${normal}"
 read -p ''
 nopv_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
-export KUSTOMIZE_FILE=`ls ${HOME}/bin/kustomize`
-export KUSTOMIZE_PATH="${HOME}/bin/kustomize"
-if [ ${KUSTOMIZE_FILE} == ${KUSTOMIZE_PATH} ]; then
+export KUSTOMIZE_FILEPATH="${HOME}/bin/kustomize"
+if [ -f ${KUSTOMIZE_FILEPATH} ]; then
     echo -e "kustomize is already installed and in the ${KUSTOMIZE_FILE} folder."
 else 
     nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
