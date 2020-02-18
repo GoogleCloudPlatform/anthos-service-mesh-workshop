@@ -50,10 +50,121 @@ echo -e "\n"
 echo "${bold}*** Lab: Mutual TLS ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
+title_and_wait "Check MeshPolicy in ops clusters. Note mTLS is PERMISSIVE allowing for both encrypted and non-mTLS traffic."
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
 
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
+# validate permissive state
+NUM_PERMISSIVE_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
+if [[ $NUM_PERMISSIVE_1 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't in a permissive state in ${OPS_GKE_1}. maybe you've already done this?"
+    echo "proceeding..."
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_PERMISSIVE_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
+if [[ $NUM_PERMISSIVE_2 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't in a permissive state in ${OPS_GKE_2}. maybe you've already done this?"
+    echo "proceeding..."
+else 
+    echo "looks good! continuing..."
+fi
+
+title_no_wait "Turn on mTLS. The Istio operator controller is running and we can change the "
+title_no_wait "Istio configuration by editing or replacing the IstioControlPlane resource. "
+title_no_wait "The controller will detect the change and respond by updating the Istio installation "
+title_no_wait "accordingly. We will set mtls to enabled in the IstioControlPlane resource for both "
+title_no_wait "the shared and replicated control plane. This will set the MeshPolicy to ISTIO_MUTUAL "
+title_and_wait "and create a default Destination Rule."
+
+print_and_execute "cd ${WORKDIR}/asm"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+ 
+title_and_wait "Commit to k8s-repo."
+
 print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "git add . && git commit -am \"turn mTLS on\""
+print_and_execute "git push"
+ 
+title_and_wait "Wait for rollout to complete"
+print_and_execute "${WORKDIR}/asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
+ 
+title_no_wait "Verify mTLS"
+title_and_wait "Check MeshPolicy once more in ops clusters. Note mTLS is no longer PERMISSIVE and will only allow for mTLS traffic."
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
 
+# actually validate here
+# Output (do not copy):
+# 
+# spec:
+#     peers:
+#     - mtls: {}
+
+# validate not-permissive state
+NUM_MTLS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
+if [[ $NUM_MTLS_1 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_MTLS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
+if [[ $NUM_MTLS_2 -eq 0 ]]
+then 
+    echo "oops, MTLS isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+title_and_wait "Describe the DestinationRule created by the Istio operator controller."
+print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml"
+ 
+#validate
+#Output (do not copy):
+#
+#  apiVersion: networking.istio.io/v1alpha3
+#  kind: DestinationRule
+#  metadata:  
+#    name: default
+#    namespace: istio-system
+#  spec:
+#    host: '*.local'
+#    trafficPolicy:
+#      tls:
+#        mode: ISTIO_MUTUAL
+
+# validate not-permissive state
+NUM_ISTIO_MUTUAL_1=`kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
+if [[ $NUM_ISTIO_MUTUAL_1 -eq 0 ]]
+then 
+    echo "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+NUM_ISTIO_MUTUAL_2=`kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
+if [[ $NUM_ISTIO_MUTUAL_2 -eq 0 ]]
+then 
+    echo "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
+
+# show some logs that prove secure
+# log into envoy for frontend, curl product on port 8080? and output headers, grep for something.
+# kubectl --context ${DEV2_GKE_2} exec -n payment $(kubectl get pod --context ${DEV2_GKE_2} -n payment | grep payment | awk '{print $1}') -c istio-proxy -- curl frontend.frontend:8080/
