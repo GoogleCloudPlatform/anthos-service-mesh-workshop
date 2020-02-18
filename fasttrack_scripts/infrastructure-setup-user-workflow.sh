@@ -104,10 +104,10 @@ read -p ''
 print_and_execute "mkdir -p ${WORKDIR}/asm/vars"
 export VARS_FILE=${WORKDIR}/asm/vars/vars.sh
 if [ -f ${VARS_FILE} ]; then
+    echo -e "${VARS_FILE} already exists. Skipping step."
+else
     print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
     print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
-else
-    echo -e "${VARS_FILE} already exists. Skipping step."
 fi
 echo -e "\n"
 
