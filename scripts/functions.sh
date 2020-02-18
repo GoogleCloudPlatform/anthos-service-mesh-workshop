@@ -70,7 +70,7 @@ get_istio_svc_ingress_ip () {
 
 print_and_execute () {
 
-    SPEED=40
+    SPEED=130
     color='\e[1;32m' # green
     nc='\e[0m'
 
