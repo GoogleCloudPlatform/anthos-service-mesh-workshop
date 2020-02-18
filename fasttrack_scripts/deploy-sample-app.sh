@@ -46,8 +46,10 @@ color='\e[1;32m' # green
 nc='\e[0m'
 
 echo -e "\n"
-title_no_wait "*** Lab 1: Deploy the Sample App ***"
+title_no_wait "*** Lab: Deploy the Sample App ***"
 echo -e "\n"
+
+source ${HOME}/.bashrc
 
 # Set up ops git repo
 title_and_wait "Set up ops git repo if not already done."
