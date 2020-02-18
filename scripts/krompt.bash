@@ -9,11 +9,11 @@ GREEN="\[\e[1;32m\]"
 
 __kube_ps1()
 {
-	if [ ! -f $HOME/.kube/config ]; then
+	if [ ! -f ${KUBECONFIG} ]; then
        echo "N/A"
     else
     	# Get current context
-    	CONTEXT=$(cat ~/.kube/config | grep "current-context:" | sed "s/current-context: //")
+    	CONTEXT=$(cat ${KUBECONFIG} | grep "current-context:" | sed "s/current-context: //")
 
   		if [ -n "$CONTEXT" ]; then
         	echo "(${CONTEXT})"
