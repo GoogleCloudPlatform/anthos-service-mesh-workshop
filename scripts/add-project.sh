@@ -75,5 +75,6 @@ done
 
 echo -e "\n${CYAN}Committing infrastructure terraform to cloud source repo...${NC}"
 cd ${SCRIPT_DIR}/../../infra-repo
+git config --local user.email ${MY_USER} && git config --local user.name "infra repo user"
 git add . && git commit -am "add new project"
-git push
+git push --set-upstream origin master
