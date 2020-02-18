@@ -103,7 +103,8 @@ nopv_and_execute () {
 error_no_wait () {
     red_color='\e[1;38m' # green
     nc='\e[0m'
-    echo "${red_color}# ${@}${nc}"
+    printf "${red_color}# ${@}${nc}"
+    printf "\n"
 }
 
 export -f is_istio_deployment_ready
