@@ -51,6 +51,7 @@ echo "${bold}*** Lab: Mutual TLS ***${normal}"
 echo -e "\n"
 
 # START INSTRUCTIONS HERE - EXAMPLE BELOW
+
 echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
 read -p ''
 print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
