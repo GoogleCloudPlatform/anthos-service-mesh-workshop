@@ -75,6 +75,8 @@ print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
  
 title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
 echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo ""
+echo ""
 
 title_and_wait "Now let's add our pre-canned metrics dashboard. \
     We are going to be using the Dashboard API directly.\
@@ -90,13 +92,16 @@ print_and_execute "curl -X POST -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"C
 
 title_and_wait "Navigate to the output link below to view the newly added dashboard."
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
- 
-title_and_wait "We could edit the dashboard in-place using the UX, but in our case \\n
-    we are going to quickly add a new graph using the API.\\n
-    In order to do that, you should pull down the latest version\\n
-    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\\n
-    You can get an existing dashboard by querying the monitoring API.\\n
+echo ""
+echo ""
+
+title_and_wait "We could edit the dashboard in-place using the UX, but in our case \
+    we are going to quickly add a new graph using the API.\
+    In order to do that, you should pull down the latest version\
+    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\
+    You can get an existing dashboard by querying the monitoring API.\
     Get the existing dashboard that was just added:"
+
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
  
@@ -104,7 +109,7 @@ title_and_wait "Add a new graph: (50th %ile latency): [API reference] Now we can
     to our dashboard in code. This change can be reviewed by peers and checked into version control.\
     Here is a widget to add that shows 50%ile latency (median latency).\
     Try editing the dashboard you just got, adding a new stanza:"
-print_and_execute "jq --argjson newChart \"$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
+print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
  
 title_and_wait "Update the existing servicesdashboard:"
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
