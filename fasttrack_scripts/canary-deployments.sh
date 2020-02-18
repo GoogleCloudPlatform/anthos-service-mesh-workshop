@@ -79,3 +79,5 @@ title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_
 
 title_and_wait "Wait until frontend, frontend-v2 and respy Deployments are Ready."
 print_and_execute "is_deployment_ready ${DEV1_GKE_1} frontend frontend"
+print_and_execute "is_deployment_ready ${DEV1_GKE_1} frontend frontend-v2"
+print_and_execute "is_deployment_ready ${DEV1_GKE_1} frontend respy"
