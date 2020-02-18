@@ -76,7 +76,7 @@ title_and_wait () {
     export CYAN='\033[1;36m'
     export NC='\e[0m'
     echo "${bold}# ${@}"
-    echo "${CYAN}--> Press ENTER to continue...${NC}"
+    echo -e "${CYAN}--> Press ENTER to continue...${NC}"
     read -p ''
 }
 
