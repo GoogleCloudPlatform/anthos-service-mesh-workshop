@@ -111,7 +111,7 @@ title_and_wait "Add a new graph: (50th %ile latency): Now we can add a new graph
     to our dashboard in code. This change can be reviewed by peers and checked into version control.\
     Here is a widget to add that shows 50%ile latency (median latency).\
     Try editing the dashboard you just got, adding a new stanza:"
-print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json \> patched-services-dashboard.json"
+print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
  
 title_and_wait "Update the existing servicesdashboard:"
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
