@@ -96,7 +96,6 @@ if [ ${TF_ADMIN} == 'null' ]; then
   gcloud projects list 
   exit 1
 fi
-echo -e "\n"
 
 title_and_wait "Get the variables for your environment. The variables include projects IDs, GKE cluster context, regions, zones etc."
 print_and_execute "mkdir -p ${WORKDIR}/asm/vars"
@@ -107,7 +106,6 @@ else
     print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
     print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
 fi
-echo -e "\n"
 
 title_no_wait "Verify the infrastructure Cloud Build finished successfully."
 title_no_wait "Navigate to the terraform-admin-project Cloud Build page and inspect the latest build."
