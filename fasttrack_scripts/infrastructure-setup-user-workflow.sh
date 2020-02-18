@@ -176,7 +176,21 @@ echo "${bold}Please ENTER to continue...${normal}"
 read -p ''
 print_and_execute "kubectl --context ${OPS_GKE_1} get secrets -l istio/multiCluster=true -n istio-system"
 print_and_execute "kubectl --context ${OPS_GKE_2} get secrets -l istio/multiCluster=true -n istio-system"
-echo "${bold}You should see 4 secrets in both ops clusters. One for each app cluster.${normal}"
+echo -e "\n"
+export OPS1_NUM_OF_SECRETS=`kubectl --context ${OPS_GKE_1} get secrets -l istio/multiCluster=true -n istio-system | wc -l`
+export OPS2_NUM_OF_SECRETS=`kubectl --context ${OPS_GKE_2} get secrets -l istio/multiCluster=true -n istio-system | wc -l`
+if [ ${OPS1_NUM_OF_SECRETS} == 4 ]; then
+    echo "${bold}You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. One for each app cluster. Looks good.${normal}"
+else
+    echo "${bold}You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. You should see 4 secrets, one for each app cluster. Exiting script.${normal}"
+    exit 1
+fi
+if [ ${OPS2_NUM_OF_SECRETS} == 4 ]; then
+    echo "${bold}You show ${OPS2_NUM_OF_SECRETS} secrets in ops-2 cluster. One for each app cluster. Looks good.${normal}"
+else
+    echo "${bold}You show ${OPS2_NUM_OF_SECRETS} secrets in ops-2 cluster. You should see 4 secrets, one for each app cluster. Exiting script.${normal}"
+    exit 1
+fi
 echo -e "\n"
 
 echo "${bold}Congratulations! You have successfully completed the Infrastructure Setup - User Workflow lab.${normal}"
