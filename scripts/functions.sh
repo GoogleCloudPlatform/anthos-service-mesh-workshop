@@ -101,7 +101,7 @@ nopv_and_execute () {
 }
 
 error_no_wait () {
-    red_color='\e[1;38m' # green
+    red_color='\e[1;91m' # red
     nc='\e[0m'
     printf "${red_color}# ${@}${nc}"
     printf "\n"
