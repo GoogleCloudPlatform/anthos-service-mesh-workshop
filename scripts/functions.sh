@@ -68,6 +68,11 @@ get_istio_svc_ingress_ip () {
 
 }
 
+title_and_wait () {
+    echo "${bold}@${@} Press ENTER to continue...${normal}"
+    read -p ''
+}
+
 print_and_execute () {
 
     SPEED=130

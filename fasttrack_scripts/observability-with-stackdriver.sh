@@ -50,9 +50,33 @@ echo -e "\n"
 echo "${bold}*** Lab: Observability with Stackdriver ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
+# https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#6
+title_and_wait "Install the istio to stackdriver config file."
 print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute " "
+print_and_execute "cd gke-asm-1-r1-prod/istio-telemetry"
+print_and_execute "kustomize edit add resource istio-telemetry.yaml"
+print_and_execute " "
+print_and_execute "cd ../../gke-asm-2-r2-prod/istio-telemetry"
+print_and_execute "kustomize edit add resource istio-telemetry.yaml"
+
+echo "${bold}Commit to k8s-repo. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "cd ../../"
+print_and_execute "git add . && git commit -am \"Install istio to stackdriver configuration\""
+print_and_execute "git push"
+ 
+echo "${bold}Wait for rollout to complete. Press ENTER to continue...${normal}"
+read -p ''
+print_and_execute "../asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
+ 
+echo "${bold}Verify the Istio → Stackdriver integration Get the Stackdriver Handler CRD. Press ENTER to continue...${normal}"
+read -p ''
+
+print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
+ 
+echo "${bold}Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command: Press ENTER to continue...${normal}"
+read -p ''
+
+echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
 
