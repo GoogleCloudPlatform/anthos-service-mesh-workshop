@@ -116,7 +116,7 @@ then
     error_no_wait "oops, MTLS isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
     exit 1
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-1 cluster looks good! continuing..."
 fi
 
 NUM_MTLS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
@@ -125,7 +125,7 @@ then
     error_no_wait "oops, MTLS isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
     exit 1
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "ops-2 cluster looks good! continuing..."
 fi
 
 title_and_wait "Describe the DestinationRule created by the Istio operator controller."
