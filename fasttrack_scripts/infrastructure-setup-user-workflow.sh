@@ -112,11 +112,37 @@ fi
 echo -e "\n"
 
 echo "${bold}Verify the infrastructure Cloud Build finished successfully.${normal}"
-echo "${bold}Navigate to the terraform-admin-project Cloud Build page and click on the latest build.${normal}"
+echo "${bold}Navigate to the terraform-admin-project Cloud Build page and inspect the latest build.${normal}"
 echo "${bold}Click on the following link to get to the terraform-admin-project Cloud Build page.${normal}"
 print_and_execute "source ${VARS_FILE}"
 print_and_execute "echo \"https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}\""
 echo -e "\n"
+echo "${bold}Click on the link above. Click on the Build ID. You should only see one build ID. Inspect the build steps. Press ENTER to continue...${normal}"
+read -p ''
 
+echo "${bold}Verify the k8s-repo Cloud Build finished successfully.${normal}"
+echo "${bold}Navigate to the ops-project Cloud Build page and inspect the latest build.${normal}"
+echo "${bold}Click on the following link to get to the ops-project Cloud Build page.${normal}"
+print_and_execute "echo \"https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}\""
+echo -e "\n"
+echo "${bold}Click on the link above. Click on the Build ID. You should only see one build ID. Inspect the build steps. Press ENTER to continue...${normal}"
+read -p ''
+
+echo "${bold}Get credentials for all clusters and create KUBECONFIG file.${normal}"
+echo "${bold}The kubeconfig file is located at ${WORKDIR}/asm/gke/kubemesh ${normal}"
+echo "${bold}Please ENTER to continue...${normal}"
+read -p ''
+print_and_execute "${SCRIPT_DIR}/../scripts/setup-gke-vars-kubeconfig.sh"
+print_and_execute "source ${VARS_FILE}"
+print_and_execute "export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh"
+echo "${bold}Adding ${VARS_FILE} and KUBECONFIG vars to bashrc for persistence across multiple Cloud Shell sessions. ${normal}"
+print_and_execute "echo \"source ${VARS_FILE}\" >> ~/.bashrc"
+print_and_execute "echo \"export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh\" >> ~/.bashrc"
+echo -e "\n"
+
+echo "${bold}Confirm you can see all six GKE cluster contexts. Please ENTER to continue...${normal}"
+read -p ''
+print_and_execute "kubectl config view -ojson | jq -r '.clusters[].name'"
+echo -e "\n"
 
  
