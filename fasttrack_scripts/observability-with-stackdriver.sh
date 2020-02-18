@@ -72,6 +72,11 @@ title_and_wait "Verify the Istio → Stackdriver integration Get the Stackdriver
 print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
 
 # actually validate the existence of the stackdriver handler
+NUM_SD=kubectl --context ${OPS_GKE_1} get handler -n istio-system | grep "stackdriver" | wc -l
+if [[ $NUM_SD -gt 0 ]]
+then 
+    echo "oops, stackdriver handler isn't installed.  please get some help, or retry."
+fi
  
 title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
 echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
