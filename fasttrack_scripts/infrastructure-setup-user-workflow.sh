@@ -60,9 +60,7 @@ nopv_and_execute "export PATH=$PATH:${HOME}/bin"
 nopv_and_execute "echo "export PATH=$PATH:${HOME}/bin" >> ~/.bashrc"
 echo -e "\n"
 nopv_and_execute "sudo apt-get update && sudo apt-get -y install pv"
-nopv_and_execute "echo -e  '#!/bin/sh' >> $HOME/.customize_environment"
-nopv_and_execute "echo -e "apt-get update" >> $HOME/.customize_environment"
-nopv_and_execute "echo -e "apt-get -y install pv" >> $HOME/.customize_environment"
+nopv_and_execute "sudo mv /usr/bin/pv ${HOME}/bin/pv"
 echo -e "\n"
 
 
