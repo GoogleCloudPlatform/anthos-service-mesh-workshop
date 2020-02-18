@@ -50,9 +50,70 @@ echo -e "\n"
 echo "${bold}*** Lab: Mutual TLS ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
 
+title_and_wait "Check MeshPolicy in ops clusters. Note mTLS is PERMISSIVE allowing for both encrypted and non-mTLS traffic."
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
+ 
+#Output (do not copy)
+#
+#  spec:
+#    peers:
+#    - mtls:
+#        mode: PERMISSIVE
+
+title_no_wait "Turn on mTLS. The Istio operator controller is running and we can change the "
+title_no_wait "Istio configuration by editing or replacing the IstioControlPlane resource. "
+title_no_wait "The controller will detect the change and respond by updating the Istio installation "
+title_no_wait "accordingly. We will set mtls to enabled in the IstioControlPlane resource for both "
+title_no_wait "the shared and replicated control plane. This will set the MeshPolicy to ISTIO_MUTUAL "
+title_and_wait "and create a default Destination Rule."
+
+print_and_execute "cd ${WORKDIR}/asm"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+ 
+title_and_wait "Commit to k8s-repo."
+print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "git add . && git commit -am \"turn mTLS on\""
+print_and_execute "git push"
+ 
+title_and_wait "Wait for rollout to complete"
+print_and_execute "${WORKDIR}/asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
+ 
+title_no_wait "Verify mTLS"
+title_and_wait "Check MeshPolicy once more in ops clusters. Note mTLS is no longer PERMISSIVE and will only allow for mTLS traffic."
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
+
+# actually validate here
+# Output (do not copy):
+# 
+# spec:
+#     peers:
+#     - mtls: {}
+
+
+title_and_wait "Describe the DestinationRule created by the Istio operator controller."
+print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml"
+ 
+#validate
+#Output (do not copy):
+#
+#  apiVersion: networking.istio.io/v1alpha3
+#  kind: DestinationRule
+#  metadata:  
+#    name: default
+#    namespace: istio-system
+#  spec:
+#    host: '*.local'
+#    trafficPolicy:
+#      tls:
+#        mode: ISTIO_MUTUAL
+
+# show some logs that prove secure
