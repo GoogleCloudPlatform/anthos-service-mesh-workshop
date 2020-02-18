@@ -23,14 +23,15 @@ export CYAN='\033[1;36m'
 export GREEN='\033[1;32m'
 export NC='\033[0m' # No Color
 
+# Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
+export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
+
 # Create a log file and send stdout and stderr to console and log file 
 export LOG_FILE=setup-gke-vars-$(date +%s).log
-touch ./logs/${LOG_FILE}
+touch ${SCRIPT_DIR}/../logs/${LOG_FILE}
 exec 2>&1
 exec &> >(tee -i ./logs/${LOG_FILE})
 
-# Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
-export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 # Add GKE vars to vars.sh and re-source vars
 echo -e "\n${CYAN}Adding GKE cluster names, regions, zones and contexts to vars.sh...${NC}" 
