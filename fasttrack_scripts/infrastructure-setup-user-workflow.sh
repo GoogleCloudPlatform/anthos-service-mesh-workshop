@@ -40,11 +40,11 @@ source ${SCRIPT_DIR}/../scripts/functions.sh
 # Lab: Infrastructure Setup - User Workflow
 
 # Set speed
-# bold=$(tput bold)
-# normal=$(tput sgr0)
+bold=$(tput bold)
+normal=$(tput sgr0)
 
-# color='\e[1;32m' # green
-# nc='\e[0m'
+color='\e[1;32m' # green
+nc='\e[0m'
 
 echo -e "\n"
 title_no_wait "*** Lab: Infrastructure Setup - User Workflow ***"
@@ -73,7 +73,7 @@ fi
 echo -e "\n"
 
 title_no_wait "Updating bash prompt..."
-print_and_execute "cat ${SCRIPT_DIR}/../script/krompt.bash >> ${HOME}/.bashrc"
+print_and_execute "cat ${SCRIPT_DIR}/../scripts/krompt.bash >> ${HOME}/.bashrc"
 
 title_and_wait "Verify that you are logged in with the correct user. The user should be ${MY_USER}."
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"

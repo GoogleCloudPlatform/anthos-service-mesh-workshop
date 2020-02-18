@@ -39,11 +39,11 @@ source ${SCRIPT_DIR}/../scripts/functions.sh
 # Lab 1 Deploy the Sample App
 
 # Set speed
-# bold=$(tput bold)
-# normal=$(tput sgr0)
+bold=$(tput bold)
+normal=$(tput sgr0)
 
-# color='\e[1;32m' # green
-# nc='\e[0m'
+color='\e[1;32m' # green
+nc='\e[0m'
 
 echo -e "\n"
 title_no_wait "*** Lab: Deploy the Sample App ***"
