@@ -77,5 +77,5 @@ title_no_wait "View the status of the Ops project Cloud Build in a previously op
 echo -e "\n"
 title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
 
-title_and_wait "Watch Pod resources in the frontend namespace."
-print_and_execute "watch -n 1 kubectl --context ${DEV1_GKE_1} get pods -n frontend"
+title_and_wait "Wait until frontend, frontend-v2 and respy Deployments are Ready."
+print_and_execute "is_deployment_ready ${DEV1_GKE_1} frontend frontend"
