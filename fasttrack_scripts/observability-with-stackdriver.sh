@@ -73,9 +73,10 @@ print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
 
 # actually validate the existence of the stackdriver handler
 NUM_SD=`kubectl --context ${OPS_GKE_1} get handler -n istio-system | grep "stackdriver" | wc -l`
-if [[ $NUM_SD -gt 0 ]]
+if [[ $NUM_SD -eq 0 ]]
 then 
     echo "oops, stackdriver handler isn't installed.  please get some help, or retry."
+    exit
 else 
     echo "looks good! continuing..."
 fi
