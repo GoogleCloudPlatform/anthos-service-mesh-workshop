@@ -50,7 +50,6 @@ echo -e "\n"
 echo "${bold}*** Lab: Mutual TLS ***${normal}"
 echo -e "\n"
 
-
 title_and_wait "Check MeshPolicy in ops clusters. Note mTLS is PERMISSIVE allowing for both encrypted and non-mTLS traffic."
 print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
 print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
@@ -90,6 +89,7 @@ print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled:
 print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ../k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
  
 title_and_wait "Commit to k8s-repo."
+
 print_and_execute "cd ${WORKDIR}/k8s-repo"
 print_and_execute "git add . && git commit -am \"turn mTLS on\""
 print_and_execute "git push"
