@@ -81,12 +81,12 @@ title_no_wait "the shared and replicated control plane. This will set the MeshPo
 title_and_wait "and create a default Destination Rule."
 
 print_and_execute "cd ${WORKDIR}/asm"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
-print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${SCRIPT_DIR}/../k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
+print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/istio-shared-controlplane.yaml"
  
 title_and_wait "Commit to k8s-repo."
 
