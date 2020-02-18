@@ -51,8 +51,24 @@ title_no_wait "*** Lab: Canary Deployments ***"
 echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#9
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
+title_and_wait "Run the repo_setup.sh script, to copy the baseline manifests into k8s-repo."
 read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "export CANARY_DIR=\"${WORKDIR}/asm/k8s_manifests/prod/app-canary/\""
+print_and_execute "export K8S_REPO=\"${WORKDIR}/k8s-repo\""
+print_and_execute "${CANARY_DIR}/repo-setup.sh"
+
+title_no_wait "The following manifests are copied:"
+
+title_no_wait "1. frontend-v2 deployment"
+title_no_wait "2. frontend-v1 patch (to include the \"v1\" label, and an image with a \"/version\" endpoint)"
+title_no_wait "3. respy, a small pod that will print HTTP response distribution, and help us visualize the canary deployment in real time."
+title_no_wait "4. frontend Istio DestinationRule - splits the frontend Kubernetes Service into two subsets, v1 and v2, based on the \"version\" deployment label"
+title_no_wait "5. frontend Istio VirtualService - routes 100% of traffic to frontend v1. This overrides the Kubernetes Service default round-robin behavior, which would immediately send 50% of all Dev1 regional traffic to frontend v2."
+echo -e "\n"
+
+title_and_wait "Commit changes to the k8s-repo."
+print_and_execute "cd ${K8S_REPO}" 
+print_and_execute "git add . && git commit -am \"frontend canary setup\""
+print_and_execute "git push"
+print_and_execute "cd ${CANARY_DIR}"
 
