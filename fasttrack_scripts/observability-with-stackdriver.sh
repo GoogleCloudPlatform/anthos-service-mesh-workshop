@@ -77,6 +77,7 @@ title_and_wait "Verify that the Istio metrics export to Stackdriver is working. 
 echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
 echo ""
 echo ""
+title_and_wait ""
 
 title_and_wait "Now let's add our pre-canned metrics dashboard. \
     We are going to be using the Dashboard API directly.\
@@ -94,6 +95,7 @@ title_and_wait "Navigate to the output link below to view the newly added dashbo
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
 echo ""
 echo ""
+title_and_wait ""
 
 title_and_wait "We could edit the dashboard in-place using the UX, but in our case \
     we are going to quickly add a new graph using the API.\
@@ -105,11 +107,11 @@ title_and_wait "We could edit the dashboard in-place using the UX, but in our ca
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
  
-title_and_wait "Add a new graph: (50th %ile latency): [API reference] Now we can add a new graph widget \
+title_and_wait "Add a new graph: (50th %ile latency): Now we can add a new graph widget \
     to our dashboard in code. This change can be reviewed by peers and checked into version control.\
     Here is a widget to add that shows 50%ile latency (median latency).\
     Try editing the dashboard you just got, adding a new stanza:"
-print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
+print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [$newChart]' sd-services-dashboard.json \> patched-services-dashboard.json"
  
 title_and_wait "Update the existing servicesdashboard:"
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
@@ -127,3 +129,7 @@ echo "https://console.cloud.google.com/traces/overview?cloudshell=false&project=
 
 title_and_wait "Expose Istio in-cluster observability tools, for later use:"
 print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
+
+echo "https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default"
+
+print_and_execute "Done with o11y!"
