@@ -79,7 +79,15 @@ echo -e "\n"
 echo "${bold}Verify that you are logged in with the correct user. The user should be userABC@yourdomain.xyz. Press ENTER to continue...${normal}"
 read -p ''
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"
+export
 echo -e "\n"
+export ACCOUNT=`gcloud config list account --format=json | jq -r .core.account`
+if [ ${ACCOUNT} == ${MY_USER} ]; then
+    echo -e "You are logged in with the correct user account."
+else
+    echo -e "You are logged in with user ${ACCOUNT}, which does not match the intended ${MY_USER}. Ensure you are logged in with ${MY_USER} by running 'gcloud auth login' and following the instructions. Exiting script."
+    exit 1
+fi
 
 echo "${bold}Get the terraform-admin-project ID. Press ENTER to continue...${normal}"
 read -p ''
