@@ -68,8 +68,13 @@ get_istio_svc_ingress_ip () {
 
 }
 
+title_no_wait () {
+    echo "${bold}# ${@}${normal}"
+}
+
 title_and_wait () {
-    echo "${bold}@${@} Press ENTER to continue...${normal}"
+    echo "${bold}# ${@}"
+    echo " --> Press ENTER to continue...${normal}"
     read -p ''
 }
 

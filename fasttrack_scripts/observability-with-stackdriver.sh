@@ -60,23 +60,85 @@ print_and_execute " "
 print_and_execute "cd ../../gke-asm-2-r2-prod/istio-telemetry"
 print_and_execute "kustomize edit add resource istio-telemetry.yaml"
 
-echo "${bold}Commit to k8s-repo. Press ENTER to continue...${normal}"
-read -p ''
+title_and_wait "Commit to k8s-repo."
 print_and_execute "cd ../../"
 print_and_execute "git add . && git commit -am \"Install istio to stackdriver configuration\""
 print_and_execute "git push"
  
-echo "${bold}Wait for rollout to complete. Press ENTER to continue...${normal}"
-read -p ''
+title_and_wait "Wait for rollout to complete."
 print_and_execute "../asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
  
-echo "${bold}Verify the Istio → Stackdriver integration Get the Stackdriver Handler CRD. Press ENTER to continue...${normal}"
-read -p ''
-
+title_and_wait "Verify the Istio → Stackdriver integration Get the Stackdriver Handler CRD."
 print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
+
+# actually validate the existence of the stackdriver handler
+NUM_SD=`kubectl --context ${OPS_GKE_1} get handler -n istio-system | grep "stackdriver" | wc -l`
+if [[ $NUM_SD -eq 0 ]]
+then 
+    echo "oops, stackdriver handler isn't installed.  please get some help, or retry."
+    exit
+else 
+    echo "looks good! continuing..."
+fi
  
-echo "${bold}Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command: Press ENTER to continue...${normal}"
-read -p ''
-
+title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
 echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo ""
+echo ""
+title_and_wait ""
 
+title_no_wait "Now let's add our pre-canned metrics dashboard."
+title_no_wait "We are going to be using the Dashboard API directly."
+title_no_wait "This is something you wouldn't normally do by hand-generating API calls,"
+title_no_wait "it would be part of an automation system, or you would build the dashboard manually"
+title_and_wait "in the web UI. This will get us started quickly:"
+
+print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
+print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
+print_and_execute "OAUTH_TOKEN=$(gcloud auth application-default print-access-token)"
+print_and_execute "curl -X POST -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+                        https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards \
+                        -d @services-dashboard.json "
+
+title_and_wait "Navigate to the output link below to view the newly added dashboard."
+echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo ""
+echo ""
+title_and_wait ""
+
+title_and_wait "We could edit the dashboard in-place using the UX, but in our case \
+    we are going to quickly add a new graph using the API.\
+    In order to do that, you should pull down the latest version\
+    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\
+    You can get an existing dashboard by querying the monitoring API.\
+    Get the existing dashboard that was just added:"
+
+print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+    https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
+ 
+title_and_wait "Add a new graph: (50th %ile latency): Now we can add a new graph widget \
+    to our dashboard in code. This change can be reviewed by peers and checked into version control.\
+    Here is a widget to add that shows 50%ile latency (median latency).\
+    Try editing the dashboard you just got, adding a new stanza:"
+print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
+ 
+title_and_wait "Update the existing servicesdashboard:"
+print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
+     -d @patched-services-dashboard.json"
+ 
+title_and_wait "View the updated dashboard by navigating to the following output link:"
+echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
+ 
+title_and_wait "View your projects logs:"
+echo "https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}"
+
+title_and_wait "View your projects traces:"
+echo "https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}"
+
+title_and_wait "Expose Istio in-cluster observability tools, for later use:"
+print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
+
+echo "https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default"
+
+print_and_execute "Done with o11y!"
