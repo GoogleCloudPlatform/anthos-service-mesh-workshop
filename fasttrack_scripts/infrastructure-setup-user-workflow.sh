@@ -40,11 +40,11 @@ source ${SCRIPT_DIR}/../scripts/functions.sh
 # Lab: Infrastructure Setup - User Workflow
 
 # Set speed
-bold=$(tput bold)
-normal=$(tput sgr0)
+# bold=$(tput bold)
+# normal=$(tput sgr0)
 
-color='\e[1;32m' # green
-nc='\e[0m'
+# color='\e[1;32m' # green
+# nc='\e[0m'
 
 echo -e "\n"
 title_no_wait "*** Lab: Infrastructure Setup - User Workflow ***"
@@ -79,7 +79,7 @@ export ACCOUNT=`gcloud config list account --format=json | jq -r .core.account`
 if [ ${ACCOUNT} == ${MY_USER} ]; then
     title_no_wait "You are logged in with the correct user account."
 else
-    error_no_wait "You are logged in with user ${ACCOUNT}, which does not match the intended ${MY_USER}. Ensure you are logged in with ${MY_USER} by running 'gcloud auth login' and following the instructions. Exiting script."
+    error_no_wait "You are logged in with user ${ACCOUNT}, which does not match the intended ${MY_USER} user. Ensure you are logged in with ${MY_USER} by running 'gcloud auth login' and following the instructions. Exiting script."
     exit 1
 fi
 echo -e "\n"
@@ -88,8 +88,8 @@ title_and_wait "Get the terraform-admin-project ID."
 print_and_execute "export TF_ADMIN=$(gcloud projects list | grep tf- | awk '{ print $1 }')"
 print_and_execute "echo ${TF_ADMIN}"
 if [ ${TF_ADMIN} == 'null' ]; then
-  title_no_wait "Uh oh! We cannot retrieve your terraform-admin project ID. You cannot continue the workshop without this. Please contact your lab administrator"
-  title_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
+  error_no_wait "Uh oh! We cannot retrieve your terraform-admin project ID. You cannot continue the workshop without this. Please contact your lab administrator"
+  error_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
   gcloud projects list 
   exit 1
 fi
@@ -138,9 +138,9 @@ export NUM_OF_CLUSTERS=`kubectl config view -ojson | jq -r '.clusters[].name' | 
 if [ ${NUM_OF_CLUSTERS} == 6 ]; then
     title_no_wait "You have ${NUM_OF_CLUSTERS} in your kubeconfig file. Looks good."
 else
-    title_no_wait "Uh oh! It looks like you have ${NUM_OF_CLUSTERS} in your kubeconfig file."
-    title_no_wait "You cannot proceed with the workshop until you have all six clusters in your kubeconfig."
-    title_no_wait "Exiting script."
+    error_no_wait "Uh oh! It looks like you have ${NUM_OF_CLUSTERS} in your kubeconfig file."
+    error_no_wait "You cannot proceed with the workshop until you have all six clusters in your kubeconfig."
+    error_no_wait "Exiting script."
     exit 1
 fi
 echo -e "\n"
@@ -184,7 +184,7 @@ export OPS2_NUM_OF_SECRETS=$((${OPS2_NUM_OF_SECRETS}-1)) # num of lines include 
 if [ ${OPS1_NUM_OF_SECRETS} == 4 ]; then
     title_no_wait "You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. One for each app cluster. Looks good."
 else
-    title_no_wait "You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. You should see 4 secrets, one for each app cluster. Exiting script."
+    error_no_wait "You show ${OPS1_NUM_OF_SECRETS} secrets in ops-1 cluster. You should see 4 secrets, one for each app cluster. Exiting script."
     exit 1
 fi
 if [ ${OPS2_NUM_OF_SECRETS} == 4 ]; then

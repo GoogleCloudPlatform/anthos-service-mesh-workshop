@@ -40,14 +40,14 @@ source ${SCRIPT_DIR}/../scripts/functions.sh
 # Lab: Observability with Stackdriver
 
 # Set speed
-bold=$(tput bold)
-normal=$(tput sgr0)
+# bold=$(tput bold)
+# normal=$(tput sgr0)
 
-color='\e[1;32m' # green
-nc='\e[0m'
+# color='\e[1;32m' # green
+# nc='\e[0m'
 
 echo -e "\n"
-echo "${bold}*** Lab: Observability with Stackdriver ***${normal}"
+title_no_wait "*** Lab: Observability with Stackdriver ***"
 echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#6
@@ -75,10 +75,10 @@ print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
 NUM_SD=`kubectl --context ${OPS_GKE_1} get handler -n istio-system | grep "stackdriver" | wc -l`
 if [[ $NUM_SD -eq 0 ]]
 then 
-    echo "oops, stackdriver handler isn't installed.  please get some help, or retry."
-    exit
+    error_no_wait "oops, stackdriver handler isn't installed.  please get some help, or retry."
+    exit 1
 else 
-    echo "looks good! continuing..."
+    title_no_wait "looks good! continuing..."
 fi
  
 title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
