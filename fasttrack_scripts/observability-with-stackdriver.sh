@@ -87,11 +87,12 @@ echo ""
 echo ""
 title_and_wait ""
 
-title_and_wait "Now let's add our pre-canned metrics dashboard. \
-    We are going to be using the Dashboard API directly.\
-    This is something you wouldn't normally do by hand-generating API calls,\
-    it would be part of an automation system, or you would build the dashboard manually \
-    in the web UI. This will get us started quickly:"
+title_and_wait "Now let's add our pre-canned metrics dashboard."
+title_and_wait "    We are going to be using the Dashboard API directly."
+title_and_wait "This is something you wouldn't normally do by hand-generating API calls,"
+title_and_wait "it would be part of an automation system, or you would build the dashboard manually"
+title_and_wait "in the web UI. This will get us started quickly:"
+
 print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
 print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
 print_and_execute "OAUTH_TOKEN=$(gcloud auth application-default print-access-token)"
