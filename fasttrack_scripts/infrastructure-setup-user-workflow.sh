@@ -143,6 +143,41 @@ echo -e "\n"
 echo "${bold}Confirm you can see all six GKE cluster contexts. Please ENTER to continue...${normal}"
 read -p ''
 print_and_execute "kubectl config view -ojson | jq -r '.clusters[].name'"
+export NUM_OF_CLUSTERS=`kubectl config view -ojson | jq -r '.clusters[].name' | wc -l`
+if [ ${NUM_OF_CLUSTERS} == 6 ]; then
+    echo -e "You have ${NUM_OF_CLUSTERS} in your kubeconfig file. Looks good."
+else
+    echo -e "Uh oh! It looks like you have ${NUM_OF_CLUSTERS} in your kubeconfig file."
+    echo -e "You cannot proceed with the workshop until you have all six clusters in your kubeconfig."
+    echo -r "Exiting script."
+    exit 1
+fi
 echo -e "\n"
 
- 
+echo "${bold}Verify the entire Istio control plane is deployed and all Pods are Running in both ops clusters. Please ENTER to continue...${normal}"
+read -p ''
+print_and_execute "kubectl --context ${OPS_GKE_1} get pods -n istio-system"
+print_and_execute "kubectl --context ${OPS_GKE_2} get pods -n istio-system"
+echo -e "\n"
+
+echo "${bold}Verify citadel, istio-sidecar-injector and coredns are deployed and all Pods are Running in all apps clusters. Please ENTER to continue...${normal}"
+read -p ''
+print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n istio-system"
+print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n istio-system"
+print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n istio-system"
+print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n istio-system"
+echo -e "\n"
+
+echo "${bold}Pilots running in the ops clusters use kubeconfig files to access and get services and endpoints from all apps clusters.${normal}"
+echo "${bold}The kubeconfig files for all four apps clusters are stored as secrets in the ops clusters.${normal}"
+echo "${bold}Pilots use these secrets to get service/endpoint info from all Envoy proxies running in the apps clusters.${normal}"
+echo "${bold}Ensure these secrets are created in both ops clusters.${normal}"
+echo "${bold}Please ENTER to continue...${normal}"
+read -p ''
+print_and_execute "kubectl --context ${OPS_GKE_1} get secrets -l istio/multiCluster=true -n istio-system"
+print_and_execute "kubectl --context ${OPS_GKE_2} get secrets -l istio/multiCluster=true -n istio-system"
+echo "${bold}You should see 4 secrets in both ops clusters. One for each app cluster.${normal}"
+echo -e "\n"
+
+echo "${bold}Congratulations! You have successfully completed the Infrastructure Setup - User Workflow lab.${normal}"
+echo -e "\n"
