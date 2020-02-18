@@ -52,7 +52,6 @@ echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#9
 title_and_wait "Run the repo_setup.sh script, to copy the baseline manifests into k8s-repo."
-read -p ''
 print_and_execute "export CANARY_DIR=\"${WORKDIR}/asm/k8s_manifests/prod/app-canary/\""
 print_and_execute "export K8S_REPO=\"${WORKDIR}/k8s-repo\""
 print_and_execute "${CANARY_DIR}/repo-setup.sh"
@@ -72,3 +71,11 @@ print_and_execute "git add . && git commit -am \"frontend canary setup\""
 print_and_execute "git push"
 print_and_execute "cd ${CANARY_DIR}"
 
+echo -e "\n"
+title_no_wait "Wait for the k8s-repo Cloud Build to finish successfully."
+title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+
+title_and_wait "Watch Pod resources in the frontend namespace."
+print_and_execute "watch -n 1 kubectl --context ${DEV1_GKE_1} get pods -n frontend"
