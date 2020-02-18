@@ -79,7 +79,7 @@ export ACCOUNT=`gcloud config list account --format=json | jq -r .core.account`
 if [ ${ACCOUNT} == ${MY_USER} ]; then
     title_no_wait "You are logged in with the correct user account."
 else
-    title_no_wait "You are logged in with user ${ACCOUNT}, which does not match the intended ${MY_USER}. Ensure you are logged in with ${MY_USER} by running 'gcloud auth login' and following the instructions. Exiting script."
+    error_no_wait "You are logged in with user ${ACCOUNT}, which does not match the intended ${MY_USER}. Ensure you are logged in with ${MY_USER} by running 'gcloud auth login' and following the instructions. Exiting script."
     exit 1
 fi
 echo -e "\n"

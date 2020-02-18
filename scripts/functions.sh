@@ -100,6 +100,12 @@ nopv_and_execute () {
     eval "$@" ;
 }
 
+error_no_wait () {
+    red_color='\e[1;38m' # green
+    nc='\e[0m'
+    echo "${red_color}# ${@}${nc}"
+}
+
 export -f is_istio_deployment_ready
 export -f expose_istio_svc_via_ilb
 export -f get_istio_svc_ingress_ip

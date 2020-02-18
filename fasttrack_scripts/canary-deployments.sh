@@ -47,10 +47,10 @@ color='\e[1;32m' # green
 nc='\e[0m'
 
 echo -e "\n"
-echo "${bold}*** Lab: Canary Deployments ***${normal}"
+title_no_wait "*** Lab: Canary Deployments ***"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
+# https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#9
 echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
 read -p ''
 print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
