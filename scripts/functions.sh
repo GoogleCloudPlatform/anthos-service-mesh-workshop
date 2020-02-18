@@ -73,6 +73,8 @@ title_no_wait () {
 }
 
 title_and_wait () {
+    export CYAN='\033[1;36m'
+    export NC='\e[0m'
     echo "${bold}# ${@}"
     echo " --> Press ENTER to continue...${normal}"
     read -p ''
@@ -81,10 +83,10 @@ title_and_wait () {
 print_and_execute () {
 
     SPEED=130
-    color='\e[1;32m' # green
-    nc='\e[0m'
+    GREEN='\e[1;32m' # green
+    NC='\e[0m'
 
-    printf "${color}\$ ${@}${nc}" | pv -qL $SPEED;
+    printf "${GREEN}\$ ${@}${NC}" | pv -qL $SPEED;
     printf "\n"
     eval "$@" ;
 }
@@ -92,18 +94,18 @@ print_and_execute () {
 nopv_and_execute () {
 
     SPEED=130
-    color='\e[1;32m' # green
-    nc='\e[0m'
+    GREEN='\e[1;32m' # green
+    NC='\e[0m'
 
-    printf "${color}\$ ${@}${nc}";
+    printf "${GREEN}\$ ${@}${NC}";
     printf "\n"
     eval "$@" ;
 }
 
 error_no_wait () {
-    red_color='\e[1;91m' # red
-    nc='\e[0m'
-    printf "${red_color}# ${@}${nc}"
+    RED='\e[1;91m' # red
+    NC='\e[0m'
+    printf "${RED}# ${@}${NC}"
     printf "\n"
 }
 
