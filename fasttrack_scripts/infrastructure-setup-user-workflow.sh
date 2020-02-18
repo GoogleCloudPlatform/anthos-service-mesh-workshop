@@ -111,6 +111,12 @@ else
 fi
 echo -e "\n"
 
+echo "${bold}Verify the infrastructure Cloud Build finished successfully.${normal}"
+echo "${bold}Navigate to the terraform-admin-project Cloud Build page and click on the latest build.${normal}"
+echo "${bold}Click on the following link to get to the terraform-admin-project Cloud Build page.${normal}"
+print_and_execute "source ${VARS_FILE}"
+print_and_execute "echo \"https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}\""
+echo -e "\n"
 
 
  
