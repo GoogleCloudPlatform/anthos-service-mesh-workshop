@@ -75,10 +75,9 @@ fi
 echo -e "\n"
 
 
-echo "${bold}Verify that you are logged in with the correct user. The user should be userABC@yourdomain.xyz. Press ENTER to continue...${normal}"
+echo "${bold}Verify that you are logged in with the correct user. The user should be ${MY_USER}. Press ENTER to continue...${normal}"
 read -p ''
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"
-export
 echo -e "\n"
 export ACCOUNT=`gcloud config list account --format=json | jq -r .core.account`
 if [ ${ACCOUNT} == ${MY_USER} ]; then
