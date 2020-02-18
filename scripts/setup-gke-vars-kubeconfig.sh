@@ -29,15 +29,17 @@ touch ./logs/${LOG_FILE}
 exec 2>&1
 exec &> >(tee -i ./logs/${LOG_FILE})
 
-# Add GKE vars to vars.sh and re-source vars
+# Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
+export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
+# Add GKE vars to vars.sh and re-source vars
 echo -e "\n${CYAN}Adding GKE cluster names, regions, zones and contexts to vars.sh...${NC}" 
 
-export VARS_FILE=./vars/vars.sh
+export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
 source ${VARS_FILE}
 
 # Create GKE vars
-echo -e "export ISTIO_VERSION=1.4.0" | tee -a ${VARS_FILE}
+echo -e "export ISTIO_VERSION=1.4.3" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_1_CLUSTER=gke-asm-1-r1-prod" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_2_CLUSTER=gke-asm-2-r2-prod" | tee -a ${VARS_FILE}
 echo -e "export DEV1_GKE_1_CLUSTER=gke-1-apps-r1a-prod" | tee -a ${VARS_FILE}
@@ -62,7 +64,7 @@ echo -e "export DEV2_GKE_2=gke_${TF_VAR_dev2_project_name}_${DEV2_GKE_2_LOCATION
 
 # Create kubeconfig file
 source ${VARS_FILE}
-export KUBECONFIG=./gke/kubemesh
+export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh
 gcloud container clusters get-credentials "${OPS_GKE_1_CLUSTER}" --region "${OPS_GKE_1_LOCATION}" --project "${TF_VAR_ops_project_name}"
 gcloud container clusters get-credentials "${OPS_GKE_2_CLUSTER}" --region "${OPS_GKE_2_LOCATION}" --project "${TF_VAR_ops_project_name}"
 gcloud container clusters get-credentials "${DEV1_GKE_1_CLUSTER}" --zone "${DEV1_GKE_1_LOCATION}" --project "${TF_VAR_dev1_project_name}"
