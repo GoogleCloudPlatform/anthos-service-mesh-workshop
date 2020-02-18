@@ -114,14 +114,12 @@ title_no_wait "Navigate to the terraform-admin-project Cloud Build page and insp
 title_no_wait "Click on the following link to get to the terraform-admin-project Cloud Build page."
 print_and_execute "source ${VARS_FILE}"
 print_and_execute "echo \"https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}\""
-echo -e "\n"
 title_and_wait "Click on the link above. Click on the Build ID. You should only see one build ID. Inspect the build steps."
 
 title_no_wait "Verify the k8s-repo Cloud Build finished successfully."
 title_no_wait "Navigate to the ops-project Cloud Build page and inspect the latest build."
 title_no_wait "Click on the following link to get to the ops-project Cloud Build page."
 print_and_execute "echo \"https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}\""
-echo -e "\n"
 title_and_wait "Click on the link above. Click on the Build ID. You should only see one build ID. Inspect the build steps."
 
 title_no_wait "Get credentials for all clusters and create KUBECONFIG file."
