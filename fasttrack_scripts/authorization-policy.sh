@@ -87,6 +87,7 @@ print_and_execute "cd ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-authorization/; kusto
 title_and_wait "Push changes."
 print_and_execute "cd $K8S_REPO "
 print_and_execute "git add . && git commit -am \"AuthorizationPolicy - currency: deny all\""
+print_and_execute "git diff"
 print_and_execute "git push"
 sleep 15
 print_and_execute "cd $AUTHZ_DIR"
@@ -103,7 +104,7 @@ title_no_wait "Let's investigate how the currency service is enforcing this Auth
 title_no_wait "First, enable trace-level logs on the Envoy proxy for one of the currency pods, since "
 title_and_wait "blocked authorization calls aren't logged by default."
 print_and_execute "CURRENCY_POD=$(kubectl --context ${DEV1_GKE_2} get pod -n currency | grep currency| awk '{ print $1 }')"
-print_and_execute "kubectl --context ${DEV1_GKE_2} exec $CURRENCY_POD -n currency -c istio-proxy \"curl -X POST \"http://localhost:15000/logging?level=trace\"; exit "
+print_and_execute "kubectl --context ${DEV1_GKE_2} exec $CURRENCY_POD -n currency -c istio-proxy \"curl -X POST \"http://localhost:15000/logging?level=trace\"; exit \""
  
 title_no_wait "Get the RBAC (authorization) logs from the currency service's sidecar proxy."
 title_no_wait "You should see an \"enforced denied\" message, indicating that the currencyservice "
