@@ -60,7 +60,8 @@ print_and_execute "cd $AUTHZ_DIR"
 title_no_wait "Inspect the contents of currency-deny-all.yaml. This policy uses Deployment label selectors "
 title_no_wait "to restrict access to the currencyservice. Notice how there is no spec field - this means this"
 title_and_wait "policy will deny all access to the selected service."
-print_and_execute "cat currency-deny-all.yaml"
+print_and_execute "cat currency-deny-all.yaml && echo ''"
+title_no_wait ""
  
 # apiVersion: "security.istio.io/v1beta1"
 # kind: "AuthorizationPolicy"
@@ -117,7 +118,7 @@ print_and_execute "kubectl --context ${DEV1_GKE_2} logs -n currency $CURRENCY_PO
 
 title_no_wait "Now, let's allow the frontend -- but not the other backend services -- to access currencyservice."
 title_and_wait "Open currency-allow-frontend.yaml and inspect its contents. Note that we've added the following rule:"
-print_and_execute "cat currency-allow-frontend.yaml"
+print_and_execute "cat currency-allow-frontend.yaml && echo ''"
 
 title_no_wait "Here, we are whitelisting a specific source.principal (client) to access currency service."
 title_no_wait "This source.principal is defined by is Kubernetes Service Account. In this case, the service "
@@ -152,7 +153,7 @@ title_and_wait "services that need to access it - frontend and checkout. The oth
 title_no_wait "Open currency-allow-frontend-checkout.yaml and inspect its contents. Notice that the list of rules "
 title_no_wait "functions as a logical OR - currency will accept only requests from workloads with either of these "
 title_and_wait "two service accounts."
-print_and_execute "cat currency-allow-frontend-checkout.yaml"
+print_and_execute "cat currency-allow-frontend-checkout.yaml && echo ''"
  
 title_no_wait "Copy the final authorization policy to k8s-repo."
 print_and_execute "cp $AUTHZ_DIR/currency-allow-frontend-checkout.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
