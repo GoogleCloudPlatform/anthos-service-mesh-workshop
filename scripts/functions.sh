@@ -180,4 +180,3 @@ export -f print_and_execute
 export -f title_no_wait
 export -f title_and_wait
 export -f error_no_wait
-export -f is_istio_repl_cp_ready

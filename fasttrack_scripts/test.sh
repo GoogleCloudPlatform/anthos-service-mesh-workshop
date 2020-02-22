@@ -51,4 +51,37 @@ title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
 title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
-is_istio_repl_cp_ready
+    # define ops clusters contexts
+    declare -a OPS_CLUSTER_CONTEXTS
+    export OPS_CLUSTER_CONTEXTS=(
+        ${OPS_GKE_1}
+        ${OPS_GKE_2}
+    )
+
+    # Define OPS cluster deployments - the full Istio controlplane
+    declare -a OPS_ISTIO_DEPLOYMENTS
+    export OPS_ISTIO_DEPLOYMENTS=(grafana 
+                            istio-citadel 
+                            istio-ingressgateway 
+                            istio-egressgateway 
+                            istio-galley 
+                            istio-pilot 
+                            istio-policy
+                            istio-telemetry
+                            istio-tracing
+                            istio-sidecar-injector
+                            istiocoredns
+                            kiali
+                            prometheus
+                            )
+
+    title_no_wait "Waiting until all deployments are ready..."
+    for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
+        do
+            for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
+                do  
+                    title_no_wait "for cluster ${cluster} and deployment ${deployment}"
+                    is_deployment_ready ${cluster} istio-system ${deployment}
+                done 
+        done 
+    title_no_wait "All Istio deployments are ready in ops clusters."
