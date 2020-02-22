@@ -55,7 +55,7 @@ title_and_wait "Download kustomize cli and pv tools."
 nopv_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
 export KUSTOMIZE_FILEPATH="${HOME}/bin/kustomize"
 if [ -f ${KUSTOMIZE_FILEPATH} ]; then
-    title_no_wait "kustomize is already installed and in the ${KUSTOMIZE_FILE} folder."
+    title_no_wait "kustomize is already installed and in the ${KUSTOMIZE_FILEPATH} folder."
 else 
     nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
     nopv_and_execute "export PATH=$PATH:${HOME}/bin"
