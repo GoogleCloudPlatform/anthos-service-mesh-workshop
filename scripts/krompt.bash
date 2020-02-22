@@ -37,3 +37,4 @@ export PS1="│\$(date +%d\-%b\ %H:%M) ${LIGHT_CYAN}\u in ⎔ \$(__gcp_project) 
 
 
 ##### K-PROMPT END
+
