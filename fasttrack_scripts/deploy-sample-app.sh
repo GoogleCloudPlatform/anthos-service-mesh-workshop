@@ -233,12 +233,12 @@ fi
 echo -e "\n"
 title_and_wait "Verify pods in all application namespaces except cart are in Running state in all apps clusters."
 
-for ns in ad checkout currency email payment product-catalog recommendation shipping; do
+for ns in ad checkout currency email payment recommendation shipping; do
   # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
-  title_no_wait "Waiting until Deployment ${ns}service is deplyed in all app clusters..."
+  title_no_wait "Waiting until Deployment ${ns}service is deployed and Ready in all app clusters..."
   is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}service
   is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
   is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
@@ -246,10 +246,36 @@ for ns in ad checkout currency email payment product-catalog recommendation ship
   echo -e "\n"
 done;
 
+for ns in frontend loadgenerator; do
+  # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
+  title_no_wait "Waiting until Deployment ${ns} is deployed and Ready in all app clusters..."
+  is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
+  is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}
+  echo -e "\n"
+done;
+
+for svc in productcatalog; do
+  # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
+  title_no_wait "Waiting until Deployment ${svc}service is deployed and Ready in all app clusters..."
+  is_deployment_ready ${DEV1_GKE_1} product-catalog ${svc}
+  is_deployment_ready ${DEV1_GKE_2} product-catalog ${svc}
+  is_deployment_ready ${DEV1_GKE_2} product-catalog ${svc}
+  is_deployment_ready ${DEV2_GKE_2} product-catalog ${svc}
+  echo -e "\n"
+done;
+
 echo -e "\n"
 title_and_wait "Verify pods in cart namespace are in Running state in app-1 cluster only."
 # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n cart"
-is_deployment_ready ${DEV1_GKE_1} cart cart 
+is_deployment_ready ${DEV1_GKE_1} cart cartservice
 
 echo -e "\n"
 title_no_wait "Access the Hipster shop."
