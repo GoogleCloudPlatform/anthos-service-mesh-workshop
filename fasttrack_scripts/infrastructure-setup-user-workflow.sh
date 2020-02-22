@@ -180,17 +180,17 @@ export OPS_ISTIO_DEPLOYMENTS=(grafana
                         prometheus
                         )
 
-title_no_wait "Waiting until all deployments are ready..."
+title_no_wait "Waiting until all Deployments are Ready..."
 for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
     do
         for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
             do  
-                title_no_wait "for cluster ${cluster} and deployment ${deployment}"
+                title_no_wait "for Cluster ${cluster} and Deployment ${deployment}"
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
     done 
 echo -e "\n"
-title_no_wait "Istio deployments are Ready in the ops clusters."
+title_no_wait "Istio Deployments are Ready in the ops clusters."
 
 title_and_wait "Verify citadel, istio-sidecar-injector and coredns are deployed and all Pods are Running in all apps clusters."
 title_no_wait "Getting Istio Pods in app-1 cluster in dev1 project..."
@@ -226,12 +226,12 @@ export APP_ISTIO_DEPLOYMENTS=(
         istiocoredns
         )
 
-title_no_wait "Waiting until all deployments are ready..."
+title_no_wait "Waiting until all Deployments are Ready..."
 for cluster in ${APP_CLUSTER_CONTEXTS[@]}
     do
         for deployment in ${APP_ISTIO_DEPLOYMENTS[@]}
             do  
-                title_no_wait "for cluster ${cluster} and deployment ${deployment}"
+                title_no_wait "for Cluster ${cluster} and Deployment ${deployment}"
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
     done 
