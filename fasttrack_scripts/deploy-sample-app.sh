@@ -233,16 +233,16 @@ fi
 echo -e "\n"
 title_and_wait "Verify pods in all application namespaces except cart are in Running state in all apps clusters."
 
-for ns in ad checkout currency email frontend payment product-catalog recommendation shipping; do
+for ns in ad checkout currency email payment product-catalog recommendation shipping; do
   # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
-  title_no_wait "Waiting until Deployment ${ns} is deplyed in all app clusters..."
-  is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}
-  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
-  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
-  is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}
+  title_no_wait "Waiting until Deployment ${ns}service is deplyed in all app clusters..."
+  is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}service
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
+  is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}service
   echo -e "\n"
 done;
 
