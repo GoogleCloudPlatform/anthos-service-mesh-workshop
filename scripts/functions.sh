@@ -136,7 +136,46 @@ error_no_wait () {
     printf "\n"
 }
 
-export -f is_istio_deployment_ready
+is_istio_replicated_controlplane_ready () {
+    # define ops clusters contexts
+    declare -a OPS_CLUSTER_CONTEXTS
+    export OPS_CLUSTER_CONTEXTS=(
+        ${OPS_GKE_1}
+        ${OPS_GKE_2}
+    )
+
+    # Define OPS cluster deployments - the full Istio controlplane
+    declare -a OPS_ISTIO_DEPLOYMENTS
+    export OPS_ISTIO_DEPLOYMENTS=(grafana 
+                            istio-citadel 
+                            istio-ingressgateway 
+                            istio-egressgateway 
+                            istio-galley 
+                            istio-pilot 
+                            istio-policy
+                            istio-telemetry
+                            istio-tracing
+                            istio-sidecar-injector
+                            istiocoredns
+                            kiali
+                            prometheus
+                            )
+    title_no_wait "Waiting until all deployments are ready..."
+    for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
+        do
+            for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
+                do 
+                    is_deployment_ready ${cluster} istio-system ${deployment}
+                done 
+        done 
+    title_no_wait "All Istio deployments are ready in ops clusters."
+}
+
+export -f is_deployment_ready
 export -f expose_istio_svc_via_ilb
 export -f get_istio_svc_ingress_ip
 export -f print_and_execute
+export -f title_no_wait
+export -f title_and_wait
+export -f error_no_wait
+export -f is_istio_replicated_controlplane_ready
