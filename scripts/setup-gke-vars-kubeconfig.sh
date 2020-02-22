@@ -27,10 +27,11 @@ export NC='\033[0m' # No Color
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 # Create a log file and send stdout and stderr to console and log file 
-export LOG_FILE=setup-gke-vars-$(date +%s).log
-touch ${SCRIPT_DIR}/../logs/${LOG_FILE}
+mkdir -p ${SCRIPT_DIR}/../logs
+export LOG_FILE=${SCRIPT_DIR}/../logs/setup-gke-vars-$(date +%s).log
+touch ${LOG_FILE}
 exec 2>&1
-exec &> >(tee -i ./logs/${LOG_FILE})
+exec &> >(tee -i ${LOG_FILE})
 
 
 # Add GKE vars to vars.sh and re-source vars
