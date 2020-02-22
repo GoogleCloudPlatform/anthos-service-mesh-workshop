@@ -188,6 +188,7 @@ for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
             do  
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
+        echo -e "\n"
     done 
 echo -e "\n"
 title_no_wait "Istio Deployments are Ready in the ops clusters."
@@ -234,6 +235,7 @@ for cluster in ${APP_CLUSTER_CONTEXTS[@]}
             do  
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
+        echo -e "\n"
     done 
 echo -e "\n"
 title_no_wait "Istio deployments are Ready in the apps clusters."
