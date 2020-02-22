@@ -160,7 +160,8 @@ is_istio_replicated_controlplane_ready () {
                             kiali
                             prometheus
                             )
-    title_no_wait "Waiting until all deployments are ready..."
+
+    echo "Waiting until all deployments are ready..."
     for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
         do
             for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
@@ -169,7 +170,7 @@ is_istio_replicated_controlplane_ready () {
                     is_deployment_ready ${cluster} istio-system ${deployment}
                 done 
         done 
-    title_no_wait "All Istio deployments are ready in ops clusters."
+    echo "All Istio deployments are ready in ops clusters."
 }
 
 export -f is_deployment_ready
