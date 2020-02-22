@@ -51,4 +51,4 @@ title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
 title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
-print_and_execute "is_istio_replicated_controlplane_ready"
+print_and_execute "$(is_istio_replicated_controlplane_ready)"
