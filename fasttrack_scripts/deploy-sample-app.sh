@@ -259,12 +259,12 @@ for ns in frontend loadgenerator; do
   echo -e "\n"
 done;
 
-for svc in productcatalog; do
+for svc in productcatalogservice; do
   # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
-  title_no_wait "Waiting until Deployment ${svc}service is deployed and Ready in all app clusters..."
+  title_no_wait "Waiting until Deployment ${svc} is deployed and Ready in all app clusters..."
   is_deployment_ready ${DEV1_GKE_1} product-catalog ${svc}
   is_deployment_ready ${DEV1_GKE_2} product-catalog ${svc}
   is_deployment_ready ${DEV1_GKE_2} product-catalog ${svc}
