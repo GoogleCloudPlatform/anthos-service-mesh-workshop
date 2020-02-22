@@ -234,15 +234,22 @@ echo -e "\n"
 title_and_wait "Verify pods in all application namespaces except cart are in Running state in all apps clusters."
 
 for ns in ad checkout currency email frontend payment product-catalog recommendation shipping; do
-  print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
-  print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
-  print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
-  print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV1_GKE_2} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
+  # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
+  title_no_wait "Waiting until Deployment ${ns} is deplyed in all app clusters..."
+  is_deployment_ready ${ns} ${ns} ${DEV1_GKE_1}
+  is_deployment_ready ${ns} ${ns} ${DEV1_GKE_2}
+  is_deployment_ready ${ns} ${ns} ${DEV2_GKE_1}
+  is_deployment_ready ${ns} ${ns} ${DEV2_GKE_2}
+  echo -e "\n"
 done;
 
 echo -e "\n"
 title_and_wait "Verify pods in cart namespace are in Running state in app-1 cluster only."
-print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n cart"
+# print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n cart"
+is_deployment_ready cart cart ${DEV1_GKE_1}
 
 echo -e "\n"
 title_no_wait "Access the Hipster shop."
