@@ -154,6 +154,44 @@ title_no_wait "Getting Istio Pods in ops-2 cluster..."
 print_and_execute "kubectl --context ${OPS_GKE_2} get pods -n istio-system"
 echo -e "\n"
 
+title_no_wait "Confirming Istio controlplane is deployed and Ready on the ops clusters..."
+echo -e "\n"
+# define ops clusters contexts
+declare -a OPS_CLUSTER_CONTEXTS
+export OPS_CLUSTER_CONTEXTS=(
+    ${OPS_GKE_1}
+    ${OPS_GKE_2}
+)
+
+# Define OPS cluster deployments - the full Istio controlplane
+declare -a OPS_ISTIO_DEPLOYMENTS
+export OPS_ISTIO_DEPLOYMENTS=(grafana 
+                        istio-citadel 
+                        istio-ingressgateway 
+                        istio-egressgateway 
+                        istio-galley 
+                        istio-pilot 
+                        istio-policy
+                        istio-telemetry
+                        istio-tracing
+                        istio-sidecar-injector
+                        istiocoredns
+                        kiali
+                        prometheus
+                        )
+
+title_no_wait "Waiting until all deployments are ready..."
+for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
+    do
+        for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
+            do  
+                title_no_wait "for cluster ${cluster} and deployment ${deployment}"
+                is_deployment_ready ${cluster} istio-system ${deployment}
+            done 
+    done 
+echo -e "\n"
+title_no_wait "Istio deployments are Ready in the ops clusters."
+
 title_and_wait "Verify citadel, istio-sidecar-injector and coredns are deployed and all Pods are Running in all apps clusters."
 title_no_wait "Getting Istio Pods in app-1 cluster in dev1 project..."
 print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n istio-system"
@@ -167,6 +205,38 @@ echo -e "\n"
 title_no_wait "Getting Istio Pods in app-4 cluster in dev2 project..."
 print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n istio-system"
 echo -e "\n"
+
+title_no_wait "Confirming the required Istio controlplane components are deployed and Ready on the apps clusters..."
+echo -e "\n"
+# define apps clusters contexts
+declare -a APP_CLUSTER_CONTEXTS
+export APP_CLUSTER_CONTEXTS=(
+    ${DEV1_GKE_1}
+    ${DEV1_GKE_2}
+    ${DEV2_GKE_1}
+    ${DEV2_GKE_2}
+)
+
+# Define deployments running in shared clusters 
+# only citadel, sidecar-injector and optionally coredns should be running
+declare -a APP_ISTIO_DEPLOYMENTS
+export APP_ISTIO_DEPLOYMENTS=( 
+        istio-citadel 
+        istio-sidecar-injector
+        istiocoredns
+        )
+
+title_no_wait "Waiting until all deployments are ready..."
+for cluster in ${APP_CLUSTER_CONTEXTS[@]}
+    do
+        for deployment in ${APP_ISTIO_DEPLOYMENTS[@]}
+            do  
+                title_no_wait "for cluster ${cluster} and deployment ${deployment}"
+                is_deployment_ready ${cluster} istio-system ${deployment}
+            done 
+    done 
+echo -e "\n"
+title_no_wait "Istio deployments are Ready in the apps clusters."
 
 title_no_wait "Pilots running in the ops clusters use kubeconfig files to access and get services and endpoints from all apps clusters."
 title_no_wait "The kubeconfig files for all four apps clusters are stored as secrets in the ops clusters."
