@@ -50,40 +50,4 @@ echo -e "\n"
 title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
-title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
-echo -e "\n"
-    # define ops clusters contexts
-    declare -a OPS_CLUSTER_CONTEXTS
-    export OPS_CLUSTER_CONTEXTS=(
-        ${OPS_GKE_1}
-        ${OPS_GKE_2}
-    )
-
-    # Define OPS cluster deployments - the full Istio controlplane
-    declare -a OPS_ISTIO_DEPLOYMENTS
-    export OPS_ISTIO_DEPLOYMENTS=(grafana 
-                            istio-citadel 
-                            istio-ingressgateway 
-                            istio-egressgateway 
-                            istio-galley 
-                            istio-pilot 
-                            istio-policy
-                            istio-telemetry
-                            istio-tracing
-                            istio-sidecar-injector
-                            istiocoredns
-                            kiali
-                            prometheus
-                            )
-
-    title_no_wait "Waiting until all deployments are ready..."
-    for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
-        do
-            for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
-                do  
-                    title_no_wait "for cluster ${cluster} and deployment ${deployment}"
-                    is_deployment_ready ${cluster} istio-system ${deployment}
-                done 
-        done 
-    echo -e "\n"
-    title_no_wait "All Istio deployments are ready in ops clusters."
+print_and_execute "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}&pageState=\%7B\%22xyChart\%22:\%7B\%22dataSets\%22:\%5B\%7B\%22timeSeriesFilter\%22:\%7B\%22filter\%22:\%22metric.type\%3D\%5C\%22istio.io\%2Fservice\%2Fserver\%2Frequest_count\%5C\%22\%20resource.type\%3D\%5C\%22k8s_container\%5C\%22\%22,\%22perSeriesAligner\%22:\%22ALIGN_RATE\%22,\%22crossSeriesReducer\%22:\%22REDUCE_NONE\%22,\%22secondaryCrossSeriesReducer\%22:\%22REDUCE_NONE\%22,\%22minAlignmentPeriod\%22:\%2260s\%22,\%22groupByFields\%22:\%5B\%5D,\%22unitOverride\%22:\%221\%22\%7D,\%22targetAxis\%22:\%22Y1\%22,\%22plotType\%22:\%22LINE\%22\%7D\%5D,\%22options\%22:\%7B\%22mode\%22:\%22COLOR\%22\%7D,\%22constantLines\%22:\%5B\%5D,\%22timeshiftDuration\%22:\%220s\%22,\%22y1Axis\%22:\%7B\%22label\%22:\%22y1Axis\%22,\%22scale\%22:\%22LINEAR\%22\%7D\%7D,\%22isAutoRefresh\%22:true,\%22timeSelection\%22:\%7B\%22timeRange\%22:\%221h\%22\%7D\%7D"
