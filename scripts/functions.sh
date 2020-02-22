@@ -164,7 +164,8 @@ is_istio_replicated_controlplane_ready () {
     for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
         do
             for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
-                do 
+                do  
+                    echo "for cluster ${cluster} and deployment ${deployment}"
                     is_deployment_ready ${cluster} istio-system ${deployment}
                 done 
         done 
