@@ -52,23 +52,32 @@ echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#6
 title_and_wait "Install the istio to stackdriver config file."
-print_and_execute "cd ${WORKDIR}/k8s-repo"
-print_and_execute " "
-print_and_execute "cd gke-asm-1-r1-prod/istio-telemetry"
+print_and_execute "cd ${WORKDIR}/k8s-repo/gke-asm-1-r1-prod/istio-telemetry"
 print_and_execute "kustomize edit add resource istio-telemetry.yaml"
 print_and_execute " "
-print_and_execute "cd ../../gke-asm-2-r2-prod/istio-telemetry"
+print_and_execute "cd ${WORKDIR}/k8s-repo/gke-asm-2-r2-prod/istio-telemetry"
 print_and_execute "kustomize edit add resource istio-telemetry.yaml"
 
-title_and_wait "Commit to k8s-repo."
-print_and_execute "cd ../../"
+title_and_wait "Commit the changes to to k8s-repo."
+print_and_execute "cd ${WORKDIR}/k8s-repo"
 print_and_execute "git add . && git commit -am \"Install istio to stackdriver configuration\""
 print_and_execute "git push"
  
-title_and_wait "Wait for rollout to complete."
-print_and_execute "../asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
+echo -e "\n"
+title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+title_no_wait "Waiting for Cloud Build to finish..."
+
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+while [[ "${BUILD_STATUS}" == "WORKING" ]]
+  do
+      title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+      sleep 10
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+  done
  
-title_and_wait "Verify the Istio → Stackdriver integration Get the Stackdriver Handler CRD."
+title_and_wait "Verify the Istio → Stackdriver integration. Get the Stackdriver Handler CRD."
 print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
 
 # actually validate the existence of the stackdriver handler
@@ -87,11 +96,9 @@ echo ""
 echo ""
 title_and_wait ""
 
-title_no_wait "Now let's add our pre-canned metrics dashboard."
-title_no_wait "We are going to be using the Dashboard API directly."
-title_no_wait "This is something you wouldn't normally do by hand-generating API calls,"
-title_no_wait "it would be part of an automation system, or you would build the dashboard manually"
-title_and_wait "in the web UI. This will get us started quickly:"
+title_no_wait "Add a pre-canned metrics dashboard using the Dashboard API."
+title_no_wait "This is typically done as part of a deployment pipeline."
+title_no_wait "For this workshop, create the dashboard interacting with the API directly (via curl)."
 
 print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
 print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
@@ -106,23 +113,20 @@ echo ""
 echo ""
 title_and_wait ""
 
-title_and_wait "We could edit the dashboard in-place using the UX, but in our case \
-    we are going to quickly add a new graph using the API.\
-    In order to do that, you should pull down the latest version\
-    of the dashboard, apply your edits, then push it back up using the HTTP PATCH method.\
-    You can get an existing dashboard by querying the monitoring API.\
+title_and_wait "Add a new Chart using the API. \
+    To accomplish this, get the latest version of the Dashboard. \
+    Apply edits directly to the downloaded Dashboard json.\
+    And upload the patched json (with the new Chart) using the HTTP PATCH method. \
     Get the existing dashboard that was just added:"
 
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
  
-title_and_wait "Add a new graph: (50th %ile latency): Now we can add a new graph widget \
-    to our dashboard in code. This change can be reviewed by peers and checked into version control.\
-    Here is a widget to add that shows 50%ile latency (median latency).\
-    Try editing the dashboard you just got, adding a new stanza:"
+title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
+    Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
 print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
  
-title_and_wait "Update the existing servicesdashboard:"
+title_and_wait "Update the Dashboard with the new patched json."
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
      https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
      -d @patched-services-dashboard.json"
@@ -130,15 +134,20 @@ print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"
 title_and_wait "View the updated dashboard by navigating to the following output link:"
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
  
-title_and_wait "View your projects logs:"
+title_and_wait "View project logs."
 echo "https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}"
+title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
 
-title_and_wait "View your projects traces:"
+title_and_wait "View project traces:"
 echo "https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}"
+title_and_wait "Refer to the Tracing section in the Observability Lab in the workshop for further details."
 
-title_and_wait "Expose Istio in-cluster observability tools, for later use:"
+title_and_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool. \
+    This is used later in the workshop in the Istio control plane monitoring and troubleshooting sections. \
+    To learn more about Grafana, visit https://grafana.io"
 print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
 
 echo "https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default"
 
-title_no_wait "Done with o11y!"
+title_no_wait "Congratulations! You have successfully completed the Observability with Stackdriver lab."
+echo -e "\n"

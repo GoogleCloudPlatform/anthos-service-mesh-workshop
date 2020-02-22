@@ -281,3 +281,6 @@ echo -e "\n"
 title_no_wait "Access the Hipster shop."
 title_no_wait "Go to the link below to access Hipster shop."
 title_no_wait "https://frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog"
+
+title_no_wait "Congratulations! You have successfully completed the Deploy Sample Application lab."
+echo -e "\n"
