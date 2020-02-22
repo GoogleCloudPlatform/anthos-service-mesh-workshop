@@ -183,9 +183,9 @@ export OPS_ISTIO_DEPLOYMENTS=(grafana
 title_no_wait "Waiting until all Deployments are Ready..."
 for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
     do
+        title_no_wait "for Cluster ${cluster}"
         for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
             do  
-                title_no_wait "for Cluster ${cluster} and Deployment ${deployment}"
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
     done 
@@ -229,9 +229,9 @@ export APP_ISTIO_DEPLOYMENTS=(
 title_no_wait "Waiting until all Deployments are Ready..."
 for cluster in ${APP_CLUSTER_CONTEXTS[@]}
     do
+        title_no_wait "for Cluster ${cluster}"
         for deployment in ${APP_ISTIO_DEPLOYMENTS[@]}
             do  
-                title_no_wait "for Cluster ${cluster} and Deployment ${deployment}"
                 is_deployment_ready ${cluster} istio-system ${deployment}
             done 
     done 
