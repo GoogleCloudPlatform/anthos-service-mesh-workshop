@@ -50,4 +50,4 @@ echo -e "\n"
 title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
-print_and_execute "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}&pageState=%7B"
+print_and_execute "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}&pageState=\%7B"
