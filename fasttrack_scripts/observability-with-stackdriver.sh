@@ -92,6 +92,7 @@ then
 else 
     title_no_wait "Stackdriver handler is deployed in the ops-1 cluster. Continuing..."
 fi
+echo -e "\n"
  
 title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
 echo "https://console.cloud.google.com/monitoring/metrics-explorer?cloudshell=false&project=${TF_VAR_ops_project_name}"
