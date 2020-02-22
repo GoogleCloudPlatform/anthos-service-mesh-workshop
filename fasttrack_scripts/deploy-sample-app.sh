@@ -62,7 +62,7 @@ if [[ $? -ne 0 ]]; then
   print_and_execute "git config --local user.email ${MY_USER} && git config --local user.name \"K8s repo user\""
   print_and_execute "git config --local credential.'https://source.developers.google.com'.helper gcloud.sh"
   print_and_execute "git pull origin master"
-  if [[ $? -ne 0 ]]; then
+  if [[ $? -eq 0 ]]; then
     title_no_wait "git repo successfully pulled!"
   else
     error_no_wait "Error pulling git repo. Please inspect the repo name and make sure it is formatted properly."
