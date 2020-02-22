@@ -239,17 +239,17 @@ for ns in ad checkout currency email frontend payment product-catalog recommenda
   # print_and_execute "kubectl --context ${DEV2_GKE_1} get pods -n ${ns}"
   # print_and_execute "kubectl --context ${DEV2_GKE_2} get pods -n ${ns}"
   title_no_wait "Waiting until Deployment ${ns} is deplyed in all app clusters..."
-  is_deployment_ready ${ns} ${ns} ${DEV1_GKE_1}
-  is_deployment_ready ${ns} ${ns} ${DEV1_GKE_2}
-  is_deployment_ready ${ns} ${ns} ${DEV2_GKE_1}
-  is_deployment_ready ${ns} ${ns} ${DEV2_GKE_2}
+  is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
+  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
+  is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}
   echo -e "\n"
 done;
 
 echo -e "\n"
 title_and_wait "Verify pods in cart namespace are in Running state in app-1 cluster only."
 # print_and_execute "kubectl --context ${DEV1_GKE_1} get pods -n cart"
-is_deployment_ready cart cart ${DEV1_GKE_1}
+is_deployment_ready ${DEV1_GKE_1} cart cart 
 
 echo -e "\n"
 title_no_wait "Access the Hipster shop."
