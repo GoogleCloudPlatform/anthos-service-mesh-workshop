@@ -85,7 +85,8 @@ print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"
 NUM_SD=`kubectl --context ${OPS_GKE_1} get handler -n istio-system | grep "stackdriver" | wc -l`
 if [[ $NUM_SD -eq 0 ]]
 then 
-    error_no_wait "oops, stackdriver handler isn't installed.  please get some help, or retry."
+    error_no_wait "Stackdriver handler is not deployed in ops-1 cluster."  
+    error_no_wait "Verify the istio-telemetry.yaml file is in the k8s-repo. Exiting script..."
     exit 1
 else 
     title_no_wait "looks good! continuing..."
