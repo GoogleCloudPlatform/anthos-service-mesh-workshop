@@ -90,7 +90,7 @@ then
     error_no_wait "Verify the istio-telemetry.yaml file is in the k8s-repo. Exiting script..."
     exit 1
 else 
-    title_no_wait "looks good! continuing..."
+    title_no_wait "Stackdriver handler is deployed in the ops-1 cluster. Continuing..."
 fi
  
 title_and_wait "Verify that the Istio metrics export to Stackdriver is working. Click the link output from this command:"
