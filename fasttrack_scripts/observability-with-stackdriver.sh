@@ -51,8 +51,8 @@ title_no_wait "*** Lab: Observability with Stackdriver ***"
 echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#6
-title_and_wait "Install the istio to stackdriver config file in the ops clusters. \
-   Recall that the Istio controlplane (including istio-telemetry) is installed in the ops clusters only."
+title_no_wait "Install the istio to stackdriver config file in the ops clusters."
+title_and_wait "Recall that the Istio controlplane (including istio-telemetry) is installed in the ops clusters only."
 print_and_execute "cd ${WORKDIR}/k8s-repo/gke-asm-1-r1-prod/istio-telemetry"
 print_and_execute "kustomize edit add resource istio-telemetry.yaml"
 print_and_execute " "
