@@ -136,7 +136,7 @@ error_no_wait () {
     printf "\n"
 }
 
-is_istio_replicated_controlplane_ready () {
+is_istio_repl_cp_ready () {
     # define ops clusters contexts
     declare -a OPS_CLUSTER_CONTEXTS
     export OPS_CLUSTER_CONTEXTS=(
@@ -180,4 +180,4 @@ export -f print_and_execute
 export -f title_no_wait
 export -f title_and_wait
 export -f error_no_wait
-export -f is_istio_replicated_controlplane_ready
+export -f is_istio_repl_cp_ready

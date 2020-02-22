@@ -51,5 +51,4 @@ title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
 title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
-is_deployment_ready ${OPS_GKE_1} istio-system grafana
-# is_istio_replicated_controlplane_ready
+is_istio_repl_cp_ready
