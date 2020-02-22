@@ -51,6 +51,7 @@ title_no_wait "*** Lab: Test ***"
 echo -e "\n"
 
 title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
+echo -e "\n"
     # define ops clusters contexts
     declare -a OPS_CLUSTER_CONTEXTS
     export OPS_CLUSTER_CONTEXTS=(
@@ -84,4 +85,5 @@ title_no_wait "Confirming Istio controlplane is deployed on the ops clusters"
                     is_deployment_ready ${cluster} istio-system ${deployment}
                 done 
         done 
+    echo -e "\n"
     title_no_wait "All Istio deployments are ready in ops clusters."
