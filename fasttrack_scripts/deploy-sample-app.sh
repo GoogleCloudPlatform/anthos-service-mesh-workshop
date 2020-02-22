@@ -66,7 +66,7 @@ if [[ $? -ne 0 ]]; then
     title_no_wait "git repo successfully pulled!"
   else
     error_no_wait "Error pulling git repo. Please inspect the repo name and make sure it is formatted properly."
-    title_no_wait "Deleting the k8s-repo folder..."
+    error_no_wait "Deleting the k8s-repo folder..."
     print_and_execute "rm -rf ${WORKDIR}/k8s-repo"
     error_no_wait "Exiting script... "
     exit 1
