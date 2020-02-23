@@ -121,11 +121,14 @@ if [[ ${DASHBOARD} == "{}" ]]; then
                             -d @services-dashboard.json "
     else
     title_no_wait "Dashboard already exists. Skipping Dashboard creation."
+    echo -e "\n"
 fi    
 
 title_and_wait "Navigate to the output link below to view the newly added dashboard."
 echo "${bold}https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
 echo -e "\n"
+title_and_wait "Alternatively, you can access the Dashboard by navigating to the \"Dashboard\" link from the left hand menu clicking on \"services dashboard\" from the list of Dashboards."
+
 
 title_and_wait "Add a new Chart using the API. \
     To accomplish this, get the latest version of the Dashboard. \
