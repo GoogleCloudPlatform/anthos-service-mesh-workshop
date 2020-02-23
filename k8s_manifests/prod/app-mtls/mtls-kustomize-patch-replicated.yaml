@@ -6,5 +6,5 @@ metadata:
 spec:
   values:
     global:
-      mTLS:
+      mtls:
         enabled: true
