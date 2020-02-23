@@ -148,19 +148,16 @@ if [[ -z ${NEW_CHART_EXISTS} ]]; then
     title_no_wait "Creating new chart..."
     print_and_execute "export NEW_CHART_JSON=${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/new-chart.json"
     print_and_execute "jq --argjson newChart \"\$(<${NEW_CHART_JSON})\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
+    title_and_wait "Update the Dashboard with the new patched json."
+    print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
+     -d @${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
 else
     echo ${NEW_CHART_EXISTS}
     title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
 fi
-
-title_and_wait "STOP HERE"
-
-title_and_wait "Update the Dashboard with the new patched json."
-print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
-     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
-     -d @${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
  
-title_and_wait "View the updated dashboard by navigating to the following output link:"
+title_and_wait "View the dashboard by navigating to the following output link:"
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
  
 title_and_wait "View project logs."
