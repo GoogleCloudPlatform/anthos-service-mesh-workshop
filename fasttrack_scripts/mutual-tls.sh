@@ -60,8 +60,7 @@ if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
 then 
     title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
     export MTLS_CONFIG_OPS_1=permissive
-elif [[ ${PERMISSIVE_OPS_1} == "{}" ]]
-then
+else
     title_no_wait "mTLS is already configured on the ${OPS_GKE_1} cluster"
     export MTLS_CONFIG_OPS_1=mtls
 fi
@@ -71,8 +70,7 @@ if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
 then 
     title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
     export MTLS_CONFIG_OPS_2=permissive
-elif [[ ${PERMISSIVE_OPS_2} == "{}" ]]
-then
+else
     title_no_wait "mTLS is already configured on the ${OPS_GKE_2} cluster"
     export MTLS_CONFIG_OPS_2=mtls
 fi
