@@ -159,14 +159,15 @@ else
 fi
  
 title_and_wait "View the dashboard by navigating to the following output link:"
-echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo "${bold}https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
+echo -e "\n"
  
 title_and_wait "View project logs."
-echo "https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo "${bold}https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
 title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
 
 title_and_wait "View project traces:"
-echo "https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}"
+echo "${bold}https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
 title_and_wait "Refer to the Tracing section in the Observability Lab in the workshop for further details."
 
 title_and_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool. \
