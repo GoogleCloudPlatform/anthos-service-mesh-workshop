@@ -51,28 +51,34 @@ title_no_wait "*** Lab: Mutual TLS ***"
 echo -e "\n"
 
 title_and_wait "Check MeshPolicy in ops clusters."
-print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq '.items[].spec'"
-print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
+print_and_execute "kubectl --context ${OPS_GKE_1_CLUSTER} get MeshPolicy -o json | jq '.items[].spec'"
+print_and_execute "kubectl --context ${OPS_GKE_2_CLUSTER} get MeshPolicy -o json | jq '.items[].spec'"
 
 # validate permissive state
 PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
 if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
 then 
-    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
+    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_1_CLUSTER} cluster, allowing for both encrypted and non-mTLS traffic."
     export MTLS_CONFIG_OPS_1=permissive
 else
-    title_no_wait "mTLS is already configured on the ${OPS_GKE_1} cluster"
-    export MTLS_CONFIG_OPS_1=mtls
+    export CHECK_MTLS_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls'`
+    if [[ ${CHECK_MTLS_OPS_1} == "{}" ]]; then
+        title_no_wait "mTLS is already configured on the ${OPS_GKE_1_CLUSTER} cluster"
+        export MTLS_CONFIG_OPS_1=mtls
+    fi
 fi
 
 PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
 if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
 then 
-    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
+    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_2_CLUSTER} cluster, allowing for both encrypted and non-mTLS traffic."
     export MTLS_CONFIG_OPS_2=permissive
 else
-    title_no_wait "mTLS is already configured on the ${OPS_GKE_2} cluster"
-    export MTLS_CONFIG_OPS_2=mtls
+    export CHECK_MTLS_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls'`
+    if [[ ${CHECK_MTLS_OPS_2} == "{}" ]]; then
+        title_no_wait "mTLS is already configured on the ${OPS_GKE_2_CLUSTER} cluster"
+        export MTLS_CONFIG_OPS_1=mtls
+    fi
 fi
 echo -e "\n"
 
