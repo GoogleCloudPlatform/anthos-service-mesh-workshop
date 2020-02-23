@@ -213,3 +213,6 @@ echo -e "\n"
 # show some logs that prove secure
 # log into envoy for frontend, curl product on port 8080? and output headers, grep for something.
 # kubectl --context ${DEV2_GKE_2} exec -n payment $(kubectl get pod --context ${DEV2_GKE_2} -n payment | grep payment | awk '{print $1}') -c istio-proxy -- curl frontend.frontend:8080/
+
+title_no_wait "Congratulations! You have successfully completed the Mutual TLS lab."
+echo -e "\n"
