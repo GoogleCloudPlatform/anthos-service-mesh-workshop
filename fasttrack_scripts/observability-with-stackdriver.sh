@@ -135,15 +135,21 @@ title_and_wait "Add a new Chart using the API. \
 
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json"
-
-title_and_wait "Check to see if the Chart already exists"
-
-title_and_wait "STOP Chart already exists"
  
 title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
     Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
-print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
- 
+
+title_and_wait "Checking to see if the \"Service Average Latencies\"Chart already exists"
+export NEW_CHART_EXISTS=$(cat ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json | jq -r '.gridLayout.widgets[] | select(.title=="Service Average Latencies")')
+if [[ -z ${NEW_CHART_EXISTS} ]]; then
+    title_no_wait "Creating new chart..."
+    print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
+else
+    title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
+fi
+
+title_and_wait "STOP HERE"
+
 title_and_wait "Update the Dashboard with the new patched json."
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
      https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
