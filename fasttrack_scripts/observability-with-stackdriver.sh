@@ -182,6 +182,7 @@ else
 fi
 
 title_no_wait "Click on the following link to access Grafana dashboards."
+echo -e "\n"
 echo "${bold}https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default${normal}"
 
 echo -e "\n"
