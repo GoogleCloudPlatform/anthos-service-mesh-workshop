@@ -109,12 +109,19 @@ title_no_wait "Add a pre-canned metrics dashboard using the Dashboard API."
 title_no_wait "This is typically done as part of a deployment pipeline."
 title_no_wait "For this workshop, create the dashboard interacting with the API directly (via curl)."
 
-print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
-print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
-print_and_execute "OAUTH_TOKEN=$(gcloud auth application-default print-access-token)"
-print_and_execute "curl -X POST -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
-                        https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards \
-                        -d @services-dashboard.json "
+export OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+export DASHBOARD=$(curl -X GET -H "Authorization: Bearer $OAUTH_TOKEN" -H "Content-Type: application/json" https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards)
+
+if [[ ${DASHBOARD} -eq "{}" ]]; then
+    print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
+    print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
+    print_and_execute "OAUTH_TOKEN=$(gcloud auth application-default print-access-token)"
+    print_and_execute "curl -X POST -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
+                            https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards \
+                            -d @services-dashboard.json "
+    else
+    title_no_wait "Dashboard already exists. Skipping Dashboard creation."
+fi    
 
 title_and_wait "Navigate to the output link below to view the newly added dashboard."
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
