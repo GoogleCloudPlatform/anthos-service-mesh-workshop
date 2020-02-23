@@ -83,7 +83,7 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     title_no_wait "Istio is configured on all cluster using the Istio operator, which uses the IstioControlPlane custom resource (CR)."
     title_no_wait "Configure mTLS in all cluster by updating the IstioControlPlane CR and updating the k8s-repo."
     title_no_wait "Setting \"global > mTLS > enabled: true\" in the IstioControlPlane CR results in the follwing two changes to the Istio control plane."
-    title_no_wait "  1. MeshPolicy is set to turn on mTLS mesh wide."
+    title_no_wait "  1. MeshPolicy is set to turn on mTLS mesh wide for all Services running in all clusters."
     title_and_wait "  2. A DestinationRule is created to allow ISTIO_MUTUAL traffic between Services running in all clusters."
 
     print_and_execute "sed -i '/global:/a\ \ \ \ \ \ mtls:\n\ \ \ \ \ \ \ \ enabled: true' ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/istio-replicated-controlplane.yaml"
