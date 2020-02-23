@@ -142,12 +142,13 @@ print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Co
 title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
     Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
 
-title_and_wait "Checking to see if the \"Service Average Latencies\"Chart already exists"
+title_no_wait "Checking to see if the \"Service Average Latencies\" Chart already exists"
 export NEW_CHART_EXISTS=$(cat ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json | jq -r '.gridLayout.widgets[] | select(.title=="Service Average Latencies")')
 if [[ -z ${NEW_CHART_EXISTS} ]]; then
     title_no_wait "Creating new chart..."
     print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
 else
+    echo ${NEW_CHART_EXISTS}
     title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
 fi
 
