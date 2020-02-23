@@ -85,6 +85,7 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     title_no_wait "Setting \"global > mTLS > enabled: true\" in the IstioControlPlane CR results in the follwing two changes to the Istio control plane."
     title_no_wait "  1. MeshPolicy is set to turn on mTLS mesh wide for all Services running in all clusters."
     title_no_wait "  2. A DestinationRule is created to allow ISTIO_MUTUAL traffic between Services running in all clusters."
+    echo -e "\n"
     title_no_wait "Apply the following kustomize patch to the istioControlPlane CR to enable mTLS cluster wide."
     print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml"
     echo -e "\n"
@@ -94,6 +95,37 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/."
     print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane"
     print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
+
+    title_no_wait "For ${OPS_GKE_2_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/istio-controlplane"
+    print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
+
+    title_no_wait "For ${DEV1_GKE_1_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${DEV1_GKE_1_CLUSTER}/istio-controlplane"
+    print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
+
+    title_no_wait "For ${DEV1_GKE_2_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${DEV1_GKE_2_CLUSTER}/istio-controlplane"
+    print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
+
+    title_no_wait "For ${DEV2_GKE_1_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${DEV2_GKE_1_CLUSTER}/istio-controlplane"
+    print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
+
+    title_no_wait "For ${DEV2_GKE_2_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${DEV2_GKE_2_CLUSTER}/istio-controlplane"
+    print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
+    echo -e "\n"
 
     title_and_wait "Commit to k8s-repo."
 
