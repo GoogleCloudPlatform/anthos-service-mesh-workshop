@@ -50,27 +50,27 @@ echo -e "\n"
 title_no_wait "*** Lab: Mutual TLS ***"
 echo -e "\n"
 
-title_and_wait "Check MeshPolicy in ops clusters. Note mTLS is PERMISSIVE allowing for both encrypted and non-mTLS traffic."
-print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
-print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
+title_and_wait "Check MeshPolicy in ops clusters."
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq '.items[].spec'"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
 
 # validate permissive state
-NUM_PERMISSIVE_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
-if [[ $NUM_PERMISSIVE_1 -eq 0 ]]
+PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
 then 
-    title_no_wait "oops, MTLS isn't in a permissive state in ${OPS_GKE_1}. maybe you've already done this?"
-    title_no_wait "proceeding..."
-else 
-    title_no_wait "ops-1 cluster looks good! continuing..."
+    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
+else if [[ ${PERMISSIVE_OPS_1} == "{}" ]]
+then
+    title_no_wait "mTLS is already configured on the ${OPS_GKE_1} cluster"
 fi
 
-NUM_PERMISSIVE_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mode: PERMISSIVE" | wc -l`
-if [[ $NUM_PERMISSIVE_2 -eq 0 ]]
+PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
 then 
-    title_no_wait "oops, MTLS isn't in a permissive state in ${OPS_GKE_2}. maybe you've already done this?"
-    title_no_wait "proceeding..."
-else 
-    title_no_wait "ops-2 cluster looks good! continuing..."
+    title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
+else if [[ ${PERMISSIVE_OPS_2} == "{}" ]]
+then
+    title_no_wait "mTLS is already configured on the ${OPS_GKE_2} cluster"
 fi
 
 title_no_wait "Turn on mTLS. The Istio operator controller is running and we can change the "
