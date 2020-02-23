@@ -51,8 +51,8 @@ title_no_wait "*** Lab: Mutual TLS ***"
 echo -e "\n"
 
 title_and_wait "Check MeshPolicy in ops clusters."
-print_and_execute "kubectl --context ${OPS_GKE_1_CLUSTER} get MeshPolicy -o json | jq '.items[].spec'"
-print_and_execute "kubectl --context ${OPS_GKE_2_CLUSTER} get MeshPolicy -o json | jq '.items[].spec'"
+print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq '.items[].spec'"
+print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
 
 # validate permissive state
 PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
