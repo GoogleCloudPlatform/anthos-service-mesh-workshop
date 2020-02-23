@@ -159,71 +159,58 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     echo -e "\n"
     
     title_no_wait "Verify mTLS"
-    title_and_wait "Check MeshPolicy once more in ops clusters. Note mTLS is no longer PERMISSIVE and will only allow for mTLS traffic."
+    title_and_wait "Check MeshPolicy once more in ops clusters."
     print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq '.items[].spec'"
     print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
-fi
 
-# validate mtls state
-PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
-if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
-then 
-    title_no_wait "mTLS is still in PERMISSIVE state in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
-    export MTLS_CONFIG_OPS_1=permissive
-elif [[ ${PERMISSIVE_OPS_1} == "{}" ]]
-then
-    title_no_wait "mTLS is configured on the ${OPS_GKE_1} cluster"
-    export MTLS_CONFIG_OPS_1=mtls
-fi
+    # validate mtls state
+    PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+    if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
+    then 
+        title_no_wait "mTLS is still in PERMISSIVE state in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
+        export MTLS_CONFIG_OPS_1=permissive
+    elif [[ ${PERMISSIVE_OPS_1} == "{}" ]]
+    then
+        title_no_wait "mTLS is configured on the ${OPS_GKE_1} cluster"
+        export MTLS_CONFIG_OPS_1=mtls
+    fi
 
-PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
-if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
-then 
-    title_no_wait "mTLS is still PERMISSIVE in state in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
-    export MTLS_CONFIG_OPS_2=permissive
-elif [[ ${PERMISSIVE_OPS_2} == "{}" ]]
-then
-    title_no_wait "mTLS is configured on the ${OPS_GKE_2} cluster"
-    export MTLS_CONFIG_OPS_2=mtls
+    PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+    if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
+    then 
+        title_no_wait "mTLS is still PERMISSIVE in state in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
+        export MTLS_CONFIG_OPS_2=permissive
+    elif [[ ${PERMISSIVE_OPS_2} == "{}" ]]
+    then
+        title_no_wait "mTLS is configured on the ${OPS_GKE_2} cluster"
+        export MTLS_CONFIG_OPS_2=mtls
+    fi
+    echo -e "\n"
 fi
-echo -e "\n"
 
 title_and_wait "Describe the DestinationRule created by the Istio operator controller."
-print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml"
-print_and_execute "kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml"
+print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o json | jq '.spec'"
+print_and_execute "kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o json | jq '.spec'"
  
-#validate
-#Output (do not copy):
-#
-#  apiVersion: networking.istio.io/v1alpha3
-#  kind: DestinationRule
-#  metadata:  
-#    name: default
-#    namespace: istio-system
-#  spec:
-#    host: '*.local'
-#    trafficPolicy:
-#      tls:
-#        mode: ISTIO_MUTUAL
-
-# validate not-permissive state
-NUM_ISTIO_MUTUAL_1=`kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
-if [[ $NUM_ISTIO_MUTUAL_1 -eq 0 ]]
+# validate ISTIO_MUTUAL DestinationRule state
+DESTRULE_OPS_1=`kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o json | jq -r '.spec.trafficPolicy.tls.mode'`
+if [[ ${DESTRULE_OPS_1} == "ISTIO_MUTUAL" ]]
 then 
-    error_no_wait "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
+    title_no_wait "trafficPolicy tls mode is set to \"ISTIO_MUTUAL\" for ${OPS_GKE_1_CLUSTER} cluster."
+else
+    error_no_wait "DestinationRule misconfigured for mTLS in ${OPS_GKE_1_CLUSTER} cluster. Exiting script..."
     exit 1
-else 
-    title_no_wait "ops-1 cluster looks good! continuing..."
 fi
 
-NUM_ISTIO_MUTUAL_2=`kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o yaml | grep "mode: ISTIO_MUTUAL" | wc -l`
-if [[ $NUM_ISTIO_MUTUAL_2 -eq 0 ]]
+DESTRULE_OPS_2=`kubectl --context ${OPS_GKE_2} get DestinationRule default -n istio-system -o json | jq -r '.spec.trafficPolicy.tls.mode'`
+if [[ ${DESTRULE_OPS_2} == "ISTIO_MUTUAL" ]]
 then 
-    error_no_wait "oops, ISTIO_MUTUAL isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
+    title_no_wait "trafficPolicy tls mode is set to \"ISTIO_MUTUAL\" for ${OPS_GKE_2_CLUSTER} cluster."
+else
+    error_no_wait "DestinationRule misconfigured for mTLS in ${OPS_GKE_2_CLUSTER} cluster. Exiting script..."
     exit 1
-else 
-    title_no_wait "ops-2 cluster looks good! continuing..."
 fi
+echo -e "\n"
 
 # show some logs that prove secure
 # log into envoy for frontend, curl product on port 8080? and output headers, grep for something.
