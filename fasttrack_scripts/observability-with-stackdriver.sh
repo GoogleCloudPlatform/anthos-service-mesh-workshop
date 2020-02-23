@@ -155,6 +155,7 @@ if [[ -z ${NEW_CHART_EXISTS} ]]; then
 else
     echo ${NEW_CHART_EXISTS}
     title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
+    echo -e "\n"
 fi
  
 title_and_wait "View the dashboard by navigating to the following output link:"
