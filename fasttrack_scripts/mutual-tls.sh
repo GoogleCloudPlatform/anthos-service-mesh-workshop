@@ -127,20 +127,44 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
     echo -e "\n"
 
-    title_and_wait "Commit to k8s-repo."
+    title_and_wait "Commit the changes to k8s-repo."
 
     print_and_execute "cd ${WORKDIR}/k8s-repo"
     print_and_execute "git add . && git commit -am \"turn mTLS on\""
     print_and_execute "git push"
-    
-    title_and_wait "Wait for rollout to complete"
-    print_and_execute "${WORKDIR}/asm/scripts/stream_logs.sh $TF_VAR_ops_project_name"
+
+    echo -e "\n"
+    title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+    echo -e "\n"
+    title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+    title_no_wait "Waiting for Cloud Build to finish..."
+
+    BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+    while [[ "${BUILD_STATUS}" == "WORKING" ]]
+    do
+        title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+        sleep 10
+        BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+    done
+
+    echo -e "\n"
+    title_no_wait "Build finished with status: $BUILD_STATUS"
+    echo -e "\n"
+
+    if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+    title_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+    exit
+    fi
+
+    echo -e "\n"
     
     title_no_wait "Verify mTLS"
     title_and_wait "Check MeshPolicy once more in ops clusters. Note mTLS is no longer PERMISSIVE and will only allow for mTLS traffic."
-    print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml"
-    print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml"
+    print_and_execute "kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq '.items[].spec'"
+    print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
 fi
+
+title_and_wait "STOP HERE!!"
 
 # actually validate here
 # Output (do not copy):
