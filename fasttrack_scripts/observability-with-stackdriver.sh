@@ -112,7 +112,7 @@ title_no_wait "For this workshop, create the dashboard interacting with the API 
 export OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 export DASHBOARD=$(curl -X GET -H "Authorization: Bearer $OAUTH_TOKEN" -H "Content-Type: application/json" https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards)
 
-if [[ ${DASHBOARD} -eq "{}" ]]; then
+if [[ ${DASHBOARD} == "{}" ]]; then
     print_and_execute "cd ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/"
     print_and_execute "sed -i 's/OPS_PROJECT/'${TF_VAR_ops_project_name}'/g'  services-dashboard.json"
     print_and_execute "OAUTH_TOKEN=$(gcloud auth application-default print-access-token)"
