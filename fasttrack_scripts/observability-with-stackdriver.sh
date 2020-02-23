@@ -124,10 +124,8 @@ if [[ ${DASHBOARD} == "{}" ]]; then
 fi    
 
 title_and_wait "Navigate to the output link below to view the newly added dashboard."
-echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
-echo ""
-echo ""
-title_and_wait ""
+echo "${bold}https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
+echo -e "\n"
 
 title_and_wait "Add a new Chart using the API. \
     To accomplish this, get the latest version of the Dashboard. \
@@ -136,7 +134,7 @@ title_and_wait "Add a new Chart using the API. \
     Get the existing dashboard that was just added:"
 
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
-    https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
+    https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json"
 
 title_and_wait "Check to see if the Chart already exists"
 
@@ -144,12 +142,12 @@ title_and_wait "STOP Chart already exists"
  
 title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
     Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
-print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' sd-services-dashboard.json > patched-services-dashboard.json"
+print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
  
 title_and_wait "Update the Dashboard with the new patched json."
 print_and_execute "curl -X PATCH -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
      https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
-     -d @patched-services-dashboard.json"
+     -d @${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
  
 title_and_wait "View the updated dashboard by navigating to the following output link:"
 echo "https://console.cloud.google.com/monitoring/dashboards/custom/servicesdash?cloudshell=false&project=${TF_VAR_ops_project_name}"
