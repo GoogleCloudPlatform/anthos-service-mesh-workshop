@@ -90,9 +90,9 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     echo -e "\n"
     title_and_wait "Copy the kustomize patch file to the k8s-repo and update the kustomization.yaml file. Do this for all clusters."
 
-    title_no_wait "For ${OPS_GKE_1} cluster:"
-    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1}/istio-controlplane/."
-    print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_1}/istio-controlplane"
+    title_no_wait "For ${OPS_GKE_1_CLUSTER} cluster:"
+    print_and_execute "cp -r ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane/."
+    print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/istio-controlplane"
     print_and_execute "kustomize edit add patch mtls-kustomize-patch.yaml"
 
     title_and_wait "Commit to k8s-repo."
