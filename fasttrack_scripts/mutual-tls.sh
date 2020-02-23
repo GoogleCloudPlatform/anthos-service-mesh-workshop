@@ -59,7 +59,7 @@ PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r 
 if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
 then 
     title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
-else if [[ ${PERMISSIVE_OPS_1} == "{}" ]]
+elif [[ ${PERMISSIVE_OPS_1} == "{}" ]]
 then
     title_no_wait "mTLS is already configured on the ${OPS_GKE_1} cluster"
 fi
@@ -68,7 +68,7 @@ PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r 
 if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
 then 
     title_no_wait "Note mTLS is PERMISSIVE in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
-else if [[ ${PERMISSIVE_OPS_2} == "{}" ]]
+elif [[ ${PERMISSIVE_OPS_2} == "{}" ]]
 then
     title_no_wait "mTLS is already configured on the ${OPS_GKE_2} cluster"
 fi
