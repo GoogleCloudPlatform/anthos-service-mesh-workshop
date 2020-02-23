@@ -139,6 +139,8 @@ print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Co
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > sd-services-dashboard.json"
 
 title_and_wait "Check to see if the Chart already exists"
+
+title_and_wait "STOP Chart already exists"
  
 title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
     Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
