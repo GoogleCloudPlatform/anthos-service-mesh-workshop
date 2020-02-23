@@ -130,17 +130,17 @@ echo -e "\n"
 title_and_wait "Alternatively, you can access the Dashboard by navigating to the \"Dashboard\" link from the left hand menu clicking on \"services dashboard\" from the list of Dashboards."
 
 
-title_and_wait "Add a new Chart using the API. \
-    To accomplish this, get the latest version of the Dashboard. \
-    Apply edits directly to the downloaded Dashboard json.\
-    And upload the patched json (with the new Chart) using the HTTP PATCH method. \
-    Get the existing dashboard that was just added:"
+title_no_wait "Add a new Chart using the API."
+title_no_wait "To accomplish this, get the latest version of the Dashboard."
+title_no_wait "Apply edits directly to the downloaded Dashboard json."
+title_no_wait "And upload the patched json (with the new Chart) using the HTTP PATCH method."
+title_and_wait "Get the existing dashboard that was just added:"
 
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json"
  
-title_and_wait "Add a new Chart for 50th %ile latency to the Dashbaord. \
-    Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
+title_no_wait "Add a new Chart for 50th %ile latency to the Dashbaord."
+title_and_wait "Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
 
 title_no_wait "Checking to see if the \"Service Average Latencies\" Chart already exists"
 export NEW_CHART_EXISTS=$(cat ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json | jq -r '.gridLayout.widgets[] | select(.title=="Service Average Latencies")')
@@ -153,7 +153,6 @@ if [[ -z ${NEW_CHART_EXISTS} ]]; then
      https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash \
      -d @${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
 else
-    echo ${NEW_CHART_EXISTS}
     title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
     echo -e "\n"
 fi
@@ -164,17 +163,17 @@ echo -e "\n"
  
 title_and_wait "View project logs."
 echo "${bold}https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
-title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
 echo -e "\n"
+title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
 
 title_no_wait "View project traces:"
 echo "${bold}https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
-title_and_wait "Refer to the Tracing section in the Observability Lab in the workshop for further details."
 echo -e "\n"
+title_and_wait "Refer to the Tracing section in the Observability Lab in the workshop for further details."
 
-title_and_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool. \
-    This is used later in the workshop in the Istio control plane monitoring and troubleshooting sections. \
-    To learn more about Grafana, visit https://grafana.io"
+title_no_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool."
+title_no_wait "This is used later in the workshop in the Istio control plane monitoring and troubleshooting sections."
+title_and_wait "To learn more about Grafana, visit https://grafana.io"
 export PORT_3000_EXPOSED=$(sudo netstat -tulpn | grep LISTEN | grep 3000)
 if [[ -z ${PORT_3000_EXPOSED} ]]; then
     print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
