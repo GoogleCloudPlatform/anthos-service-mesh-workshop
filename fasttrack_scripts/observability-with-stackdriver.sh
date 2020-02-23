@@ -165,10 +165,12 @@ echo -e "\n"
 title_and_wait "View project logs."
 echo "${bold}https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
 title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
+echo -e "\n"
 
 title_no_wait "View project traces:"
 echo "${bold}https://console.cloud.google.com/traces/overview?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
 title_and_wait "Refer to the Tracing section in the Observability Lab in the workshop for further details."
+echo -e "\n"
 
 title_and_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool. \
     This is used later in the workshop in the Istio control plane monitoring and troubleshooting sections. \
