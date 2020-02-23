@@ -164,7 +164,6 @@ echo -e "\n"
  
 title_and_wait "View project logs."
 echo "${bold}https://console.cloud.google.com/logs/viewer?cloudshell=false&project=${TF_VAR_ops_project_name}${normal}"
-echo -e "\n"
 title_and_wait "Refer to the Logging section in the Observability Lab in the workshop for further details."
 
 title_and_wait "View project traces:"
