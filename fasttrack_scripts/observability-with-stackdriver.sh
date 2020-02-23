@@ -146,7 +146,8 @@ title_no_wait "Checking to see if the \"Service Average Latencies\" Chart alread
 export NEW_CHART_EXISTS=$(cat ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json | jq -r '.gridLayout.widgets[] | select(.title=="Service Average Latencies")')
 if [[ -z ${NEW_CHART_EXISTS} ]]; then
     title_no_wait "Creating new chart..."
-    print_and_execute "jq --argjson newChart \"\$(<new-chart.json)\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
+    print_and_execute "export NEW_CHART_JSON=${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/new-chart.json"
+    print_and_execute "jq --argjson newChart \"\$(<${NEW_CHART_JSON})\" '.gridLayout.widgets += [\$newChart]' ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/patched-services-dashboard.json"
 else
     echo ${NEW_CHART_EXISTS}
     title_no_wait "\"Service Average Latencies\" chart already in the Dashboard. Skipping new chart creation."
