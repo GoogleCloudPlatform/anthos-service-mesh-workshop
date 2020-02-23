@@ -164,33 +164,29 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     print_and_execute "kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq '.items[].spec'"
 fi
 
-title_and_wait "STOP HERE!!"
-
-# actually validate here
-# Output (do not copy):
-# 
-# spec:
-#     peers:
-#     - mtls: {}
-
-# validate not-permissive state
-NUM_MTLS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
-if [[ $NUM_MTLS_1 -eq 0 ]]
+# validate mtls state
+PERMISSIVE_OPS_1=`kubectl --context ${OPS_GKE_1} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+if [[ ${PERMISSIVE_OPS_1} == "PERMISSIVE" ]]
 then 
-    error_no_wait "oops, MTLS isn't enabled in ${OPS_GKE_1}. get some help, or give it another try."
-    exit 1
-else 
-    title_no_wait "ops-1 cluster looks good! continuing..."
+    title_no_wait "mTLS is still in PERMISSIVE state in ${OPS_GKE_1} cluster, allowing for both encrypted and non-mTLS traffic."
+    export MTLS_CONFIG_OPS_1=permissive
+elif [[ ${PERMISSIVE_OPS_1} == "{}" ]]
+then
+    title_no_wait "mTLS is configured on the ${OPS_GKE_1} cluster"
+    export MTLS_CONFIG_OPS_1=mtls
 fi
 
-NUM_MTLS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o yaml | grep "mtls: {}" | wc -l`
-if [[ $NUM_MTLS_2 -eq 0 ]]
+PERMISSIVE_OPS_2=`kubectl --context ${OPS_GKE_2} get MeshPolicy -o json | jq -r '.items[].spec.peers[].mtls.mode'`
+if [[ ${PERMISSIVE_OPS_2} == "PERMISSIVE" ]]
 then 
-    error_no_wait "oops, MTLS isn't enabled in ${OPS_GKE_2}. get some help, or give it another try."
-    exit 1
-else 
-    title_no_wait "ops-2 cluster looks good! continuing..."
+    title_no_wait "mTLS is still PERMISSIVE in state in ${OPS_GKE_2} cluster, allowing for both encrypted and non-mTLS traffic."
+    export MTLS_CONFIG_OPS_2=permissive
+elif [[ ${PERMISSIVE_OPS_2} == "{}" ]]
+then
+    title_no_wait "mTLS is configured on the ${OPS_GKE_2} cluster"
+    export MTLS_CONFIG_OPS_2=mtls
 fi
+echo -e "\n"
 
 title_and_wait "Describe the DestinationRule created by the Istio operator controller."
 print_and_execute "kubectl --context ${OPS_GKE_1} get DestinationRule default -n istio-system -o yaml"
