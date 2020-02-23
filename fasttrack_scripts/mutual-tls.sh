@@ -87,7 +87,7 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     title_no_wait "  2. A DestinationRule is created to allow ISTIO_MUTUAL traffic between Services running in all clusters."
     echo -e "\n"
     title_no_wait "Apply the following kustomize patch to the istioControlPlane CR to enable mTLS cluster wide."
-    print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch.yaml"
+    print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-mtls/mtls-kustomize-patch-replicated.yaml"
     echo -e "\n"
     title_and_wait "Copy the kustomize patch file to the k8s-repo and update the kustomization.yaml file. Do this for all clusters."
 
