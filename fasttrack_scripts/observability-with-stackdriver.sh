@@ -173,9 +173,16 @@ title_and_wait "Refer to the Tracing section in the Observability Lab in the wor
 title_and_wait "Expose Grafana in ops-1 cluster. Grafana is an open source metrics dashboarding tool. \
     This is used later in the workshop in the Istio control plane monitoring and troubleshooting sections. \
     To learn more about Grafana, visit https://grafana.io"
-print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
+export PORT_3000_EXPOSED=$(sudo netstat -tulpn | grep LISTEN | grep 3000)
+if [[ -z ${PORT_3000_EXPOSED} ]]; then
+    print_and_execute "kubectl --context ${OPS_GKE_1} -n istio-system port-forward svc/grafana 3000:3000 >> /dev/null & "
+else
+    title_no_wait "Grafana already exposed on port 3000."
+fi
 
-echo "https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default"
+title_no_wait "Click on the following link to access Grafana dashboards."
+echo "${bold}https://ssh.cloud.google.com/devshell/proxy?authuser=0&port=3000&environment_id=default${normal}"
 
+echo -e "\n"
 title_no_wait "Congratulations! You have successfully completed the Observability with Stackdriver lab."
 echo -e "\n"
