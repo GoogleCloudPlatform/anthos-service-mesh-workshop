@@ -77,6 +77,7 @@ print_and_execute "kustomize edit add resource currency-deny-all.yaml"
 
 echo -e "\n"
 title_and_wait "Commit to k8s-repo to trigger deployment."
+print_and_execute "cd ${WORKDIR}/k8s-repo"
 print_and_execute "git add . && git commit -am \"AuthorizationPolicy - currency: deny all\""
 print_and_execute "git push --set-upstream origin master"
 
