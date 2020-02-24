@@ -214,7 +214,7 @@ title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_
 title_no_wait "Waiting for Cloud Build to finish..."
 
 BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
-while [[ "${BUILD_STATUS}" == "WORKING" ]]
+while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]
   do
       title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
       sleep 10
