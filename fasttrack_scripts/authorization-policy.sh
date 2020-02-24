@@ -67,12 +67,12 @@ title_and_wait "Copy the currency policy into k8s-repo, for the ops clusters bot
 
 title_no_wait "For ${OPS_GKE_1_CLUSTER} cluster:"
 print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-deny-all.yaml"
-print_and_execute "cd ${WORKDIR}/${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-authorization"
+print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization"
 print_and_execute "kustomize edit add resource currency-deny-all.yaml"
 
 title_no_wait "For ${OPS_GKE_2_CLUSTER} cluster:"
 print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-deny-all.yaml"
-print_and_execute "cd ${WORKDIR}/${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-authorization"
+print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization"
 print_and_execute "kustomize edit add resource currency-deny-all.yaml"
 
 echo -e "\n"
