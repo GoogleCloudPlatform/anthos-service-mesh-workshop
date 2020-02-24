@@ -61,6 +61,7 @@ title_no_wait "This policy uses Deployment label selectors to restrict access to
 title_and_wait "Notice how there is no spec field - this means this policy will DENY all access to the selected service."
 
 print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml"
+echo -e "\n"
 
 title_and_wait "Copy the currency policy into k8s-repo, for the ops clusters both regions. Add the new resource to the kustomization.yaml files."
 
