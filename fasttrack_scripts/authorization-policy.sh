@@ -50,9 +50,18 @@ echo -e "\n"
 echo "${bold}*** Lab: Authorization Policy ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
+# https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#9
+title_no_wait "Objective:  Set up RBAC between microservices (AuthZ)."
+title_no_wait "  1. Create AuthorizationPolicy to DENY access to a microservice"
+title_no_wait "  2. Create AuthorizationPolicy to ALLOW specific access to a microservice"
+echo -e "\n"
+
+title_no_wait "Inspect the contents of \"currency-deny-all.yaml\"." 
+title_no_wait "This policy uses Deployment label selectors to restrict access to the currencyservice." 
+title_and_wait "Notice how there is no spec field - this means this policy will DENY all access to the selected service."
+
+print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml"
+title_and_wait ""
+
+
 

@@ -3,7 +3,7 @@ log() { echo "$1" >&2; }
 
 # Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
-source ${WORKDIR}/asm/scripts/functions.sh
+source ${SCRIPT_DIR}/../scripts/functions.sh
 
 # DEV1
 log "📑 Generating Dev1 Manifests ..."
@@ -29,7 +29,7 @@ cp $CANARY_DIR/baseline/dr-frontend.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-ca
 cp $CANARY_DIR/baseline/vs-frontend.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary/
 cd ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary
 if [ -f ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-canary/kustomization.yaml ]; then
-    title_no_wait "kustomization file exists for ops-1 cluster."
+    title_no_wait "kustomization.yaml file exists for ops-1 cluster."
 else
     kustomize create --autodetect
 fi

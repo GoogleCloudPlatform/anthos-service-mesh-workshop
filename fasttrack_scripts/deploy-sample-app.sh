@@ -226,8 +226,8 @@ title_no_wait "Build finished with status: $BUILD_STATUS"
 echo -e "\n"
 
 if [[ $BUILD_STATUS != "SUCCESS" ]]; then
-  title_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
-  exit
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
 fi
 
 echo -e "\n"
