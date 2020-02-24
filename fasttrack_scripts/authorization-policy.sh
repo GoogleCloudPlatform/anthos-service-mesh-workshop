@@ -119,6 +119,7 @@ title_and_wait "You see an \"enforced denied\" message, indicating that the curr
 title_no_wait "Allow only the \"frontend\" service to access the currencyservice."
 title_and_wait "Inspect the \"currency-allow-frontend.yaml\"."
 print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml"
+echo -e "\n"
 
 title_no_wait "This AuthorizationPolicy whitelists a specific source.principal (client) to access currency service." 
 title_no_wait "This source.principal is defined by is Kubernetes Service Account (in this case frontend KSA in the frontend namespace)." 
