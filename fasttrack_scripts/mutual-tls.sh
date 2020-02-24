@@ -144,8 +144,7 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     title_no_wait "Waiting for Cloud Build to finish..."
 
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
-    while [[ "${BUILD_STATUS}" == "WORKING" ]]
-    do
+    while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
         title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
         sleep 10
         BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
@@ -156,8 +155,8 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     echo -e "\n"
 
     if [[ $BUILD_STATUS != "SUCCESS" ]]; then
-    title_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
-    exit
+        title_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+        exit
     fi
 
     echo -e "\n"

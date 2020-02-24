@@ -59,7 +59,7 @@ if [ -f ${KUSTOMIZE_FILEPATH} ]; then
 else 
     nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
     nopv_and_execute "export PATH=$PATH:${HOME}/bin"
-    nopv_and_execute "echo \"export PATH=$PATH:${HOME}/bin\" >> ~/.bashrc"
+    nopv_and_execute "grep -q \"export PATH=.*${HOME}/bin.*\" ${HOME}/.asm-workshop || echo \"export PATH=$PATH:${HOME}/bin\" >> ${HOME}/.asm-workshop"
 fi
 echo -e "\n"
 
@@ -72,9 +72,25 @@ else
 fi
 echo -e "\n"
 
-title_no_wait "Updating bash prompt..."
-print_and_execute "cat ${SCRIPT_DIR}/../scripts/krompt.bash >> ${HOME}/.bashrc"
-echo -e "\n"
+[[ ! -e ${HOME}/.asm-workshop.bash ]] && touch ${HOME}/.asm-workshop.bash
+
+title_no_wait "Creating custom shell prompt file..."
+print_and_execute "cp ${SCRIPT_DIR}/../scripts/krompt.bash ${HOME}/.krompt.bash"
+grep -q ".krompt.bash" ${HOME}/.asm-workshop.bash || (echo "source ${HOME}/.krompt.bash" >> ${HOME}/.asm-workshop.bash)
+
+if [[ ${ASM_UPDATE_BASHRC:-"true"} == "true" ]]; then
+    title_no_wait "Updating bash prompt..."
+    grep -q ".asm-workshop.bash" ${HOME}/.bashrc || (echo "source ${HOME}/.asm-workshop.bash" >> ${HOME}/.bashrc)
+else
+    title_no_wait "Adding asm-init alias to bashrc..."
+    grep -q "alias asm-init" ${HOME}/.bashrc || (echo "alias asm-init='source ${HOME}/.asm-workshop.bash'" >> ${HOME}/.bashrc)
+    echo -e "\n"
+fi
+
+if [[ -z ${MY_USER} ]]; then
+    error_no_wait "Missing env MY_USER"
+    exit 1
+fi
 
 title_and_wait "Verify that you are logged in with the correct user. The user should be ${MY_USER}."
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"
@@ -88,10 +104,21 @@ fi
 echo -e "\n"
 
 title_and_wait "Get the terraform-admin-project ID."
-print_and_execute "export TF_ADMIN=$(gcloud projects list | grep tf- | awk '{ print $1 }')"
+print_and_execute "export TF_ADMIN=$(gcloud projects list --filter='name~user.*-tf' --format='value(projectId)')"
 print_and_execute "echo ${TF_ADMIN}"
-if [ ${TF_ADMIN} == 'null' ]; then
+if [[ -z ${TF_ADMIN} ]]; then
   error_no_wait "Uh oh! We cannot retrieve your terraform-admin project ID. You cannot continue the workshop without this. Please contact your lab administrator"
+  error_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
+  gcloud projects list 
+  exit 1
+fi
+echo -e "\n"
+
+title_and_wait "Get the terraform-ops-project ID."
+print_and_execute "export TF_VAR_ops_project_name=$(gcloud projects list --filter='name~user.*-ops' --format='value(projectId)')"
+print_and_execute "echo ${TF_VAR_ops_project_name}"
+if [[ -z ${TF_VAR_ops_project_name} ]]; then
+  error_no_wait "Uh oh! We cannot retrieve your terraform-ops project ID. You cannot continue the workshop without this. Please contact your lab administrator"
   error_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
   gcloud projects list 
   exit 1
@@ -101,12 +128,9 @@ echo -e "\n"
 title_and_wait "Get the variables for your environment. The variables include projects IDs, GKE cluster context, regions, zones etc."
 print_and_execute "mkdir -p ${WORKDIR}/asm/vars"
 export VARS_FILE=${WORKDIR}/asm/vars/vars.sh
-if [ -f ${VARS_FILE} ]; then
-    title_no_wait "${VARS_FILE} already exists. Skipping step."
-else
-    print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
-    print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
-fi
+print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
+print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
+print_and_execute "echo \"cd \${WORKDIR}\" >> ${HOME}/.asm-workshop.bash
 echo -e "\n"
 
 title_no_wait "Verify the infrastructure Cloud Build finished successfully."
@@ -129,8 +153,8 @@ print_and_execute "source ${VARS_FILE}"
 print_and_execute "export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh"
 echo -e "\n"
 title_and_wait "Adding ${VARS_FILE} and KUBECONFIG vars to bashrc for persistence across multiple Cloud Shell sessions."
-print_and_execute "echo \"source ${VARS_FILE}\" >> ~/.bashrc"
-print_and_execute "echo \"export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh\" >> ~/.bashrc"
+print_and_execute "grep -q \"source ${VARS_FILE}\" ${HOME}/.asm-workshop.bash || (echo \"source ${VARS_FILE}\" >> ${HOME}/.asm-workshop.bash)"
+print_and_execute "grep -q \"export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh\" ${HOME}/.asm-workshop.bash || (echo \"export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh\" >> ${HOME}/.asm-workshop.bash)"
 echo -e "\n"
 
 title_and_wait "Confirm you can see all six GKE cluster contexts."
