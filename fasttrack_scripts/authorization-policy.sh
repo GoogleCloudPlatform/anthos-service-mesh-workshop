@@ -61,7 +61,53 @@ title_no_wait "This policy uses Deployment label selectors to restrict access to
 title_and_wait "Notice how there is no spec field - this means this policy will DENY all access to the selected service."
 
 print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml"
-title_and_wait ""
 
+title_and_wait "Copy the currency policy into k8s-repo, for the ops clusters both regions. Add the new resource to the kustomization.yaml files."
 
+title_no_wait "For ${OPS_GKE_1_CLUSTER} cluster:"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
+print_and_execute "cd ${WORKDIR}/${K8S_REPO}/${OPS_GKE_1_CLUSTER}/app-authorization"
+print_and_execute "kustomize edit add resource currency-deny-all.yaml"
 
+title_no_wait "For ${OPS_GKE_2_CLUSTER} cluster:"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-authorization/currency-policy.yaml"
+print_and_execute "cd ${WORKDIR}/${K8S_REPO}/${OPS_GKE_2_CLUSTER}/app-authorization"
+print_and_execute "kustomize edit add resource currency-deny-all.yaml"
+
+echo -e "\n"
+title_and_wait "Commit to k8s-repo to trigger deployment."
+print_and_execute "git add . && git commit -am \"AuthorizationPolicy - currency: deny all\""
+print_and_execute "git push --set-upstream origin master"
+
+echo -e "\n"
+title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+title_no_wait "Waiting for Cloud Build to finish..."
+
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+while [[ "${BUILD_STATUS}" == "WORKING" ]]
+  do
+      title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+      sleep 10
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+  done
+
+echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
+fi
+
+title_no_wait "Try to access the Hipster shop by clicking the following link."
+print_and_execute "echo \"https://frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog\""
+title_and_wait "You should see an Authorization error (RBAC: access denied) from currencyservice."
+
+title_no_wait "Investigate how the currency service is enforcing this AuthorizationPolicy."
+title_and_wait "Enable trace-level logs on the Envoy proxy for one of the currency pods. Blocked authorization calls aren't logged by default."
+print_and_execute "CURRENCY_POD=$(kubectl --context ${DEV1_GKE_2} get pod -n currency | grep currency| awk '{ print $1 }')"
+print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it $CURRENCY_POD -n currency -c istio-proxy /bin/sh curl -X POST \"http://localhost:15000/logging?level=trace\"; exit"
+title_and_wait
