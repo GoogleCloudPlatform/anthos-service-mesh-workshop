@@ -41,3 +41,4 @@ infrastructure/vm-migration/istio-*
 infrastructure/*/*.env
 infrastructure/*/*.pem
 .DS_Store
+workshop.txt
