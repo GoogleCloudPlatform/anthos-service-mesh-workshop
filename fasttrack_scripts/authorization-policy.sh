@@ -66,14 +66,14 @@ echo -e "\n"
 title_and_wait "Copy the currency policy into k8s-repo, for the ops clusters both regions. Add the new resource to the kustomization.yaml files."
 
 title_no_wait "For ${OPS_GKE_1_CLUSTER} cluster:"
-print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-deny-all.yaml"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
 print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization"
 print_and_execute "kustomize edit add resource currency-deny-all.yaml"
 
 title_no_wait "For ${OPS_GKE_2_CLUSTER} cluster:"
-print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-deny-all.yaml"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-deny-all.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-policy.yaml"
 print_and_execute "cd ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization"
-print_and_execute "kustomize edit add resource currency-deny-all.yaml"
+print_and_execute "kustomize edit add resource currency-policy.yaml"
 
 echo -e "\n"
 title_and_wait "Commit to k8s-repo to trigger deployment."
@@ -114,4 +114,21 @@ print_and_execute "CURRENCY_POD=$(kubectl --context ${DEV1_GKE_2} get pod -n cur
 print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it ${CURRENCY_POD} -n currency -c istio-proxy -- curl -X POST \"http://localhost:15000/logging?level=trace\""
 title_and_wait "Get the RBAC (authorization) logs from the currency service's sidecar proxy."
 print_and_execute "kubectl --context ${DEV1_GKE_2} logs -n currency ${CURRENCY_POD} -c istio-proxy | grep -m 3 rbac"
-title_and_wait "You should see an \"enforced denied\" message, indicating that the currencyservice is set to block all inbound requests."
+title_and_wait "You see an \"enforced denied\" message, indicating that the currencyservice is set to block all inbound requests."
+
+title_no_wait "Allow only the \"frontend\" service to access the currencyservice."
+title_and_wait "Inspect the \"currency-allow-frontend.yaml\"."
+print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml"
+
+title_no_wait "This AuthorizationPolicy whitelists a specific source.principal (client) to access currency service." 
+title_no_wait "This source.principal is defined by is Kubernetes Service Account (in this case frontend KSA in the frontend namespace)." 
+title_no_wait "Mutual TLS (mTLS) must be enabled cluster-wide in order to use Kubernetes Service Accounts in Istio AuthorizationPolicies."
+title_and_wait "This ensures that service account credentials are mounted into requests."
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-policy.yaml"
+ 
+
+
+
+
+
