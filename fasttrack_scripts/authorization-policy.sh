@@ -111,6 +111,7 @@ title_and_wait "You should see an Authorization error (RBAC: access denied) from
 title_no_wait "Verify the currency service is enforcing this AuthorizationPolicy."
 title_and_wait "Enable trace-level logs on the Envoy proxy for one of the currency pods. Blocked authorization calls aren't logged by default."
 print_and_execute "CURRENCY_POD=$(kubectl --context ${DEV1_GKE_2} get pod -n currency | grep currency| awk '{ print $1 }')"
-print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it $CURRENCY_POD -n currency -c istio-proxy /bin/sh"
-print_and_execute "curl -X POST \"http://localhost:15000/logging?level=trace\"; exit"
-title_and_wait
+print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it ${CURRENCY_POD} -n currency -c istio-proxy -- curl -X POST \"http://localhost:15000/logging?level=trace\""
+title_and_wait "Get the RBAC (authorization) logs from the currency service's sidecar proxy."
+print_and_execute "kubectl --context ${DEV1_GKE_2} logs -n currency ${CURRENCY_POD} -c istio-proxy | grep -m 3 rbac"
+title_and_wait "You should see an \"enforced denied\" message, indicating that the currencyservice is set to block all inbound requests."
