@@ -108,8 +108,9 @@ title_no_wait "Try to access the Hipster shop by clicking the following link."
 print_and_execute "echo \"https://frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog\""
 title_and_wait "You should see an Authorization error (RBAC: access denied) from currencyservice."
 
-title_no_wait "Investigate how the currency service is enforcing this AuthorizationPolicy."
+title_no_wait "Verify the currency service is enforcing this AuthorizationPolicy."
 title_and_wait "Enable trace-level logs on the Envoy proxy for one of the currency pods. Blocked authorization calls aren't logged by default."
 print_and_execute "CURRENCY_POD=$(kubectl --context ${DEV1_GKE_2} get pod -n currency | grep currency| awk '{ print $1 }')"
-print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it $CURRENCY_POD -n currency -c istio-proxy /bin/sh curl -X POST \"http://localhost:15000/logging?level=trace\"; exit"
+print_and_execute "kubectl --context ${DEV1_GKE_2} exec -it $CURRENCY_POD -n currency -c istio-proxy /bin/sh"
+print_and_execute "curl -X POST \"http://localhost:15000/logging?level=trace\"; exit"
 title_and_wait
