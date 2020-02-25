@@ -18,19 +18,31 @@ SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$
 
 # TASK: Add new project script
 
+PROJECT_NAME=$1
+SRC_DIR=$2
+DEST_DIR=$3
+
+[[ $# -ne 3 ]] && echo "USAGE: $0 <project name> <src dir> <dest dir>" && exit 1
+
+[[ ! -e "${SRC_DIR}/vars/vars.sh" ]] && echo "Missing vars.sh in src dir: ${SRC_DIR}/vars/vars.sh" && exit 1
+
+PROJECT_DIR="${DEST_DIR}/apps/prod/${PROJECT_NAME}/${PROJECT_NAME}_project"
+PROJECT_GKE_DIR="${DEST_DIR}/apps/prod/${PROJECT_NAME}/${PROJECT_NAME}_gke"
+[[ ! -d ${PROJECT_DIR} ]] && echo "Missing project directory: ${PROJECT_DIR}" && exit 1
+[[ ! -d ${PROJECT_GKE_DIR} ]] && echo "Missing project GKE directory: ${PROJECT_GKE_DIR}" && exit 1
+
 # Font colors
 export CYAN='\033[1;36m'
 export GREEN='\033[1;32m'
 export NC='\033[0m' # No Color
 
-
 # Create a vars folder and file
-export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
+export VARS_FILE=${SRC_DIR}/vars/vars.sh
 source ${VARS_FILE}
 
 # Create a logs folder and file and send stdout and stderr to console and log file 
-mkdir -p ${SCRIPT_DIR}/../logs
-export LOG_FILE=${SCRIPT_DIR}/../logs/add-project-$(date +%s).log
+mkdir -p ${SRC_DIR}/logs
+export LOG_FILE=${SRC_DIR}/logs/add-project-$(date +%s).log
 touch ${LOG_FILE}
 exec 2>&1
 exec &> >(tee -i ${LOG_FILE})
@@ -39,8 +51,8 @@ echo -e "\n${CYAN}Preparing terraform backends, shared states and vars...${NC}"
 # Define an array of GCP resources
 declare -a folders
 folders=(
-    'apps/prod/app3/app3_project'
-    'apps/prod/app3/app3_gke'
+    ${PROJECT_DIR}
+    ${PROJECT_GKE_DIR}
     )
 
 # Build backends and shared states for each GCP prod resource
@@ -51,24 +63,24 @@ do
 
     # Create backends
     sed -e s/PROJECT_ID/${TF_ADMIN}/ -e s/ENV/prod/ -e s/RESOURCE/${resource}/ \
-    ${SCRIPT_DIR}/../infrastructure/templates/backend.tf_tmpl > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/backend.tf
+    ${SRC_DIR}/infrastructure/templates/backend.tf_tmpl > ${folders[idx]}/backend.tf
 
     # Create shared states for every resource
     sed -e s/PROJECT_ID/${TF_ADMIN}/ -e s/RESOURCE/${resource}/ \
-    ${SCRIPT_DIR}/../infrastructure/templates/shared_state.tf_tmpl > ${SCRIPT_DIR}/../../infra-repo/gcp/prod/shared_states/shared_state_${resource}.tf
+    ${SRC_DIR}/infrastructure/templates/shared_state.tf_tmpl > ${DEST_DIR}/gcp/prod/shared_states/shared_state_${resource}.tf
 
     # Create vars from terraform.tfvars_tmpl files
-    tfvar_tmpl_file=${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars_tmpl
+    tfvar_tmpl_file=${folders[idx]}/terraform.tfvars_tmpl
     if [ -f "$tfvar_tmpl_file" ]; then
-        envsubst <${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars_tmpl \
-        > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/terraform.tfvars
+        envsubst <${folders[idx]}/terraform.tfvars_tmpl \
+        > ${folders[idx]}/terraform.tfvars
     fi
 
     # Create vars from variables.auto.tfvars_tmpl files
-    auto_tfvar_tmpl_file=${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars_tmpl
+    auto_tfvar_tmpl_file=${folders[idx]}/variables.auto.tfvars_tmpl
     if [ -f "$auto_tfvar_tmpl_file" ]; then
-        envsubst <${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars_tmpl \
-        > ${SCRIPT_DIR}/../../infra-repo/${folders[idx]}/variables.auto.tfvars
+        envsubst <${folders[idx]}/variables.auto.tfvars_tmpl \
+        > ${folders[idx]}/variables.auto.tfvars
     fi
 
 done
