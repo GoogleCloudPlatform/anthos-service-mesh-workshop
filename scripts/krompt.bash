@@ -12,7 +12,7 @@ LIGHT_CYAN="\e[38;5;87m"
 
 __kube_ps1()
 {
-        if [ ! -f ${KUBECONFIG} ]; then
+    if [ ! -f ${KUBECONFIG} ] || [ -z ${KUBECONFIG} ]; then
        echo "N/A"
     else
         # Get current context
