@@ -3,7 +3,7 @@ log() { echo "$1" >&2; }
 
 # Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
-source ${SCRIPT_DIR}/../scripts/functions.sh
+source ${WORKDIR}/asm/scripts/functions.sh
 
 # DEV1
 log "📑 Generating Dev1 Manifests ..."
