@@ -174,6 +174,8 @@ echo -e "\n"
 title_no_wait "Authorize checkout service to access currency service."
 title_and_wait "Inspect the \"currency-allow-frontend-checlout.yaml\"."
 print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend-checkout.yaml"
+echo -e "\n"
+
 
 title_no_wait "The AuthorizationPolicy allows currency service access from both the frontend and the checkout service ."
 
