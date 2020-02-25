@@ -1,5 +1,5 @@
 {
-    "title": "Service Average Latencies",
+    "title": "Service Median Latencies",
     "xyChart": {
       "dataSets": [
         {
