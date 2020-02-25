@@ -78,12 +78,13 @@ echo -e "\n"
 title_no_wait "View the status of the TF project Cloud Build in a previously opened tab or by clicking the following link: "
 echo -e "\n"
 title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}"
+title_no_wait "This step takes 25-30 mins. This is a good time for a coffee break."
 title_no_wait "Waiting for Cloud Build to finish..."
 
 BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_ADMIN} --format="value(id)" | head -n 1) --project ${TF_ADMIN} --format="value(status)")
 while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
-    title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
-    sleep 10
+    title_no_wait "Still waiting for cloud build to finish. Sleep for 10m"
+    sleep 36000
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_ADMIN} --format="value(id)" | head -n 1) --project ${TF_ADMIN} --format="value(status)")
 done
 
@@ -104,8 +105,8 @@ title_no_wait "Waiting for Cloud Build to finish..."
 
 BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
-    title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
-    sleep 10
+    title_no_wait "Still waiting for cloud build to finish. Sleep for 1m"
+    sleep 60
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 done
 
