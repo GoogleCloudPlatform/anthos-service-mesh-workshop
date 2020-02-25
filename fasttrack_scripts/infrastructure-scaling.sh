@@ -50,11 +50,12 @@ echo -e "\n"
 echo "${bold}*** Lab: Infrastructure Scaling ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
+title_and_wait "Clone the infrastructure repo from Cloud Source Repositories"
+print_and_execute "cd ${WORKDIR} && mkdir -p ${WORKDIR}/infra-repo && cd ${WORKDIR}/infra-repo && git init && git remote add origin https://source.developers.google.com/p/${TF_ADMIN}/r/infrastructure"
+
+print_and_execute "(cd ${WORKDIR}/infra-repo && git config --local user.email ${MY_USER} && git config --local user.name \"infra repo user\")"
+print_and_execute "(cd ${WORKDIR}/infra-repo && git config --local credential.'https://source.developers.google.com'.helper gcloud.sh)"
+print_and_execute "(cd ${WORKDIR}/infra-repo && git pull origin master)"
 
 title_and_wait "Clone the workshop source repo 'add-proj' branch into the 'add-proj-repo' directory"
 rm -rf ${WORKDIR}/add-proj-repo
@@ -63,8 +64,10 @@ print_and_execute "(cd ${WORKDIR} && git clone https://github.com/GoogleCloudPla
 title_and_wait "Copy files from the add-proj branch in the source workshop repo. The add-proj branch contains the changes for this section."
 print_and_execute "(cd ${WORKDIR}/add-proj-repo && cp -R infrastructure/* ${WORKDIR}/infra-repo/)"
 
-title_and_wait "Copy the shared states and vars to the new project directory structure."
+title_and_wait "Replace the infrastructure directory in the add-proj repo directory with a symlink to the infra-repo directory to allow the scripts on the branch to run."
 print_and_execute "(cd ${WORKDIR}/add-proj-repo && rm -rf infrastructure && ln -s ${WORKDIR}/infra-repo infrastructure)"
+
+title_and_wait "Run the add-project.sh script to copy the shared states and vars to the new project directory structure."
 print_and_execute "${WORKDIR}/add-proj-repo/scripts/add-project.sh app3 ${WORKDIR}/asm ${WORKDIR}/infra-repo"
 
 print_and_execute "(cd ${WORKDIR}/infra-repo && git add . && git status)"
