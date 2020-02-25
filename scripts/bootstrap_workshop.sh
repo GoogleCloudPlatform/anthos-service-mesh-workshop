@@ -138,7 +138,7 @@ jq '.bindings[] | select(.role=="roles/billing.admin")' | grep $ADMIN_USER &>/de
 export TF_VAR_org_id=$ORG_ID
 export TF_VAR_billing_account=$BILLING_ID
 
-export $PARENT_FOLDER_NAME=asm-workshop-$WORKSHOP_ID
+export PARENT_FOLDER_NAME=asm-workshop-$WORKSHOP_ID
 
 echo -e "\n${CYAN}Checking for existing workshop folder...${NC}"
 export PARENT_FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep $PARENT_FOLDER_NAME | awk '{print $3}')
