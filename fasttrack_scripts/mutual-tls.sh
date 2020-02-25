@@ -142,6 +142,7 @@ if [[ ${MTLS_CONFIG_OPS_1} == "permissive" && ${MTLS_CONFIG_OPS_2} == "permissiv
     echo -e "\n"
     title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
     title_no_wait "Waiting for Cloud Build to finish..."
+    sleep 10
 
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
     while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
