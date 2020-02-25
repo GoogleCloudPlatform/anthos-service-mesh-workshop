@@ -83,8 +83,8 @@ title_no_wait "Waiting for Cloud Build to finish..."
 
 BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_ADMIN} --format="value(id)" | head -n 1) --project ${TF_ADMIN} --format="value(status)")
 while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
-    title_no_wait "Still waiting for cloud build to finish. Sleep for 10m"
-    sleep 36000
+    title_no_wait "Still waiting for cloud build to finish. Sleep for 5m"
+    sleep 18000
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_ADMIN} --format="value(id)" | head -n 1) --project ${TF_ADMIN} --format="value(status)")
 done
 
