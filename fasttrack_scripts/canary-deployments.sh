@@ -52,9 +52,9 @@ echo -e "\n"
 
 # https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#9
 title_and_wait "Run the repo_setup.sh script, to copy the baseline manifests into k8s-repo."
-print_and_execute "export CANARY_DIR=\"${WORKDIR}/asm/k8s_manifests/prod/app-canary/\""
+print_and_execute "export CANARY_DIR=\"${WORKDIR}/asm/k8s_manifests/prod/app-canary\""
 print_and_execute "export K8S_REPO=\"${WORKDIR}/k8s-repo\""
-echo "export CANARY_DIR=${WORKDIR}/asm/k8s_manifests/prod/app-canary/" >> ~/.bashrc 
+echo "export CANARY_DIR=${WORKDIR}/asm/k8s_manifests/prod/app-canary" >> ~/.bashrc 
 echo "export K8S_REPO=${WORKDIR}/k8s-repo" >> ~/.bashrc
 print_and_execute "${CANARY_DIR}/repo-setup.sh"
 
