@@ -21,22 +21,24 @@
 
 SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
+SRC_DIR=${1-"${SCRIPT_DIR}/.."}
+
 export CYAN='\033[1;36m'
 export GREEN='\033[1;32m'
 export NC='\033[0m' # No Color
 
 # Create a log file and send stdout and stderr to console and log file
 export LOG_FILE=setup-gke-vars-$(date +%s).log
-touch ${SCRIPT_DIR}/../logs/${LOG_FILE}
+touch ${SRC_DIR}/logs/${LOG_FILE}
 exec 2>&1
-exec &> >(tee -i ${SCRIPT_DIR}/../logs/${LOG_FILE})
+exec &> >(tee -i ${SRC_DIR}/logs/${LOG_FILE})
 
 # Add GKE vars to vars.sh and re-source vars
 
 
 echo -e "\n${CYAN}Adding new GKE cluster names, regions, zones and contexts to vars.sh...${NC}"
 
-export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
+export VARS_FILE=${SRC_DIR}/vars/vars.sh
 source ${VARS_FILE}
 
 # Create GKE vars
@@ -55,7 +57,7 @@ echo -e "export DEV3_GKE_2=gke_${TF_VAR_dev3_project_name}_${DEV3_GKE_2_LOCATION
 
 # Create kubeconfig file
 source ${VARS_FILE}
-export KUBECONFIG=${SCRIPT_DIR}/../gke/kubemesh
+export KUBECONFIG=${SRC_DIR}/gke/kubemesh
 gcloud container clusters get-credentials "${OPS_GKE_3_CLUSTER}" --region "${OPS_GKE_3_LOCATION}" --project "${TF_VAR_ops_project_name}"
 gcloud container clusters get-credentials "${DEV3_GKE_1_CLUSTER}" --zone "${DEV3_GKE_1_LOCATION}" --project "${TF_VAR_dev3_project_name}"
 gcloud container clusters get-credentials "${DEV3_GKE_2_CLUSTER}" --zone "${DEV3_GKE_2_LOCATION}" --project "${TF_VAR_dev3_project_name}"
