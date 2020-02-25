@@ -76,7 +76,15 @@ while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
     sleep 10
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 done
+
 echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
+fi
  
 title_and_wait "Verify the Istio → Stackdriver integration. Get the Stackdriver Handler CRD."
 print_and_execute "kubectl --context ${OPS_GKE_1} get handler -n istio-system"

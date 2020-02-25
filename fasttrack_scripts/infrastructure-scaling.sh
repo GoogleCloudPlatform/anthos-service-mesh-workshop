@@ -86,7 +86,15 @@ while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
     sleep 10
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_ADMIN} --format="value(id)" | head -n 1) --project ${TF_ADMIN} --format="value(status)")
 done
+
 echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}. \n Exiting...."
+  exit 1
+fi
 
 echo -e "\n"
 title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
@@ -100,7 +108,15 @@ while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
     sleep 10
     BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
 done
+
 echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_ADMIN}. \n Exiting...."
+  exit 1
+fi
 
 title_and_wait "Run script to add the new clusters to the vars and kubeconfig file."
 print_and_execute "${WORKDIR}/add-proj-repo/scripts/setup-gke-vars-kubeconfig-add-proj.sh ${WORKDIR}/asm"
