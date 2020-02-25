@@ -119,6 +119,7 @@ title_and_wait "You see an \"enforced denied\" message, indicating that the curr
 title_no_wait "Allow only the \"frontend\" service to access the currencyservice."
 title_and_wait "Inspect the \"currency-allow-frontend.yaml\"."
 print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml"
+echo -e "\n"
 
 title_no_wait "This AuthorizationPolicy whitelists a specific source.principal (client) to access currency service." 
 title_no_wait "This source.principal is defined by is Kubernetes Service Account (in this case frontend KSA in the frontend namespace)." 
@@ -127,6 +128,103 @@ title_and_wait "This ensures that service account credentials are mounted into r
 print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
 print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-policy.yaml"
  
+echo -e "\n"
+title_and_wait "Commit to k8s-repo to trigger deployment."
+print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "git add . && git commit -am \"AuthorizationPolicy - currency: allow frontend\""
+print_and_execute "git push --set-upstream origin master"
+
+echo -e "\n"
+title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+title_no_wait "Waiting for Cloud Build to finish..."
+
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+while [[ "${BUILD_STATUS}" == "WORKING" ]]
+  do
+      title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+      sleep 10
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+  done
+
+echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
+fi
+
+title_no_wait "Access the Hipster shop by clicking the following link."
+print_and_execute "echo \"https://frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog\""
+title_and_wait "You see no errors accessing the frontend of the Hipster shop."
+
+title_no_wait "Perform a checkout."
+title_no_wait "From the Hipster shop app tab, Add an item (or more) to the shopping cart."
+title_and_wait "Click on the cart and click on \"Place order\" from the cart page."
+
+title_no_wait "Upon checkout, you see a \"failed to convert price\" error."
+title_no_wait "Frontend service is authorized to access checkout service."
+title_no_wait "However, checkout service still cannot access the currency service."
+title_no_wait "This is required to perform a checkout."
+echo -e "\n"
+
+title_no_wait "Authorize checkout service to access currency service."
+title_and_wait "Inspect the \"currency-allow-frontend-checlout.yaml\"."
+print_and_execute "cat ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend-checkout.yaml"
+echo -e "\n"
+
+
+title_no_wait "The AuthorizationPolicy allows currency service access from both the frontend and the checkout service ."
+
+title_and_wait "Copy this AuthorizationPolicy to k8s-repo.."
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend-checkout.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_1_CLUSTER}/app-authorization/currency-policy.yaml"
+print_and_execute "cp ${WORKDIR}/asm/k8s_manifests/prod/app-authorization/currency-allow-frontend-checkout.yaml ${WORKDIR}/k8s-repo/${OPS_GKE_2_CLUSTER}/app-authorization/currency-policy.yaml"
+ 
+echo -e "\n"
+title_and_wait "Commit to k8s-repo to trigger deployment."
+print_and_execute "cd ${WORKDIR}/k8s-repo"
+print_and_execute "git add . && git commit -am \"AuthorizationPolicy - currency: allow frontend and checkout\""
+print_and_execute "git push --set-upstream origin master"
+
+echo -e "\n"
+title_no_wait "View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+title_no_wait "Waiting for Cloud Build to finish..."
+
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+while [[ "${BUILD_STATUS}" == "WORKING" ]]
+  do
+      title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+      sleep 10
+      BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+  done
+
+echo -e "\n"
+title_no_wait "Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
+fi
+
+title_no_wait "Access the Hipster shop by clicking the following link."
+print_and_execute "echo \"https://frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog\""
+title_and_wait "You see no errors accessing the frontend of the Hipster shop."
+
+title_no_wait "Perform a checkout."
+title_no_wait "From the Hipster shop app tab, Add an item (or more) to the shopping cart."
+title_and_wait "Click on the cart and click on \"Place order\" from the cart page."
+
+title_no_wait "You can successfully access the Hipster shop and perform a checklout."
+echo -e "\n"
+
+title_no_wait "Congratulations! You have successfully completed the Authorization Policies lab."
+echo -e "\n"
 
 
 
