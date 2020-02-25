@@ -109,6 +109,23 @@ title_and_wait "Run the canary deployment script for the Dev1 region. Note - thi
 print_and_execute "K8S_REPO=${K8S_REPO} CANARY_DIR=${CANARY_DIR} OPS_DIR=${OPS_GKE_1_CLUSTER} OPS_CONTEXT=${OPS_GKE_1} ./auto-canary.sh"
 
 # Close the split pane.
+title_no_wait "Close the split pane."
+print_and_execute "tmux respawn-pane -t ${TMUX_SESSION}:0.1 -k 'exit'"
+
+title_and_wait "Run the watch command to observe the HTTP response distribution for the frontend service. We can see that all traffic is going to the frontend v1 deployment, defined in the new VirtualService."
+print_and_execute "export TMUX_SESSION=\$(tmux display-message -p '#S')"
+if [[ -z ${TMUX_SESSION} ]]; then
+    error_no_wait "failed to locate tmux session."
+    error_no_wait "verify that you are running in cloud shell and are in a tmux session."
+    exit 1
+fi
+print_and_execute "tmux split-window -d -t ${TMUX_SESSION}:0 -p33 -v \"export KUBECONFIG=${WORKDIR}/asm/gke/kubemesh; kubectl --context ${DEV2_GKE_1} exec -n frontend -it $RESPY_POD -c respy /bin/sh -- -c 'watch -n 1 ./respy --u http://frontend:80/version --c 10 --n 500'; sleep 2\""
+
+title_and_wait "Run the canary deployment script for the Dev1 region. Note - this script takes about 10 minutes to complete."
+print_and_execute "K8S_REPO=${K8S_REPO} CANARY_DIR=${CANARY_DIR} OPS_DIR=${OPS_GKE_2_CLUSTER} OPS_CONTEXT=${OPS_GKE_2} ./auto-canary.sh"
+
+# Close the split pane.
+title_no_wait "Close the split pane."
 print_and_execute "tmux respawn-pane -t ${TMUX_SESSION}:0.1 -k 'exit'"
 
 echo -e "\n"
