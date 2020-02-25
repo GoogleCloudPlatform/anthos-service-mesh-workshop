@@ -57,10 +57,10 @@ export KUSTOMIZE_FILEPATH="${HOME}/bin/kustomize"
 if [ -f ${KUSTOMIZE_FILEPATH} ]; then
     title_no_wait "kustomize is already installed and in the ${KUSTOMIZE_FILEPATH} folder."
 else 
-    nopv_and_execute "curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash"
-    nopv_and_execute "export PATH=$PATH:${HOME}/bin"
-    nopv_and_execute "grep -q \"export PATH=.*${HOME}/bin.*\" ${HOME}/.asm-workshop || echo \"export PATH=$PATH:${HOME}/bin\" >> ${HOME}/.asm-workshop"
+    nopv_and_execute "curl -s \"https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh\"  | bash"
 fi
+export PATH=$PATH:${HOME}/bin
+grep -q "export PATH=.*\${HOME}/bin.*" ${HOME}/.asm-workshop.bash || echo "export PATH=\$PATH:\${HOME}/bin" >> ${HOME}/.asm-workshop.bash
 echo -e "\n"
 
 export PV_INSTALLED=`which pv`
@@ -114,7 +114,7 @@ if [[ -z ${TF_ADMIN} ]]; then
 fi
 echo -e "\n"
 
-title_and_wait "Get the terraform-ops-project ID."
+title_and_wait "Get the ops-project ID."
 print_and_execute "export TF_VAR_ops_project_name=$(gcloud projects list --filter='name~user.*-ops' --format='value(projectId)')"
 print_and_execute "echo ${TF_VAR_ops_project_name}"
 if [[ -z ${TF_VAR_ops_project_name} ]]; then
@@ -130,7 +130,7 @@ print_and_execute "mkdir -p ${WORKDIR}/asm/vars"
 export VARS_FILE=${WORKDIR}/asm/vars/vars.sh
 print_and_execute "gsutil cp gs://${TF_ADMIN}/vars/vars.sh ${VARS_FILE}"
 print_and_execute "echo \"export WORKDIR=${WORKDIR}\" >> ${VARS_FILE}"
-print_and_execute "echo \"cd \${WORKDIR}\" >> ${HOME}/.asm-workshop.bash
+print_and_execute "echo \"cd \${WORKDIR}\" >> ${HOME}/.asm-workshop.bash"
 echo -e "\n"
 
 title_no_wait "Verify the infrastructure Cloud Build finished successfully."
