@@ -86,8 +86,8 @@ if [ "${TF_VAR_folder_id}" ]; then
    echo -e "\n${CYAN}Folder ${TF_VAR_folder_display_name} already exists.${NC}"
    else
        echo -e "\n${CYAN}Creating asm workshop folder ${TF_VAR_folder_display_name}...${NC}"
-       gcloud resource-manager folders create --display-name=${TF_VAR_folder_display_name} --organization=${TF_VAR_org_id}
-       export TF_VAR_folder_id=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
+       gcloud resource-manager folders create --display-name=${TF_VAR_folder_display_name} --folder $PARENT_FOLDER_ID
+       export TF_VAR_folder_id=$(gcloud resource-manager folders list --folder=$PARENT_FOLDER_ID | grep ${TF_VAR_folder_display_name} | awk '{print $3}')
 fi
 
 # TODO: If project already exists then have script retry with a diff PROJECT_ID_SUFFIX value
