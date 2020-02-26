@@ -146,7 +146,7 @@ title_and_wait "Get the existing dashboard that was just added:"
 print_and_execute "curl -X GET -H \"Authorization: Bearer $OAUTH_TOKEN\" -H \"Content-Type: application/json\" \
     https://monitoring.googleapis.com/v1/projects/${TF_VAR_ops_project_name}/dashboards/servicesdash > ${WORKDIR}/asm/k8s_manifests/prod/app-telemetry/sd-services-dashboard.json"
  
-title_no_wait "Add a new Chart for 50th %ile latency to the Dashbaord."
+title_no_wait "Add a new Chart for 50th %ile latency to the Dashboard."
 title_and_wait "Use jq to patch the downloaded Dashboard json in the previous step with the new Chart."
 
 title_no_wait "Checking to see if the \"Service Average Latencies\" Chart already exists"
