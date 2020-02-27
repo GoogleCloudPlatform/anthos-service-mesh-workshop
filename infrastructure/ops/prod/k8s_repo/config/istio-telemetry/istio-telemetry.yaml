@@ -139,6 +139,8 @@ spec:
         - received_bytes
         - sent_bytes
         - referer
+        - destination_cluster
+        - source_cluster
       server-tcp-accesslog-stackdriver.instance.istio-system:
         labelNames:
         - mesh_uid
@@ -271,6 +273,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -311,6 +315,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -350,6 +356,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -390,6 +398,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -429,6 +439,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -469,6 +481,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -508,6 +522,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -548,6 +564,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -583,6 +601,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -619,6 +639,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -654,6 +676,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -690,6 +714,8 @@ spec:
       destination_owner: destination.owner | "unknown"
       destination_principal: destination.principal | "unknown"
       source_principal: source.principal | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
     monitoredResourceType: '"k8s_pod"'
     monitoredResourceDimensions:
       project_id: '""'
@@ -872,6 +898,8 @@ spec:
       source_workload_namespace: source.workload.namespace | "unknown"
       source_workload_name: source.workload.name | "unknown"
       source_owner: source.owner | "unknown"
+      source_cluster: source.cluster_name | source.labels["cluster"] | ""
+      destination_cluster: destination.cluster_name |destination.labels["cluster"] | ""
       destination_workload_namespace: destination.workload.namespace | "unknown"
       destination_workload_name: destination.workload.name | "unknown"
       destination_owner: destination.owner | "unknown"
