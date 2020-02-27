@@ -186,6 +186,7 @@ echo -e "export RANDOM_PERSIST=${RANDOM_PERSIST}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_org_id=${TF_VAR_org_id}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_billing_account=${TF_VAR_billing_account}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_folder_id=${TF_VAR_folder_id}" | tee -a ${VARS_FILE}
+echo -e "export PARENT_FOLDER_ID=${PARENT_FOLDER_ID}" | tee -a ${VARS_FILE}
 echo -e "export TF_ADMIN=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_tfadmin=${TF_ADMIN}" | tee -a ${VARS_FILE}
 echo -e "export TF_VAR_project_editor=${ADMIN_USER}" | tee -a ${VARS_FILE}

@@ -70,8 +70,13 @@ gsutil cp gs://${ADMIN_GCS_BUCKET}/${ORG_NAME}/${WORKSHOP_ID}/workshop.txt ${SCR
 
 # Loop over tf admin projects and copy vars file to clean up projects
 while read user_tf_project; do
+  unset VARS_FILE
   export VARS_FILE="${SCRIPT_DIR}/../vars/vars_${user_tf_project}.sh"
   gsutil cp gs://${user_tf_project}/vars/vars.sh ${VARS_FILE}
   source ${SCRIPT_DIR}/cleanup_projects.sh
-  unset VARS_FILE
 done <${SCRIPT_DIR}/../tmp/workshop.txt
+
+# Clean up parent folder
+if [[ -n $PARENT_FOLDER_ID ]]; then
+  gcloud resource-manager folders delete $PARENT_FOLDER_ID
+fi
