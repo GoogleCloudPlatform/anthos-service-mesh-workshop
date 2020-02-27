@@ -102,6 +102,7 @@ spec:
       server-accesslog-stackdriver.instance.istio-system:
         labelNames:
         - mesh_uid
+        - cluster_name
         - source_uid
         - source_ip
         - source_app
@@ -716,6 +717,7 @@ spec:
       source_ip: source.ip | ip("0.0.0.0")
       source_app: source.labels["app"] | ""
       source_principal: source.principal | ""
+      source_cluster: source.labels["cluster"] | source.cluster_name | ""
       source_name: source.name | ""
       source_workload: source.workload.name | ""
       source_namespace: source.namespace | ""
@@ -725,6 +727,7 @@ spec:
       destination_ip: destination.ip | ip("0.0.0.0")
       destination_service_host: destination.service.host | ""
       destination_workload: destination.workload.name | ""
+      destination_cluster: destination.labels["cluster"] | destination.cluster_name | ""
       destination_name: destination.name | ""
       destination_namespace: destination.namespace | ""
       destination_owner: destination.owner | ""
@@ -751,9 +754,9 @@ spec:
     monitored_resource_type: '"k8s_container"'
     monitoredResourceDimensions:
       project_id: '""'
-      cluster_name: '""'
+      cluster_name: destination.cluster_name | ""
       namespace_name: destination.namespace | "unknown"
-      location: '""'
+      location: destination.labels['location'] | ""
       container_name: conditional((destination.name | "unknown").startsWith("istio-telemetry") || (destination.name | "unknown").startsWith("istio-policy"), "mixer", destination.container.name | "unknown")
       pod_name: destination.name | "unknown"
 ---
