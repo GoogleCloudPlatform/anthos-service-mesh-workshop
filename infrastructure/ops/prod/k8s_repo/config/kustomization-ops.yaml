@@ -10,6 +10,8 @@ bases:
   - autoneg-system/
   - app-cnrm
   - app/
+  - app-authorization/
+  - app-canary/
   - app-ingress/
   - app-loadgenerator/
   - istio-networking/

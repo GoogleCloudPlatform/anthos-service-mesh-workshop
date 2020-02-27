@@ -138,6 +138,19 @@ jq '.bindings[] | select(.role=="roles/billing.admin")' | grep $ADMIN_USER &>/de
 export TF_VAR_org_id=$ORG_ID
 export TF_VAR_billing_account=$BILLING_ID
 
+export PARENT_FOLDER_NAME=asm-workshop-$WORKSHOP_ID
+
+echo -e "\n${CYAN}Checking for existing workshop folder...${NC}"
+export PARENT_FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep $PARENT_FOLDER_NAME | awk '{print $3}')
+if [ "$PARENT_FOLDER_ID" ]; then
+   echo -e "\n${CYAN}Folder $PARENT_FOLDER_NAME already exists.${NC}"
+else
+       echo -e "\n${CYAN}Creating asm workshop folder $PARENT_FOLDER_NAME...${NC}"
+       gcloud resource-manager folders create --display-name=$PARENT_FOLDER_NAME --organization=${TF_VAR_org_id}
+       export PARENT_FOLDER_ID=$(gcloud resource-manager folders list --organization=${TF_VAR_org_id} | grep $PARENT_FOLDER_NAME | awk '{print $3}')
+fi
+
+
 for i in $(seq ${START_USER_NUM} ${END_USER_NUM})
 do
   USER_ID=$(printf "%03d" $i)

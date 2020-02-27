@@ -52,7 +52,7 @@
         }
       },
       {
-        "title": "Service Latencies",
+        "title": "Service p99 Latencies",
         "xyChart": {
           "dataSets": [
             {

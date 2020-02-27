@@ -13,7 +13,7 @@ active_v2_percent () {
 run_canary() {
     PERCENT=$1
     # copy all manifests in canary-${PERCENT}/  to k8s_repo
-    cp canary${PERCENT}/*  ${K8S_REPO}/${OPS_DIR}/app-canary/
+    cp ${CANARY_DIR}/canary${PERCENT}/*  ${K8S_REPO}/${OPS_DIR}/app-canary/
 
     # commit to K8s_repo
     cd ${K8S_REPO}/${OPS_DIR}/
