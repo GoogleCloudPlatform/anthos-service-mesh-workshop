@@ -24,6 +24,7 @@ export NC='\033[0m' # No Color
 SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 source ${VARS_FILE}
+export ADMIN_USER=$(gcloud config get-value account)
 
 # Create a logs folder and file and send stdout and stderr to console and log file 
 mkdir -p logs

@@ -93,7 +93,6 @@ ORG_ID=$(gcloud organizations list \
 [ ${ORG_ID} ] || { echo "org-name does not exist or you do not have correct permissions in this org."; exit; }
 
 # Validate active user is org admin
-# TODO: use this in clean up script instead
 export ADMIN_USER=$(gcloud config get-value account)
 gcloud organizations get-iam-policy $ORG_ID --format=json | \
 jq '.bindings[] | select(.role=="roles/resourcemanager.organizationAdmin")' | grep $ADMIN_USER  &>/dev/null
