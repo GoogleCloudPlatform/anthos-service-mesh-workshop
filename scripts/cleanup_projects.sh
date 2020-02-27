@@ -72,8 +72,9 @@ fi
 echo -e "\n${CYAN}Deleting terraform admin project...${NC}" 
 if gcloud projects list --filter $TF_ADMIN | grep $TF_ADMIN; then
   gcloud projects delete $TF_ADMIN --quiet
+fi
 
-echo -e "\n${CYAN}Deleting folder...${NC}" 
+echo -e "\n${CYAN}Deleting folder...${NC}"
 gcloud resource-manager folders delete ${TF_VAR_folder_id}
 
 echo -e "\n${CYAN}Removing cloudbuild service account project creator IAM role at the Org level...${NC}" 
