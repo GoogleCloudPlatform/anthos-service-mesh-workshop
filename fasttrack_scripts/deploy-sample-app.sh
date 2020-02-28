@@ -241,7 +241,7 @@ for ns in ad checkout currency email payment recommendation shipping; do
   title_no_wait "Waiting until Deployment ${ns}service is deployed and Ready in all app clusters..."
   is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}service
   is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
-  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}service
+  is_deployment_ready ${DEV2_GKE_1} ${ns} ${ns}service
   is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}service
   echo -e "\n"
 done;
@@ -254,7 +254,7 @@ for ns in frontend loadgenerator; do
   title_no_wait "Waiting until Deployment ${ns} is deployed and Ready in all app clusters..."
   is_deployment_ready ${DEV1_GKE_1} ${ns} ${ns}
   is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
-  is_deployment_ready ${DEV1_GKE_2} ${ns} ${ns}
+  is_deployment_ready ${DEV2_GKE_1} ${ns} ${ns}
   is_deployment_ready ${DEV2_GKE_2} ${ns} ${ns}
   echo -e "\n"
 done;
