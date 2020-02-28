@@ -24,6 +24,7 @@ export NC='\033[0m' # No Color
 SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
 source ${VARS_FILE}
+export ADMIN_USER=$(gcloud config get-value account)
 
 # Create a logs folder and file and send stdout and stderr to console and log file 
 mkdir -p logs
@@ -43,22 +44,37 @@ gcloud config set account ${ADMIN_USER}
 echo -e "\n${CYAN}Deleting cloud endpoint service...${NC}" 
 gcloud endpoints services delete frontend.endpoints.${TF_VAR_ops_project_name}.cloud.goog --project $TF_VAR_ops_project_name --async --quiet
 
-echo -e "\n${CYAN}Deleting dev1, dev2 and ops projects...${NC}" 
-gcloud projects delete ${TF_VAR_dev1_project_name} --quiet
-gcloud projects delete ${TF_VAR_dev2_project_name} --quiet
-gcloud projects delete ${TF_VAR_ops_project_name} --quiet
+echo -e "\n${CYAN}Deleting dev1, dev2, dev3 and ops projects...${NC}"
+if gcloud projects list --filter $TF_VAR_dev1_project_name | grep $TF_VAR_dev1_project_name; then
+  gcloud projects delete $TF_VAR_dev1_project_name --quiet
+fi
+if gcloud projects list --filter $TF_VAR_dev2_project_name | grep $TF_VAR_dev2_project_name; then
+  gcloud projects delete $TF_VAR_dev2_project_name --quiet
+fi
+if gcloud projects list --filter $TF_VAR_dev3_project_name | grep $TF_VAR_dev3_project_name; then
+  gcloud projects delete $TF_VAR_dev3_project_name --quiet
+fi
+if gcloud projects list --filter $TF_VAR_ops_project_name | grep $TF_VAR_ops_project_name; then
+  gcloud projects delete $TF_VAR_ops_project_name --quiet
+fi
 
 echo -e "\n${CYAN}Removing shared vpc lien on the host project...${NC}" 
 export LIEN_ID=$(gcloud alpha resource-manager liens list --project=${TF_VAR_host_project_name} | awk 'NR==2 {print $1}')
-gcloud alpha resource-manager liens delete ${LIEN_ID}
+if [[ -n $LIEN_ID ]]; then
+  gcloud alpha resource-manager liens delete $LIEN_ID;
+fi
 
-echo -e "\n${CYAN}Deleting host project...${NC}" 
-gcloud projects delete ${TF_VAR_host_project_name} --quiet
+echo -e "\n${CYAN}Deleting host project...${NC}"
+if gcloud projects list --filter $TF_VAR_host_project_name | grep $TF_VAR_host_project_name; then
+  gcloud projects delete $TF_VAR_host_project_name --quiet
+fi
 
 echo -e "\n${CYAN}Deleting terraform admin project...${NC}" 
-gcloud projects delete ${TF_ADMIN} --quiet
+if gcloud projects list --filter $TF_ADMIN | grep $TF_ADMIN; then
+  gcloud projects delete $TF_ADMIN --quiet
+fi
 
-echo -e "\n${CYAN}Deleting folder...${NC}" 
+echo -e "\n${CYAN}Deleting folder...${NC}"
 gcloud resource-manager folders delete ${TF_VAR_folder_id}
 
 echo -e "\n${CYAN}Removing cloudbuild service account project creator IAM role at the Org level...${NC}" 
