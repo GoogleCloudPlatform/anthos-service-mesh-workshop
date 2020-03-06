@@ -46,7 +46,7 @@ This workshop is a hands-on immersive experience that goes through how to set up
   * Testing in production (traffic mirroring for A/B testing, fault injection for chaos testing)
 ## Prerequisites
 * The following are required before you proceed with this workshop:
-* A GCP Organization node
-* GCP Organization ID
-* A billing account ID (your user must be Billing Admin on this billing account)
-* Organization Administrator IAM role at the Org level for your user
+  * A GCP Organization node
+  * GCP Organization ID
+  * A billing account ID (your user must be Billing Admin on this billing account)
+  * Organization Administrator IAM role at the Org level for your user
