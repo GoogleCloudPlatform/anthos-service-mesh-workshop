@@ -16,8 +16,11 @@ locals {
   # Download istio operator, copy to GCS
   # This will be added to the cloudbuild repo for the project.
   istio_operator_download_script = <<EOT
-wget -qO- https://github.com/istio/operator/archive/${var.istio_version}.tar.gz | tar -zxf - operator-${var.istio_version}/deploy
-gsutil -m rsync -r -d operator-${var.istio_version}/deploy gs://${var.tfadmin_proj}/ops/istio-operator-${var.istio_version}
+gsutil cp gs://gke-release/asm/istio-${var.istio_version}-asm.0-osx.tar.gz . \
+&& tar -zxf ./istio-${var.istio_version}-asm.0-osx.tar.gz istio-${var.istio_version}-asm.0/install/kubernetes/operator/deploy
+
+gsutil -m rsync -r -d istio-${var.istio_version}-asm.0/install/kubernetes/operator/deploy \
+gs://${var.tfadmin_proj}/ops/istio-operator-${var.istio_version}
 
 wget -qO- https://storage.googleapis.com/asm-workshop/install-bundle-with-workload-identity.tar.gz | tar -zxvf - 
 gsutil -m rsync -r -d install-bundle gs://${var.tfadmin_proj}/ops/cnrm/install-bundle
