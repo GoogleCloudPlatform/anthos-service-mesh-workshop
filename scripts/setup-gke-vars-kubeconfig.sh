@@ -41,7 +41,7 @@ export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
 source ${VARS_FILE}
 
 # Create GKE vars
-echo -e "export ISTIO_VERSION=1.4.3" | tee -a ${VARS_FILE}
+echo -e "export ISTIO_VERSION=1.4.4" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_1_CLUSTER=gke-asm-1-r1-prod" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_2_CLUSTER=gke-asm-2-r2-prod" | tee -a ${VARS_FILE}
 echo -e "export DEV1_GKE_1_CLUSTER=gke-1-apps-r1a-prod" | tee -a ${VARS_FILE}
