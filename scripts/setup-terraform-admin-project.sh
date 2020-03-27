@@ -69,7 +69,7 @@ echo -e "${CYAN}Your Billing Account is ${TF_VAR_billing_account}${NC}"
 RANDOM_PERSIST=${RANDOM_PERSIST:-${RANDOM}}
 
 echo -e "\n${CYAN}Defining terraform admin project ID, SA and SA credentials location...${NC}"
-ORG_USER=${MY_USER?env not set}
+ORG_USER=${MY_USER?variable not set}
 ORG_USER=${MY_USER%@*}
 ORG_USER=${ORG_USER:0:7}
 
