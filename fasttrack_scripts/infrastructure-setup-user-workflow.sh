@@ -28,7 +28,7 @@ fi
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 export LAB_NAME=infrastructure-setup-user-workflow
 
-# Create a logs folder and file and send stdout and stderr to console and log file 
+# Create a logs folder and file and send stdout and stderr to console and log file
 mkdir -p ${SCRIPT_DIR}/../logs
 export LOG_FILE=${SCRIPT_DIR}/../logs/ft-${LAB_NAME}-$(date +%s).log
 touch ${LOG_FILE}
@@ -56,7 +56,7 @@ nopv_and_execute "mkdir -p ${HOME}/bin && cd ${HOME}/bin"
 export KUSTOMIZE_FILEPATH="${HOME}/bin/kustomize"
 if [ -f ${KUSTOMIZE_FILEPATH} ]; then
     title_no_wait "kustomize is already installed and in the ${KUSTOMIZE_FILEPATH} folder."
-else 
+else
     nopv_and_execute "curl -s \"https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh\"  | bash"
 fi
 export PATH=$PATH:${HOME}/bin
@@ -92,6 +92,9 @@ if [[ -z ${MY_USER} ]]; then
     exit 1
 fi
 
+ORG_USER=${MY_USER%@*}
+ORG_USER=${ORG_USER:0:7}
+
 title_and_wait "Verify that you are logged in with the correct user. The user should be ${MY_USER}."
 print_and_execute "gcloud config list account --format=json | jq -r .core.account"
 export ACCOUNT=`gcloud config list account --format=json | jq -r .core.account`
@@ -104,23 +107,25 @@ fi
 echo -e "\n"
 
 title_and_wait "Get the terraform-admin-project ID."
-print_and_execute "export TF_ADMIN=$(gcloud projects list --filter='name~user.*-tf' --format='value(projectId)')"
+project=$(gcloud projects list --filter="name~^${ORG_USER}.*-tf" --format='value(projectId)')
+print_and_execute "export TF_ADMIN=${project}"
 print_and_execute "echo ${TF_ADMIN}"
 if [[ -z ${TF_ADMIN} ]]; then
   error_no_wait "Uh oh! We cannot retrieve your terraform-admin project ID. You cannot continue the workshop without this. Please contact your lab administrator"
-  error_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
-  gcloud projects list 
+  error_no_wait "Here is a list of all projects accessible by you. Exiting script..."
+  gcloud projects list
   exit 1
 fi
 echo -e "\n"
 
 title_and_wait "Get the ops-project ID."
-print_and_execute "export TF_VAR_ops_project_name=$(gcloud projects list --filter='name~user.*-ops' --format='value(projectId)')"
+project=$(gcloud projects list --filter="name~^${ORG_USER}.*-ops" --format='value(projectId)')
+print_and_execute "export TF_VAR_ops_project_name=${project}"
 print_and_execute "echo ${TF_VAR_ops_project_name}"
 if [[ -z ${TF_VAR_ops_project_name} ]]; then
   error_no_wait "Uh oh! We cannot retrieve your terraform-ops project ID. You cannot continue the workshop without this. Please contact your lab administrator"
-  error_no_wait "Here is a list of all projects accessible by you. Exiting script..." 
-  gcloud projects list 
+  error_no_wait "Here is a list of all projects accessible by you. Exiting script..."
+  gcloud projects list
   exit 1
 fi
 echo -e "\n"
@@ -189,12 +194,12 @@ export OPS_CLUSTER_CONTEXTS=(
 
 # Define OPS cluster deployments - the full Istio controlplane
 declare -a OPS_ISTIO_DEPLOYMENTS
-export OPS_ISTIO_DEPLOYMENTS=(grafana 
-                        istio-citadel 
-                        istio-ingressgateway 
-                        istio-egressgateway 
-                        istio-galley 
-                        istio-pilot 
+export OPS_ISTIO_DEPLOYMENTS=(grafana
+                        istio-citadel
+                        istio-ingressgateway
+                        istio-egressgateway
+                        istio-galley
+                        istio-pilot
                         istio-policy
                         istio-telemetry
                         istio-tracing
@@ -209,11 +214,11 @@ for cluster in ${OPS_CLUSTER_CONTEXTS[@]}
     do
         title_no_wait "for Cluster ${cluster}"
         for deployment in ${OPS_ISTIO_DEPLOYMENTS[@]}
-            do  
+            do
                 is_deployment_ready ${cluster} istio-system ${deployment}
-            done 
+            done
         echo -e "\n"
-    done 
+    done
 echo -e "\n"
 title_no_wait "Istio Deployments are Ready in the ops clusters."
 
@@ -242,11 +247,11 @@ export APP_CLUSTER_CONTEXTS=(
     ${DEV2_GKE_2}
 )
 
-# Define deployments running in shared clusters 
+# Define deployments running in shared clusters
 # only citadel, sidecar-injector and optionally coredns should be running
 declare -a APP_ISTIO_DEPLOYMENTS
-export APP_ISTIO_DEPLOYMENTS=( 
-        istio-citadel 
+export APP_ISTIO_DEPLOYMENTS=(
+        istio-citadel
         istio-sidecar-injector
         istiocoredns
         )
@@ -256,11 +261,11 @@ for cluster in ${APP_CLUSTER_CONTEXTS[@]}
     do
         title_no_wait "for Cluster ${cluster}"
         for deployment in ${APP_ISTIO_DEPLOYMENTS[@]}
-            do  
+            do
                 is_deployment_ready ${cluster} istio-system ${deployment}
-            done 
+            done
         echo -e "\n"
-    done 
+    done
 echo -e "\n"
 title_no_wait "Istio deployments are Ready in the apps clusters."
 
