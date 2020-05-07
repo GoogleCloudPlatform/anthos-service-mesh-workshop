@@ -6,9 +6,7 @@ resource "google_compute_global_address" "ingress" {
 
 # Cloud endpoints for DNS
 module "cloud-ep-dns" {
-  # Return to module registry after this is merged: https://github.com/terraform-google-modules/terraform-google-endpoints-dns/pull/2
-  #source      = "terraform-google-modules/endpoints-dns/google"
-  source      = "github.com/danisla/terraform-google-endpoints-dns?ref=0.12upgrade"
+  source      = "terraform-google-modules/endpoints-dns/google"
   project     = data.terraform_remote_state.ops_project.outputs.ops_project_id
   name        = "frontend"
   external_ip = google_compute_global_address.ingress.address
