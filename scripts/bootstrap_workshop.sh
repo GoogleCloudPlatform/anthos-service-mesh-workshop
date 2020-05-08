@@ -45,8 +45,7 @@ BILLING_ID=
 
 while [ "$1" != "" ]; do
     case $1 in
-        --set-up-for-admin | -sufa )  shift
-                                      SETUP_ADMIN=true
+        --set-up-for-admin | -sufa )  SETUP_ADMIN=true # don't shift because it's a boolean flag
                                       ;;
         --org-name | -on )            shift
                                       ORG_NAME=$1
