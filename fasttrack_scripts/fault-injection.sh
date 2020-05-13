@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -54,9 +54,10 @@ echo -e "\n"
 
 
 title_no_wait "⏱ Let's add a 5-second delay fault to recommendationservice..."
-print_and_execute "export K8S_REPO=${WORKDIR}/k8s-repo; export ASM=${WORKDIR}/asm/; cd ${ASM}"
+print_and_execute "export K8S_REPO=${WORKDIR}/k8s-repo; export ASM=${WORKDIR}/asm"
+print_and_execute "cd ${ASM}"
 print_and_execute "cat k8s_manifests/prod/istio-networking/app-recommendation-vs-fault.yaml"
-
+echo -e "\n"
 
 title_and_wait "📑 Copy VirtualService to k8s-repo"
 print_and_execute "cp $ASM/k8s_manifests/prod/istio-networking/app-recommendation-vs-fault.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/app-recommendation-vs-fault.yaml"
@@ -68,7 +69,7 @@ print_and_execute "cd ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/; kustom
 # Push to k8s-repo master
 title_and_wait "⬆️ Commit changes to the k8s-repo."
 print_and_execute "cd ${K8S_REPO}"
-print_and_execute "git add . && git commit -am \"circuit breaker setup - shippingservice\""
+print_and_execute "git add . && git commit -am \"Fault injection - recommendationservice\""
 print_and_execute "git push"
 
 
@@ -96,10 +97,34 @@ if [[ $BUILD_STATUS != "SUCCESS" ]]; then
   exit 1
 fi
 
-
-
 # Fortio - send traffic + observe timeout
-
+title_and_wait "🚀 Use the fortio loadgen to send 100 requests to recommendationservice..."
+print_and_execute "FORTIO_POD=$(kubectl --context ${DEV1_GKE_1} get pod -n shipping | grep fortio | awk '{ print $1 }')"
+print_and_execute "kubectl --context ${DEV1_GKE_1} exec -it $FORTIO_POD -n shipping -c fortio -- /usr/bin/fortio load -grpc -c 100 -n 100 -qps 0 recommendationservice.recommendation.svc.cluster.local:8080"
 
 
 # Cleanup
+title_and_wait "🧹 Cleanup - remove VirtualService"
+
+print_and_execute "kubectl --context ${OPS_GKE_1} delete virtualservice recommendation-delay-fault -n recommendation"
+print_and_execute "rm ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/app-recommendation-vs-fault.yaml"
+print_and_execute "cd ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/; kustomize edit remove resource app-recommendation-vs-fault.yaml"
+
+print_and_execute "kubectl --context ${OPS_GKE_2} delete virtualservice recommendation-delay-fault -n recommendation"
+print_and_execute "rm ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/app-recommendation-vs-fault.yaml"
+print_and_execute "cd ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/; kustomize edit remove resource app-recommendation-vs-fault.yaml"
+
+
+# Push to master
+title_and_wait "⬆️ Commit changes to the k8s-repo."
+print_and_execute "cd ${K8S_REPO}"
+print_and_execute "git add . && git commit -am \"fault injection cleanup\""
+print_and_execute "git push"
+
+
+echo -e "\n"
+title_no_wait "✅ Congratulations! You have successfully completed the Fault Injection lab."
+echo -e "\n"
+
+
+
