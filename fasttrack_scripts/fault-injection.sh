@@ -28,7 +28,7 @@ fi
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 export LAB_NAME=fault-injection
 
-# Create a logs folder and file and send stdout and stderr to console and log file 
+# Create a logs folder and file and send stdout and stderr to console and log file
 mkdir -p ${SCRIPT_DIR}/../logs
 export LOG_FILE=${SCRIPT_DIR}/../logs/ft-${LAB_NAME}-$(date +%s).log
 touch ${LOG_FILE}
@@ -50,9 +50,56 @@ echo -e "\n"
 echo "${bold}*** Lab: Fault Injection ***${normal}"
 echo -e "\n"
 
-# START INSTRUCTIONS HERE - EXAMPLE BELOW
-echo "${bold}Set up ops git repo if not already done. Press ENTER to continue...${normal}"
-read -p ''
-print_and_execute "mkdir -p ${WORKDIR}/k8s-repo"
-print_and_execute "cd ${WORKDIR}/k8s-repo"
+# https://codelabs.developers.google.com/codelabs/anthos-service-mesh-workshop/#13
 
+
+title_no_wait "⏱ Let's add a 5-second delay fault to recommendationservice..."
+print_and_execute "export K8S_REPO=${WORKDIR}/k8s-repo; export ASM=${WORKDIR}/asm/; cd ${ASM}"
+print_and_execute "cat k8s_manifests/prod/istio-networking/app-recommendation-vs-fault.yaml"
+
+
+title_and_wait "📑 Copy VirtualService to k8s-repo"
+print_and_execute "cp $ASM/k8s_manifests/prod/istio-networking/app-recommendation-vs-fault.yaml ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/app-recommendation-vs-fault.yaml"
+print_and_execute "cd ${K8S_REPO}/${OPS_GKE_1_CLUSTER}/istio-networking/; kustomize edit add resource app-recommendation-vs-fault.yaml"
+print_and_execute "cp $ASM/k8s_manifests/prod/istio-networking/app-recommendation-vs-fault.yaml ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/app-recommendation-vs-fault.yaml"
+print_and_execute "cd ${K8S_REPO}/${OPS_GKE_2_CLUSTER}/istio-networking/; kustomize edit add resource app-recommendation-vs-fault.yaml"
+
+
+# Push to k8s-repo master
+title_and_wait "⬆️ Commit changes to the k8s-repo."
+print_and_execute "cd ${K8S_REPO}"
+print_and_execute "git add . && git commit -am \"circuit breaker setup - shippingservice\""
+print_and_execute "git push"
+
+
+# Wait for ops cloud build to complete
+echo -e "\n"
+title_no_wait "🛑 View the status of the Ops project Cloud Build in a previously opened tab or by clicking the following link: "
+echo -e "\n"
+title_no_wait "https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}"
+title_no_wait "Waiting for Cloud Build to finish..."
+
+
+BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+while [[ "${BUILD_STATUS}" =~ WORKING|QUEUED ]]; do
+    title_no_wait "Still waiting for cloud build to finish. Sleep for 10s"
+    sleep 10
+    BUILD_STATUS=$(gcloud builds describe $(gcloud builds list --project ${TF_VAR_ops_project_name} --format="value(id)" | head -n 1) --project ${TF_VAR_ops_project_name} --format="value(status)")
+done
+
+echo -e "\n"
+title_no_wait "✅ Build finished with status: $BUILD_STATUS"
+echo -e "\n"
+
+if [[ $BUILD_STATUS != "SUCCESS" ]]; then
+  error_no_wait "⚠️ Build unsuccessful. Check build logs at: \n https://console.cloud.google.com/cloud-build/builds?project=${TF_VAR_ops_project_name}. \n Exiting...."
+  exit 1
+fi
+
+
+
+# Fortio - send traffic + observe timeout
+
+
+
+# Cleanup
