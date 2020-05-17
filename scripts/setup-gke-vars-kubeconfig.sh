@@ -16,7 +16,7 @@
 
 # TASK 2: Setting up Istio
 
-# Setting up GKE cluster names, regions, zones and contexts and add them to vars.sh 
+# Setting up GKE cluster names, regions, zones and contexts and add them to vars.sh
 
 # Font colors
 export CYAN='\033[1;36m'
@@ -26,7 +26,7 @@ export NC='\033[0m' # No Color
 # Export a SCRIPT_DIR var and make all links relative to SCRIPT_DIR
 export SCRIPT_DIR=$(dirname $(readlink -f $0 2>/dev/null) 2>/dev/null || echo "${PWD}/$(dirname $0)")
 
-# Create a log file and send stdout and stderr to console and log file 
+# Create a log file and send stdout and stderr to console and log file
 mkdir -p ${SCRIPT_DIR}/../logs
 export LOG_FILE=${SCRIPT_DIR}/../logs/setup-gke-vars-$(date +%s).log
 touch ${LOG_FILE}
@@ -35,13 +35,13 @@ exec &> >(tee -i ${LOG_FILE})
 
 
 # Add GKE vars to vars.sh and re-source vars
-echo -e "\n${CYAN}Adding GKE cluster names, regions, zones and contexts to vars.sh...${NC}" 
+echo -e "\n${CYAN}Adding GKE cluster names, regions, zones and contexts to vars.sh...${NC}"
 
 export VARS_FILE=${SCRIPT_DIR}/../vars/vars.sh
 source ${VARS_FILE}
 
 # Create GKE vars
-echo -e "export ISTIO_VERSION=1.4.3" | tee -a ${VARS_FILE}
+echo -e "export ISTIO_VERSION=1.5.4" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_1_CLUSTER=gke-asm-1-r1-prod" | tee -a ${VARS_FILE}
 echo -e "export OPS_GKE_2_CLUSTER=gke-asm-2-r2-prod" | tee -a ${VARS_FILE}
 echo -e "export DEV1_GKE_1_CLUSTER=gke-1-apps-r1a-prod" | tee -a ${VARS_FILE}

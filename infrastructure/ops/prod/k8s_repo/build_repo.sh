@@ -73,10 +73,8 @@ done
 SRC="config/istio-controlplane/istio-replicated-controlplane.yaml"
 DEST="tmp/${ops_gke_1_name}/istio-controlplane/$(basename $SRC)"
 sed \
-  -e "s/POLICY_ILB_IP/${ops_gke_1_policy_ilb?env not set}/g" \
-  -e "s/TELEMETRY_ILB_IP/${ops_gke_1_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_1_pilot_ilb?env not set}/g" \
-  -e "s/OPS_PROJECT/${ops_project_id}/g" \
+  -e "s/CLUSTER_NAME/${ops_gke_1_name}/g" \
   $SRC > $DEST
 
 # Update kustomization
@@ -86,10 +84,8 @@ sed \
 SRC="config/istio-controlplane/istio-replicated-controlplane.yaml"
 DEST="tmp/${ops_gke_2_name}/istio-controlplane/$(basename $SRC)"
 sed \
-  -e "s/POLICY_ILB_IP/${ops_gke_2_policy_ilb?env not set}/g" \
-  -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb?env not set}/g" \
   -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb?env not set}/g" \
-  -e "s/OPS_PROJECT/${ops_project_id}/g" \
+  -e "s/CLUSTER_NAME/${ops_gke_2_name}/g" \
   $SRC > $DEST
 
 # Update kustomization
@@ -100,11 +96,10 @@ for cluster in ${dev1_gke_1_name} ${dev1_gke_2_name}; do
   SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
   DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
   sed \
-    -e "s/POLICY_ILB_IP/${ops_gke_1_policy_ilb}/g" \
-    -e "s/TELEMETRY_ILB_IP/${ops_gke_1_telemetry_ilb}/g" \
+    -e "s/CLUSTER_NAME/${cluster}/g" \
     -e "s/PILOT_ILB_IP/${ops_gke_1_pilot_ilb}/g" \
     $SRC > $DEST
-  
+
   # Update kustomization
   (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 done
@@ -114,11 +109,10 @@ for cluster in ${dev2_gke_3_name} ${dev2_gke_4_name}; do
   SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
   DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
   sed \
-    -e "s/POLICY_ILB_IP/${ops_gke_2_policy_ilb}/g" \
-    -e "s/TELEMETRY_ILB_IP/${ops_gke_2_telemetry_ilb}/g" \
+    -e "s/CLUSTER_NAME/${cluster}/g" \
     -e "s/PILOT_ILB_IP/${ops_gke_2_pilot_ilb}/g" \
     $SRC > $DEST
-  
+
   # Update kustomization
   (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 done
