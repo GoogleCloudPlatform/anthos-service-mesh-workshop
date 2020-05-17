@@ -91,7 +91,7 @@ sed \
 # Update kustomization
 (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 
-# Patch dev 1 clusters 1 and 2 with ILB IPs from ops 1.
+# Patch dev 1 clusters 1 and 2 with ILB IP from ops 1.
 for cluster in ${dev1_gke_1_name} ${dev1_gke_2_name}; do
   SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
   DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"
@@ -104,7 +104,7 @@ for cluster in ${dev1_gke_1_name} ${dev1_gke_2_name}; do
   (cd $(dirname $DEST) && kustomize edit add resource $(basename $DEST))
 done
 
-# Patch dev 2 clusters 3 and 4 with ILB IPs from ops 2.
+# Patch dev 2 clusters 3 and 4 with ILB IP from ops 2.
 for cluster in ${dev2_gke_3_name} ${dev2_gke_4_name}; do
   SRC="config/istio-controlplane/istio-shared-controlplane.yaml"
   DEST="tmp/$cluster/istio-controlplane/$(basename $SRC)"

@@ -30,7 +30,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: meganokeefe/cartservice:jan28fix
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.2.0
         ports:
         - containerPort: 7070
         env:
