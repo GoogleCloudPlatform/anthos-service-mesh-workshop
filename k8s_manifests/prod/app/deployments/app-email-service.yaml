@@ -16,7 +16,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emailservice
-  namespace: email
 spec:
   selector:
     matchLabels:
@@ -26,7 +25,7 @@ spec:
       labels:
         app: emailservice
     spec:
-      serviceAccount: email
+      serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
@@ -36,8 +35,10 @@ spec:
         env:
         - name: PORT
           value: "8080"
-        - name: ENABLE_PROFILER
-          value: "0"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
         readinessProbe:
           periodSeconds: 5
           exec:

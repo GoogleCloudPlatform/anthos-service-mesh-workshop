@@ -16,7 +16,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cartservice
-  namespace: cart
 spec:
   selector:
     matchLabels:
@@ -26,33 +25,31 @@ spec:
       labels:
         app: cartservice
     spec:
-      serviceAccount: cart
+      serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
-      - name: server
-        image: meganokeefe/cartservice:jan28fix
-        ports:
-        - containerPort: 7070
-        env:
-        - name: REDIS_ADDR
-          value: ""
-        - name: PORT
-          value: "7070"
-        - name: LISTEN_ADDR
-          value: "0.0.0.0"
-        resources:
-          requests:
-            cpu: 200m
-            memory: 64Mi
-          limits:
-            cpu: 300m
-            memory: 128Mi
-        readinessProbe:
-          initialDelaySeconds: 15
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
-        livenessProbe:
-          initialDelaySeconds: 15
-          periodSeconds: 10
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+        - name: server
+          image: gcr.io/google-samples/microservices-demo/cartservice:v0.3.4
+          ports:
+            - containerPort: 7070
+          env:
+            - name: REDIS_ADDR
+              value: "redis-cart:6379"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 128Mi
+          readinessProbe:
+            initialDelaySeconds: 15
+            exec:
+              command:
+                ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+          livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            exec:
+              command:
+                ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]

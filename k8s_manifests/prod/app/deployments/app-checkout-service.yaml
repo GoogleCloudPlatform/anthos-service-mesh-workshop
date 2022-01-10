@@ -16,7 +16,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: checkoutservice
-  namespace: checkout
 spec:
   selector:
     matchLabels:
@@ -26,12 +25,12 @@ spec:
       labels:
         app: checkoutservice
     spec:
-      serviceAccount: checkout
+      serviceAccountName: default
       containers:
         - name: server
           image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.3.4
           ports:
-          - containerPort: 5050
+            - containerPort: 5050
           readinessProbe:
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
@@ -39,18 +38,26 @@ spec:
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:5050"]
           env:
-          - name: PRODUCT_CATALOG_SERVICE_ADDR
-            value: "productcatalogservice.product-catalog.svc.cluster.local:3550"
-          - name: SHIPPING_SERVICE_ADDR
-            value: "shippingservice.shipping.svc.cluster.local:50051"
-          - name: PAYMENT_SERVICE_ADDR
-            value: "paymentservice.payment.svc.cluster.local:50051"
-          - name: EMAIL_SERVICE_ADDR
-            value: "emailservice.email.svc.cluster.local:5000"
-          - name: CURRENCY_SERVICE_ADDR
-            value: "currencyservice.currency.svc.cluster.local:7000"
-          - name: CART_SERVICE_ADDR
-            value: "cartservice.cart.svc.cluster.local:7070"
+            - name: PORT
+              value: "5050"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: "productcatalogservice:3550"
+            - name: SHIPPING_SERVICE_ADDR
+              value: "shippingservice:50051"
+            - name: PAYMENT_SERVICE_ADDR
+              value: "paymentservice:50051"
+            - name: EMAIL_SERVICE_ADDR
+              value: "emailservice:5000"
+            - name: CURRENCY_SERVICE_ADDR
+              value: "currencyservice:7000"
+            - name: CART_SERVICE_ADDR
+              value: "cartservice:7070"
+          # - name: DISABLE_STATS
+          #   value: "1"
+          # - name: DISABLE_TRACING
+          #   value: "1"
+          # - name: DISABLE_PROFILER
+          #   value: "1"
           # - name: JAEGER_SERVICE_ADDR
           #   value: "jaeger-collector:14268"
           resources:
